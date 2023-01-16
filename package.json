@@ -1,0 +1,51 @@
+{
+    "dependencies": {
+        "@sentry/vue": "7.26.0",
+        "browser-system-detect": "0.5.6",
+        "dayjs": "^1.11.7",
+        "lodash": "4.17.21",
+        "object-hash": "^3.0.0",
+        "vue": "2.7.13",
+        "vue-resource": "1.5.3",
+        "vue-slide-up-down": "2.0.1",
+        "vue-ssr-carousel": "1.9.0",
+        "vue2-touch-events": "3.2.2",
+        "vuex": "3.6.2"
+    },
+    "devDependencies": {
+        "dotenv-webpack": "^8.0.1",
+        "@babel/preset-env": "^7.20.2",
+        "@babel/core": "^7.20.12",
+        "@symfony/webpack-encore": "4.2.0",
+        "autoprefixer": "10.4.13",
+        "core-js": "3.26.1",
+        "css-mqpacker": "7.0.0",
+        "file-loader": "6.2.0",
+        "node-sass-glob-importer": "5.3.2",
+        "postcss-loader": "7.0.2",
+        "regenerator-runtime": "0.13.11",
+        "sass": "1.56.2",
+        "sass-loader": "13.2.0",
+        "twig": "1.15.4",
+        "twigjs-loader": "1.0.3",
+        "url-loader": "4.1.1",
+        "webpack": "^5.75.0",
+        "webpack-cli": "^5.0.1",
+        "webpack-notifier": "1.15.0"
+    },
+    "engines": {
+        "npm": "8.19.3",
+        "node": "16.19.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "dev-server": "encore dev-server --public http://192.168.1.84:8080 --host 0.0.0.0",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    },
+    "browserslist": [
+        "defaults"
+    ]
+}

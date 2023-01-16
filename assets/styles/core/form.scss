@@ -1,0 +1,47 @@
+#root, .acf-block-preview{
+  input{
+    &::placeholder {
+      color: $c-placeholder-color;
+      opacity: 1;
+    }
+    &[type=text], &[type=email], &[type=password], &[type=tel]{
+      border-radius: $border-radius; height: 60px; padding: 0 $space; border: 1px solid $c-border-input; background: $c-white;
+      width: 100%; color: inherit;
+    }
+    &[type=submit]{
+      height: 60px; padding: 0 $space; width: 100%; background: $c-dark-grey; color: $c-white; border: 1px solid $c-dark-grey;
+      text-transform: uppercase;
+    }
+    &[type="checkbox"],  &[type="radio"]{
+      width: 15px; height: 15px; border: 1px solid $c-theme-dark-transparent; margin: 0; margin-right: $space-s;
+      box-shadow: inset 0 0 0 1px $c-white; background: $c-white; flex-shrink: 0;
+      &:checked{
+        background:  $c-theme-dark;
+      }
+    }
+    &[type="checkbox"]{
+      border-radius: $border-radius;
+    }
+    &[type="radio"]{
+      border-radius: 50%;
+    }
+  }
+
+  textarea, select{
+    border-radius: $border-radius; padding: $space; border: 1px solid $c-border-input; background: $c-white;
+    width: 100%;
+    &::placeholder {
+      color: $c-placeholder-color;
+      opacity: 1;
+    }
+  }
+
+  select{
+    background: $c-white; color: inherit; appearance: none; height: 60px; padding: 0 $space;
+    &:hover{ color: inherit }
+  }
+
+  label, .label{
+    span{ font-size: $font-s; line-height: 1 }
+  }
+}

@@ -1,0 +1,31 @@
+/*
+* Boilerplate - 2023
+*
+* Akhela.fr
+*/
+
+@import "config";
+
+/*
+* Services
+*/
+
+@import "reset";
+@import "function/**/*.scss";
+@import "variable/**/*.scss";
+@import "mixin/**/*.scss";
+@import "misc/**/*.scss";
+@import "core/**/*.scss";
+
+
+/*
+* Vendors
+*/
+
+@import "vendor/**/*.scss";
+
+
+/* Blocks
+*  Exemple : hero
+*/
+@import "../../templates/block/**/*.scss";

@@ -1,0 +1,34 @@
+%button{
+  @extend %text-medium; display: inline-flex; border:1px solid; border-radius: 50rem; text-align: center;
+  position: relative; padding: $space-s $space; transition: allow(color background border); cursor: pointer;
+  line-height: 1; user-select: none; align-items: center; white-space: nowrap; justify-content: center;
+  text-decoration: none!important;
+  &:after{ transition: allow(transform); margin-left: $space }
+  &:hover{
+    color: $c-theme-alt;
+  }
+  &--invert{
+    background: $c-black; color: $c-white; border: 0;
+  }
+  &--alt{
+    background: $c-theme-alt; color: $c-white; border: 0;
+    &:hover{
+      color: $c-white;
+    }
+  }
+
+  &.is-active{ background: $c-black; color: $c-white; border-color: $c-black }
+  &.is-disabled{ opacity: 0.3; pointer-events: none }
+  &.is-loading{
+    pointer-events: none;
+    &:after{
+      content: ''; width: $space; height: $space; background: url("../../media/images/loader-black.svg") no-repeat center; 
+      background-size: contain;
+    }
+  }
+
+  @media #{$to-phone} { font-size: $font-s }
+}
+
+button{ color: inherit }
+

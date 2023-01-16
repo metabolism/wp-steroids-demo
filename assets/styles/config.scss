@@ -1,0 +1,165 @@
+// Paths
+$font-path : '/assets/media/fonts';
+
+
+// Transition
+$transition-duration : 0.3s;
+
+
+// Animations
+$animation-duration   : 0.3s;
+$animation-offset     : 30%;
+$animation-offset-rem : 10rem;
+
+//theme
+$color-noise : #f7f8fd;
+$color-theme : #204575;
+$color-theme-alt : #FF9D1C;
+$color-theme-dark : #14234C;
+$color-theme-light : #F1F4FF;
+$color-green : #02B935;
+$color-blue : #1DADE3;
+$color-yellow : #FFF743;
+
+// Colors
+$c-theme: var(--c-theme);
+$c-theme-transparent: var(--c-theme-transparent);
+$c-theme-light: var(--c-theme-light);
+$c-theme-dark: var(--c-theme-dark);
+$c-theme-dark-transparent: var(--c-theme-dark-transparent);
+$c-theme-alt: var(--c-theme-alt);
+$c-green: var(--c-green);
+$c-blue: var(--c-blue);
+$c-yellow: var(--c-yellow);
+$c-black: var(--c-black);
+$c-white: var(--c-white);
+$c-grey: var(--c-grey);
+$c-medium-grey: var(--c-medium-grey);
+$c-dark-grey: var(--c-dark-grey);
+$c-alert: var(--c-alert);
+$c-border: var(--c-border);
+$c-border-input: var(--c-border-input);
+$c-placeholder-color: var(--c-placeholder-color);
+$c-transparent: var(--c-transparent);
+$c-image-placeholder: rgba(0,0,0,0.05);
+
+:root, *:before, *:after{
+  --c-theme: #{$color-theme};
+  --c-theme-transparent: rgba(32, 69, 117, 0.15);
+  --c-theme-light: #{$color-theme-light};
+  --c-theme-dark: #{$color-theme-dark};
+  --c-theme-dark-transparent: rgba(40, 70, 152, 0.2);
+  --c-theme-alt: #{$color-theme-alt};
+  --c-black: #111;
+  --c-green: #{$color-green};
+  --c-blue: #{$color-blue};
+  --c-yellow: #{$color-yellow};
+  --c-white: #fff;
+  --c-grey: #F3F3F3;
+  --c-dark-grey: #2D2D2D;
+  --c-medium-grey: #e7e6e6;
+  --header-h: 131px;
+  --header-main-h: 80px;
+  --app-height: 100vh;
+  --app-init-height: 100vh;
+  --admin-h: 0px;
+  --footer-h: 22.5rem;
+  --c-alert: #E52626 ;
+  --c-border: rgba(218,218,218,0.4) ;
+  --c-transparent: rgba(255,255,255,0.3) ;
+  --c-border-input: #bdcde1;
+  --c-placeholder-color: #93B1D9;
+  --space-section: 12rem;
+  --font-title: 'inter', arial, serif;
+  --font-text: 'inter', arial, sans-serif;
+}
+
+// Sizes
+$container-max-w : 1920px;
+$container-w : 1278px;
+$header-feedback-h : 70px;
+$breadcrumb-h : 45px;
+$app-h : var(--app-height);
+$app-init-h : var(--app-init-height);
+$header-h : var(--header-h);
+$header-main-h : var(--header-main-h);
+$admin-h : var(--admin-h);
+$footer-h : var(--footer-h);
+$border-radius: 1px;
+
+$space: 20px;
+$space-xxs: 5px;
+$space-xs: 8px;
+$space-s: 10px;
+$space-m: 30px;
+$space-l: 4rem;
+$space-xl: 6rem;
+$space-xxl: 8rem;
+$space-xxxl: 10rem;
+$space-section: var(--space-section);
+
+
+// Selector
+$inputs :
+'input[type="text"], input[type="tel"], input[type="email"], input[type="password"],'+
+'input[type="number"], input[type="url"], input[type="search"], textarea';
+
+
+// Fonts - please use https://transfonter.org, no Autohint, WOFF and WOFF2 formats only
+
+// Name            Variant    Weight     Style    Stretch   Fallback   Version
+$fonts :
+fontello           regular     400       normal   normal    sans-serif     1,
+inter        	   regular     400       normal   normal    sans-serif     1,
+inter       	   medium      600       normal   normal    sans-serif     1,
+inter       	   bold        700       normal   normal    sans-serif     1,
+inter       	   extrabold   800       normal   normal    sans-serif     1,
+inter	           regular     400       italic   normal    sans-serif     1;
+
+
+$font-title: var(--font-title);
+$font-text: var(--font-text);
+
+
+$font-xxs: 10px;
+$font-xs: 12px;
+$font-s: 14px;
+$font-m: 16px;
+$font-ml: 20px;
+$font-l: 2.4rem;
+$font-ll: 3.8rem;
+$font-xl: 4.8rem;
+$font-xxl: 5.8rem;
+$font-xxxl: 8rem;
+
+// Icons
+
+$icons:
+facebook '\e800',
+instagram '\e801',
+linkedin '\e802',
+twitter '\e803',
+plus '\e804',
+minus '\e805',
+leaves '\e806',
+play '\e807',
+world '\e808',
+eye '\e809',
+arrow '\e80a',
+magnifier '\e80b',
+person '\e80c',
+download '\e80d',
+play-circled '\e80e',
+messages '\e80f',
+close '\e810',
+arrow-alt '\e820',
+phone '\e822',
+person2 '\e823',
+more '\e815',
+world2 '\e825';
+
+// Grid
+
+$grid-size: 122rem;
+$grip-columns: 12;
+$grip-gap: 4rem;

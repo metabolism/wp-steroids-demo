@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html {{ blog.language_attributes }}>
+<head>
+	<meta charset="{{ blog.charset }}" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="theme-color" content="#fff">
+	<link rel="author" href="{{ blog.theme.link }}/humans.txt" />
+	{% block stylesheets %}
+		{{ encore_entry_link_tags('bundle') }}
+	{% endblock %}
+	{{ wp_head }}
+	<script>
+		window.adjustFontSize = function (){ document.documentElement.style.fontSize = Math.max(7, Math.min(10, 10/(120/(window.innerWidth*0.061))))+'px' }
+		window.adjustFontSize();
+	</script>
+</head>
+<body class="is-front {{body_class}}">
+<div id="root">
+	{% include 'header.twig' %}
+
+	<main>
+		<div class="sections">
+			{% block content %}
+				Sorry, no content
+			{% endblock %}
+		</div>
+	</main>
+
+	{% include 'footer.twig' %}
+</div>
+
+{% block javascripts %}
+	{{ encore_entry_script_tags('bundle') }}
+{% endblock %}
+
+{{ wp_footer }}
+
+{% if environment|default('prod') != 'prod' %}
+	<div id="dev-bundle-grid">
+		<style>
+			#dev-bundle-grid{ position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999; pointer-events: none; display: none }
+			#dev-bundle-grid .container{ height: 100%; border-right: solid 1px blue; border-left: solid 1px blue; opacity: 0.4 }
+			.dev-bundle-grid__device{ height: 100%; display: flex }
+			.dev-bundle-grid__device div{ flex: 1; position: relative; padding: 0 2rem }
+			.dev-bundle-grid__device div + div{ border-left: solid 1px blue }
+			.dev-bundle-grid__device span{ width: 100%; height: 100%; background: red; opacity: 0.1; display: block }
+			@media screen and (min-width: 641px) { .dev-bundle-grid__device--mobile{ display: none }}
+			@media screen and (max-width: 640px) { .dev-bundle-grid__device--desktop{ display: none }}
+		</style>
+		<script>
+			var ctrlDown = false;
+			document.addEventListener("keydown", function(e) { if (e.keyCode === 17 || e.keyCode === 91) ctrlDown = true });
+			document.addEventListener("keydown", function(e) { if (ctrlDown && e.keyCode === 72 ){ e.preventDefault(); let g = document.getElementById('dev-bundle-grid'); if(g.style.display === 'block'){ localStorage.setItem('grid', 0); g.style.display = 'none'} else { localStorage.setItem('grid', '1'); g.style.display = 'block' }}});
+			document.addEventListener("keyup", function(e) { if (e.keyCode === 17 || e.keyCode === 91) ctrlDown = false });
+
+			if(localStorage.getItem('grid') === '1')
+				document.getElementById('dev-bundle-grid').style.display = 'block'
+		</script>
+		<div class="container">
+			<div class="dev-bundle-grid__device dev-bundle-grid__device--desktop">
+				{% for i in 1..12 %}<div><span></span></div>{% endfor %}
+			</div>
+			<div class="dev-bundle-grid__device dev-bundle-grid__device--mobile">
+				{% for i in 1..6 %}<div><span></span></div>{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endif %}
+</body>
+</html>

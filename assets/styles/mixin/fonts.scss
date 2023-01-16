@@ -1,0 +1,9 @@
+$font-families : ()!default;
+
+// include font with fallback
+@mixin font($name) {
+  $font : map-get($font-families, to-lower-case($name));
+  @if( $font ){
+    font-family: unquote($font);
+  }
+}

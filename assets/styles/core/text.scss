@@ -1,0 +1,121 @@
+#root{
+  color: $c-theme;
+  &, input, textarea, select, button{ font-family: $font-text; @extend %text-medium }
+}
+
+html{
+  font-size: 10px;
+  @media #{$to-phone} {
+    font-size: 10px!important
+  }
+  @media print {  font-size: 7px!important }
+}
+
+.title-hero, %title-hero{
+  font-family:$font-title; font-weight:500; font-size: $font-xxxl; line-height: 110%; letter-spacing: -0.01em;
+  @media #{$to-phone} {
+    font-size: $font-ll; word-break: break-word;
+  }
+}
+
+.title-section, %title-section{
+  font-family:$font-title; font-weight:500; font-size: $font-xxl; line-height: 110%; letter-spacing: -0.01em;
+  @media #{$to-phone} {
+    font-size: $font-ll;
+  }
+}
+
+.title-main, %title-main{
+  font-family:$font-title; font-weight:500; font-size: $font-xl; line-height: 110%; letter-spacing: -0.01em;
+  @media #{$to-phone} {
+    font-size: $font-ll;
+  }
+}
+
+.title-large, %title-large{
+  font-family:$font-title; font-weight:500; font-size: $font-ll; line-height: 110%; letter-spacing: -0.01em;
+  @media #{$to-phone} {
+    font-size: $font-l;
+  }
+}
+
+.title-small, %title-small{ font-family:$font-title; font-weight:700; font-size: $font-s; line-height: 110%; letter-spacing: -0.01em }
+.title-small-upper, %title-small-upper{ font-family:$font-text; font-weight:400; font-size: $font-s; line-height: 120%; letter-spacing: 0.05em; text-transform: uppercase }
+
+.text-hero, %text-hero{
+  font-size: 20px; font-size: max(20px, $font-l); line-height: 140%; letter-spacing: 0;
+  @media #{$to-phone} {
+    font-size: $font-ml;
+  }
+}
+.text-medium, %text-medium{
+  font-weight:400; font-size: $font-m; line-height: 150%; letter-spacing: 0;
+  @media screen and (min-width: 768px) and (max-width:1280px) {
+    font-size: 15px;
+  }
+}
+.text-small, %text-small{ font-weight:400; font-size: $font-xs; line-height: 120%; letter-spacing: 0; text-transform: uppercase }
+
+.color-alert{ color: $c-alert }
+
+.wysiwyg{
+  h1{ @extend %title-main }
+  h2{
+    @extend %text-hero;
+    @media #{$to-phone} { font-size: $font-l }
+  }
+  a, email{ text-decoration: underline }
+  h3{ @extend %text-hero }
+  h4{ @extend %text-medium }
+  p, table, li{
+    @extend %text-medium; line-height: 150%;
+  }
+  .a-cta{
+    display: inline-block;
+    span{
+      text-decoration: underline; white-space: normal; max-width: none; overflow: visible;
+      &:after{ display: none }
+    }
+  }
+  ol{ list-style: decimal; padding-left: 1em }
+  ul{ list-style: disc; padding-left: 1em }
+  li+li{ margin-top: 0.5em }
+  *+table, *+ul, *+p, *+blockquote {
+    margin-top: $space-m;
+  }
+  *+h1, *+h2, *+h3{
+    margin-top: $space-xl;
+    @media #{$to-phone} { margin-top: $space-l }
+  }
+  table{
+    table-layout: fixed;
+    @media #{$to-phone} {
+      margin-left: -$space-m; width: calc(100% + 2*$space-m)
+    }
+    td{
+      border: 1px solid $c-border-input; padding: $space-s; vertical-align: top; width: 1%; max-width: 0;
+      @media #{$to-phone} {
+        display: block; padding: $space-m; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; max-width: none;
+        img{ margin: 0; width: 100% }
+      }
+    }
+    tr{
+      @media #{$to-phone} {
+        &:last-of-type td:last-of-type{ border-bottom: 1px solid $c-border-input }
+      }
+    }
+  }
+  img{
+    width: 100%;
+    &.aligncenter{ width: auto; margin-left: auto; margin-right: auto }
+    &.alignleft{ width: auto; margin-right: auto; margin-left: 0 }
+    &.alignright{ width: auto; margin-left: auto; margin-right: 0 }
+    @media #{$to-phone} { margin-left: -$space-m; width: calc(100% + 2*$space-m); max-width: none }
+  }
+  blockquote{
+    padding: $space-l; background: $c-theme-light;
+    @media #{$to-phone} { padding: $space-m; margin-left: -$space-m; margin-right: -$space-m }
+  }
+  sup{ line-height: 1; font-size: 70% }
+  sub{ line-height: 1; font-size: 70% }
+}

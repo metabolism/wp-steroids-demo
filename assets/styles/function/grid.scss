@@ -1,0 +1,3 @@
+@function col($count){
+  @return unquote(($count/$grip-columns)*100+'%')
+}

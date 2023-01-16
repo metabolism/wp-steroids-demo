@@ -1,0 +1,8 @@
+.fade-leave-active{ animation: fade-out $animation-duration; animation-timing-function: $ease-in-out-cubic }
+.fade-enter-active{ animation: fade-in $animation-duration; animation-fill-mode: both; animation-timing-function: $ease-in-out-cubic; position: absolute; top: 0 }
+
+.slide-leave-active{ animation: slide-to-bottom $animation-duration; animation-timing-function: $ease-in-out-cubic }
+.slide-enter-active{ animation: slide-from-bottom $animation-duration; animation-fill-mode: both; animation-timing-function: $ease-in-out-cubic }
+
+.slide-left-leave-active{ animation: slide-to-right $animation-duration; animation-timing-function: $ease-in-out-cubic }
+.slide-left-enter-active{ animation: slide-from-right $animation-duration; animation-fill-mode: both; animation-timing-function: $ease-in-out-cubic }

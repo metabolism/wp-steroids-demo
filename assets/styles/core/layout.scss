@@ -1,0 +1,60 @@
+.container{
+  margin-left: auto; margin-right: auto; display: flex; flex-flow: column;
+  position: relative; max-width: $container-w; width: calc( 100% - 80px);
+  @media #{$include-small} { width: calc( 100% - 60px) }
+  .container{ width: 100% }
+  &--empty{
+    text-align: center; padding-top: $space-section; position: static;
+    &:after{
+      content: ''; background-image: linear-gradient(45deg, #204575 25%, #ffffff 25%, #ffffff 50%, #204575 50%, #204575 75%, #ffffff 75%, #ffffff 100%);
+      background-size: 56.57px 56.57px; position: overlay(); opacity: 0.04;
+    }
+  }
+  &--large{
+    max-width: none;
+    .container{ width: calc( 100% - #{$space-xxl}) }
+  }
+}
+
+html{
+  scroll-behavior: smooth;
+}
+
+* {
+  scroll-margin-top: $header-main-h;
+}
+
+body{
+  overflow-x: hidden; width: 100%; background: #fafafa;
+  &.burger-is-open{
+    @media #{$include-small} { overflow: hidden }
+  }
+}
+
+main{
+  position: relative; width: 100%; margin-top: $header-h; overflow: hidden;
+  @media print { margin-top: 0 }
+}
+
+.sections{
+  width: 100%; overflow: hidden; background: $c-white;
+  margin-left: auto; margin-right: auto;
+  min-height: calc(#{$app-init-h} - #{$header-h} - #{$footer-h});
+}
+
+section{
+  margin-top: $space-section; position: relative;
+  .container{ z-index: 2 }
+}
+
+#next{ display: inline; height: 0 }
+
+#root{
+  min-height: calc(#{$app-h} - #{$admin-h}); display: flex; flex-flow: column; overflow: hidden;
+}
+
+figure{
+  figcaption{
+    text-align: right; font-size: $font-xs; margin-top: $space-xs; font-style: italic; line-height: 1.1;
+  }
+}

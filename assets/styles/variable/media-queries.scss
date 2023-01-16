@@ -1,0 +1,62 @@
+// Default Screen sizes, following Chrome devtools specification
+$media                  : 'screen' !default;
+
+$screen-phone           : 425px !default;
+$screen-phone-m         : 375px !default;
+$screen-phone-s         : 320px !default;
+$screen-tablet          : 768px !default;
+$screen-small           : 1024px !default;
+$screen-large           : 1440px !default;
+$screen-4k              : 2560px !default;
+
+// Standard Media query shorthand
+
+// From [value] to infinity
+$from-4k               : $media+" and (min-width: "+($screen-4k)+")";
+$from-large            : $media+" and (min-width: "+($screen-large)+")";
+$from-small            : $media+" and (min-width: "+($screen-small)+")";
+$from-tablet           : $media+" and (min-width: "+($screen-tablet)+")";
+$from-phone            : $media+" and (min-width: "+($screen-phone)+")";
+$from-phone-m          : $media+" and (min-width: "+($screen-phone-m)+")";
+$from-phone-s          : $media+" and (min-width: "+($screen-phone-s)+")";
+
+// From [value] excluded to infinity
+$exclude-large            : $media+" and (min-width: "+($screen-large + 1px)+")";
+$exclude-small            : $media+" and (min-width: "+($screen-small + 1px)+")";
+$exclude-tablet           : $media+" and (min-width: "+($screen-tablet + 1px)+")";
+$exclude-phone            : $media+" and (min-width: "+($screen-phone + 1px)+")";
+$exclude-phone-m          : $media+" and (min-width: "+($screen-phone-m + 1px)+")";
+$exclude-phone-s          : $media+" and (min-width: "+($screen-phone-s + 1px)+")";
+
+// From 0 to [value]
+$to-large              : $media+" and (max-width: "+($screen-4k - 1px)+")";
+$to-small              : $media+" and (max-width: "+($screen-large - 1px)+")";
+$to-tablet             : $media+" and (max-width: "+($screen-small - 1px)+")";
+$to-phone              : $media+" and (max-width: "+($screen-tablet - 1px)+")";
+$to-phone-m            : $media+" and (max-width: "+($screen-phone - 1px)+")";
+$to-phone-s            : $media+" and (max-width: "+($screen-phone-m - 1px)+")";
+
+// From 0 to [value] included
+$include-large         : $media+" and (max-width: "+($screen-large)+")";
+$include-small         : $media+" and (max-width: "+($screen-small)+")";
+$include-tablet        : $media+" and (max-width: "+($screen-tablet)+")";
+$include-phone         : $media+" and (max-width: "+($screen-phone)+")";
+$include-phone-m       : $media+" and (max-width: "+($screen-phone-m)+")";
+$include-phone-s       : $media+" and (max-width: "+($screen-phone-s)+")";
+
+// [value] only
+$only-4k               : $from-4k;
+$only-large            : $media+" and (min-width: "+$screen-large+") and (max-width: "+($screen-4k - 1px)+")";
+$only-small            : $media+" and (min-width: "+$screen-small+") and (max-width: "+($screen-large - 1px)+")";
+$only-tablet           : $media+" and (min-width: "+$screen-tablet+") and (max-width: "+($screen-small - 1px)+")";
+$only-phone            : $media+" and (min-width: "+$screen-phone+") and (max-width: "+($screen-tablet - 1px)+")";
+$only-phone-m          : $media+" and (min-width: "+$screen-phone-m+") and (max-width: "+($screen-phone - 1px)+")";
+$only-phone-s          : $to-phone-s;
+
+// Specific
+$retina           : "(-webkit-min-device-pixel-ratio: 2),(min-resolution: 192dpi)";
+
+
+// Media query list to be used in other libraries
+$media-queries-to   : ( large: $to-large, small: $to-small, tablet: $to-tablet, phone: $to-phone, phone-m: $to-phone-m, phone-s: $to-phone-s);
+$media-queries-from : ( 4k: $from-4k, large: $from-large, small: $from-small, tablet: $from-tablet, phone: $from-phone, phone-m: $from-phone-m, phone-s: $from-phone-s);

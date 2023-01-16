@@ -1,0 +1,23 @@
+:root{
+  @media #{$include-large}{
+    --header-h: 111px;
+    --header-main-h: 70px
+
+  }
+  @media #{$to-phone} {
+    --space-section: 6rem;
+    --header-h: 71px;
+  }
+}
+
+.desktop {
+  --app-height: 100vh!important;
+  --app-init-height: 100vh!important;
+}
+
+.admin-bar{
+  --admin-h: 32px;
+  @media #{$to-phone} {
+    --admin-h: 46px
+  }
+}

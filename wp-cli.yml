@@ -1,0 +1,3 @@
+path: public/edition
+server:
+  docroot: public
