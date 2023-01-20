@@ -90,7 +90,7 @@ wordpress:
   ## Add blog support
   support:
     - page #enable page
-    - post #enable post
+    #- post #enable post
     - tag #enable tag taxonomy for post
     - category #enable category taxonomy for post
 

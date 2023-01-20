@@ -1,6 +1,10 @@
 <?php
 
-class Site extends Timber\Site {
+use Timber\ImageHelper;
+use Timber\Menu;
+use Timber\Timber;
+
+class Site extends \Timber\Site {
 
     private $entrypoints;
     private $manifest;
@@ -58,7 +62,7 @@ class Site extends Timber\Site {
         $context['is_preview'] = $is_preview;
 
         // Render the block.
-        $name = str_replace('acf/', '', $block['name']);
+        $name = str_replace('_', '-', str_replace('acf/', '', $block['name']));
 
         Timber::render( 'block/'.$name.'/'.$name.'.twig', $context );
     }
@@ -71,8 +75,8 @@ class Site extends Timber\Site {
     public function add_to_context( $context ) {
 
         $context['menu'] = [
-            'header'=>new Timber\Menu('header'),
-            'footer'=>new Timber\Menu('footer')
+            'header'=>new Menu('header'),
+            'footer'=>new Menu('footer')
         ];
 
         $context['environment'] = WP_ENV;
@@ -105,6 +109,69 @@ class Site extends Timber\Site {
         return $styles;
     }
 
+    public function generatePicture($src, $width, $height=0, $sources=[], $alt=false, $loading='lazy') {
+
+        if( $src instanceof \Timber\Image )
+            $src = acf_get_attachment($src->id);
+        elseif( is_int($src) )
+            $src = acf_get_attachment($src);
+
+        if( !$src )
+            return '';
+
+        $ext = function_exists('imagewebp') ? 'webp' : null;
+        $mime = function_exists('imagewebp') ? 'image/webp' : $src['mime_type'];
+
+        $html = '<picture>';
+
+        if($src['mime_type'] == 'image/svg+xml' || $src['mime_type'] == 'image/svg' || $src['mime_type'] == 'image/gif' ){
+
+            $html .= '<img src="'.$src['url'].'" alt="'.$src['alt'].'" loading="'.$loading.'" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
+        }
+        else {
+
+            if ($sources && is_array($sources)) {
+
+                foreach ($sources as $media => $size) {
+
+                    if (is_int($media))
+                        $media = 'max-width: ' . $media . 'px';
+
+                    if ($ext == 'webp') {
+
+                        $webp_src = ImageHelper::img_to_webp($src['url']);
+                        $url = ImageHelper::resize($webp_src, $size[0], $size[1] ?? 0);
+
+                        $html .= '<source media="(' . $media . ')" srcset="' . $url . '" type="' . $mime . '"/>';
+                    }
+
+                    $url = ImageHelper::resize($src['url'], $size[0], $size[1] ?? 0);
+                    $html .= '<source media="(' . $media . ')" srcset="' . $url . '" type="' . $src['mime_type'] . '"/>';
+                }
+            }
+
+            if ($ext == 'webp') {
+
+                $webp_src = ImageHelper::img_to_webp($src['url']);
+                $url = ImageHelper::resize($webp_src, $width, $height);
+                $html .= '<source srcset="' . $url . '" type="image/webp"/>';
+            }
+
+            $url = ImageHelper::resize($src['url'], $width, $height);
+
+            $au = ImageHelper::analyze_url($url);
+            $upload_dir = wp_upload_dir();
+
+            $image_info = getimagesize($upload_dir['basedir'].$au['subdir'].'/'.$au['basename']);
+
+            $html .= '<img src="' . $url . '" alt="' . ($alt ?: $src['alt']) . '" loading="' . $loading . '" '.($image_info[0]?'width="'.$image_info[0].'"':'').' '.($image_info[1]?'height="'.$image_info[1].'"':'').'/>';
+        }
+
+        $html .='</picture>';
+
+        return $html;
+    }
+
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
@@ -117,6 +184,8 @@ class Site extends Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'wp_footer', 'wp_footer' ) );
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_link_tags', [$this, 'renderWebpackLinkTags'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_script_tags', [$this, 'renderWebpackScriptTags'] ) );
+
+        $twig->addFilter( new Twig\TwigFilter( 'picture', [$this, 'generatePicture'] ) );
 
         return $twig;
     }

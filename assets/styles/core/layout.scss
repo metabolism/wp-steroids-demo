@@ -11,7 +11,7 @@
     }
   }
   &--large{
-    max-width: none;
+    max-width: none; width: 100%;
     .container{ width: calc( 100% - #{$space-xxl}) }
   }
 }

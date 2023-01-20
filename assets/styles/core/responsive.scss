@@ -1,9 +1,4 @@
 :root{
-  @media #{$include-large}{
-    --header-h: 111px;
-    --header-main-h: 70px
-
-  }
   @media #{$to-phone} {
     --space-section: 6rem;
     --header-h: 71px;

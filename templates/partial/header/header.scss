@@ -1,0 +1,5 @@
+.p-header{
+  position: fixed; top: $admin-h; left: 0; width: 100%; z-index: 99; height: $header-h; background: #eee;
+  .container{ height: 100%; align-items: center; flex-direction: row; }
+  .p-menu{ margin-left: $space }
+}

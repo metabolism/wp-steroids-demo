@@ -13,7 +13,7 @@ $animation-offset-rem : 10rem;
 
 //theme
 $color-noise : #f7f8fd;
-$color-theme : #204575;
+$color-theme : #999;
 $color-theme-alt : #FF9D1C;
 $color-theme-dark : #14234C;
 $color-theme-light : #F1F4FF;
@@ -22,6 +22,7 @@ $color-blue : #1DADE3;
 $color-yellow : #FFF743;
 
 // Colors
+$c-text: var(--c-text);
 $c-theme: var(--c-theme);
 $c-theme-transparent: var(--c-theme-transparent);
 $c-theme-light: var(--c-theme-light);
@@ -44,6 +45,7 @@ $c-transparent: var(--c-transparent);
 $c-image-placeholder: rgba(0,0,0,0.05);
 
 :root, *:before, *:after{
+  --c-text: #111;
   --c-theme: #{$color-theme};
   --c-theme-transparent: rgba(32, 69, 117, 0.15);
   --c-theme-light: #{$color-theme-light};

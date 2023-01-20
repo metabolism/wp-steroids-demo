@@ -1,0 +1,5 @@
+.p-menu{
+  &__items{
+    display: flex; grid-gap: $space; text-transform: uppercase;
+  }
+}

@@ -10,7 +10,7 @@
 }
 html :where(.wp-block){ max-width: none }
 .acf-block-preview{
-  margin: 10rem 0; color: $c-theme;
+  margin: 10rem 0; color: $c-text;
   &, input, textarea, select, button{ font-family: $font-text; @extend %text-medium }
   a{ text-decoration: none!important }
   p{ font-size: inherit }

@@ -1,5 +1,5 @@
 #root{
-  color: $c-theme;
+  color: $c-text;
   &, input, textarea, select, button{ font-family: $font-text; @extend %text-medium }
 }
 
@@ -39,8 +39,8 @@ html{
   }
 }
 
-.title-small, %title-small{ font-family:$font-title; font-weight:700; font-size: $font-s; line-height: 110%; letter-spacing: -0.01em }
-.title-small-upper, %title-small-upper{ font-family:$font-text; font-weight:400; font-size: $font-s; line-height: 120%; letter-spacing: 0.05em; text-transform: uppercase }
+.title-small, %title-small{ font-family:$font-title; font-weight:700; font-size: $font-ml; line-height: 110%; letter-spacing: -0.01em }
+.title-small-upper, %title-small-upper{ font-family:$font-text; font-weight:400; font-size: $font-ml; line-height: 120%; letter-spacing: 0.05em; text-transform: uppercase }
 
 .text-hero, %text-hero{
   font-size: 20px; font-size: max(20px, $font-l); line-height: 140%; letter-spacing: 0;
