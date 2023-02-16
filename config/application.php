@@ -130,6 +130,7 @@ if (file_exists($env_config)) {
 Config::apply();
 
 define('WPS_YAML_FILE', __DIR__.'/app.yml');
+define('GOOGLE_MAP_API_KEY', env('GOOGLE_MAP_API_KEY') ?: false);
 
 /**
  * Bootstrap WordPress

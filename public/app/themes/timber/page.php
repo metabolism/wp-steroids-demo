@@ -28,7 +28,9 @@ $context['post'] = $timber_post;
 
 $templates       = array( 'page.twig' );
 
-if ( is_front_page() )
+if ( is_front_page() ){
+    $context['wp_title'] = get_bloginfo('name');
     $templates = ['front-page.twig', 'home.twig'];
+}
 
 Timber::render( $templates, $context );

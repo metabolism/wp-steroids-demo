@@ -15,6 +15,7 @@ public/edition
 
 # Logs
 *.log
+.idea
 
 # Dotenv
 .env
@@ -23,6 +24,8 @@ public/edition
 
 # Composer
 /vendor
+composer.lock
+package-lock.json
 
 # WP-CLI
 wp-cli.local.yml

@@ -32,9 +32,9 @@ This is a modified version using [Timber](https://fr.wordpress.org/plugins/timbe
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
 - `WP_HOME` - Full URL to WordPress home (https://example.com)
 - `WP_SITEURL` - Full URL to WordPress including subdirectory (https://example.com/wp)
+- `ACF_PRO_KEY` - Your ACF Lience key
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
-  - Generate with [wp-cli-dotenv-command](https://github.com/aaemnnosttv/wp-cli-dotenv-command)
-  - Generate with [our WordPress salts generator](https://roots.io/salts.html)
+  - Generate with [WordPress salts generator](https://roots.io/salts.html)
 
 2. Install vendor
    ```sh

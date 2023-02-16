@@ -8,6 +8,7 @@ class Site extends \Timber\Site {
 
     private $entrypoints;
     private $manifest;
+    private $translations;
 
     /** Add timber support. */
     public function __construct() {
@@ -53,7 +54,7 @@ class Site extends \Timber\Site {
 
         $context = Timber::context();
 
-        $block['custom_fields'] = get_fields();
+        $context['props'] = get_fields();
 
         // Store field values.
         $context['block'] = $block;
@@ -67,6 +68,20 @@ class Site extends \Timber\Site {
         Timber::render( 'block/'.$name.'/'.$name.'.twig', $context );
     }
 
+    private function get_translations()
+    {
+        $options = get_fields('option');
+
+        if( $translations = $options['translations']??false )
+        {
+            $this->translations = [];
+            foreach ($translations as $translation)
+            {
+                $key = sanitize_title($translation['key']);
+                $this->translations[$key] = $translation['translation'];
+            }
+        }
+    }
 
     /** This is where you add some context
      *
@@ -81,6 +96,7 @@ class Site extends \Timber\Site {
 
         $context['environment'] = WP_ENV;
         $context['blog'] = $this;
+        $context['options'] = get_fields('option');
 
         return $context;
     }
@@ -172,6 +188,212 @@ class Site extends \Timber\Site {
         return $html;
     }
 
+    /**
+     * @param $text
+     * @param array $params
+     * @return string
+     */
+    public function translate($text, $params=[])
+    {
+        $key = sanitize_title($text);
+        $params = (array)$params;
+
+        if( isset($this->translations[$key]) ){
+
+            return vsprintf($this->translations[$key], $params);
+        }
+        else{
+
+            if( $_GET['debug']??'' == 'translation' && $_ENV['APP_ENV'] == 'dev' )
+                return '¿@ '.htmlspecialchars($text).' @?';
+
+            return vsprintf($text, $params);
+        }
+    }
+
+    /**
+     * Email string verification.
+     *
+     * @param        $text
+     * @return mixed
+     */
+    public function protectEmail($text)
+    {
+        preg_match_all( '/<a (.*)href="mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})"(.*)>(.*)<\/a>/', $text, $potentialEmails, PREG_SET_ORDER );
+
+        $potentialEmailsCount = count( $potentialEmails );
+
+        for ( $i = 0; $i < $potentialEmailsCount; $i++ )
+        {
+            $potentialEmail = $potentialEmails[$i];
+
+            if ( filter_var( $potentialEmail[2], FILTER_VALIDATE_EMAIL ) )
+            {
+                $email = $potentialEmail[2];
+                $email = explode( '@', $email );
+
+                $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="'.$potentialEmail[4].'">@' . $potentialEmail[4] . '</email>', $text );
+            }
+        }
+
+        preg_match_all( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})/', $text, $potentialEmails, PREG_SET_ORDER );
+
+        $potentialEmailsCount = count( $potentialEmails );
+
+        for ( $i = 0; $i < $potentialEmailsCount; $i++ )
+        {
+            if ( filter_var( $potentialEmails[$i][0], FILTER_VALIDATE_EMAIL ) )
+            {
+                $email = $potentialEmails[$i][0];
+                $email = explode( '@', $email );
+
+                $text = str_replace( $potentialEmails[$i][0], '<email name="' . $email[0] . '" domain="' . $email[1] . '">@' . $email[0] . '</email>', $text );
+            }
+        }
+
+        return new \Twig\Markup($text, 'UTF-8');;
+    }
+
+
+    /**
+     * Returns the video ID of a youtube video.
+     *
+     * @param $url
+     * @return string
+     */
+    public function youtubeID($url)
+    {
+        preg_match( '/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&">]+)/', $url, $matches );
+
+        return count( $matches ) > 1 ? $matches[1] : '';
+    }
+
+
+    /**
+     * @param $text
+     * @return mixed
+     */
+    public function encode($text)
+    {
+        return substr($text, 0,1).base64_encode(str_replace('@','$', $text));
+    }
+
+    /**
+     * @return string
+     */
+    public function formatPhone($text)
+    {
+        return chunk_split($text, 2, ' ');
+    }
+
+    /**
+     * @param $text
+     * @return \Twig\Markup
+     */
+    public function spaceToSpan($text)
+    {
+        $text = explode(' ', $text);
+        $html = '<span>'.implode('</span><span>', $text).'</span>';
+
+        return new \Twig\Markup($html, 'UTF-8');
+    }
+
+    /**
+     * @param $text
+     * @return \Twig\Markup
+     */
+    public function lineBreakToP($text)
+    {
+        $text = explode("\n", $text);
+        $html = '<p>'.implode('</p><p>', array_filter($text)).'</p>';
+        $html = str_replace("<p>\r</p>", '', $html);
+
+        return new \Twig\Markup($html, 'UTF-8');
+    }
+
+
+    /**
+     * Returns a proper url
+     *
+     * @param $url
+     * @param bool $full
+     * @return string
+     */
+    public function parseUrl($url, $full=true)
+    {
+        $parsed_url = parse_url($url);
+
+        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : 'https://';
+        $host     = $parsed_url['host'] ?? '';
+        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
+        $user     = $parsed_url['user'] ?? '';
+        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
+        $pass     = ($user || $pass) ? "$pass@" : '';
+        $path     = $parsed_url['path'] ?? '';
+        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
+        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
+
+        if( $full )
+            return $scheme.$user.$pass.$host.$port.$path.$query.$fragment;
+        else
+            return str_replace('www.', '', empty($host)?$path:$host);
+    }
+
+    /**
+     * @param $objects
+     * @param $attrs
+     * @return mixed
+     * @internal param $text
+     */
+    public function bind($objects, $attrs)
+    {
+        $binded_objects = [];
+        $objects = (array)$objects;
+
+        foreach ($objects as $object)
+        {
+            if( is_array($attrs) )
+            {
+                $binded_object = [];
+                foreach ($attrs as $dest=>$source)
+                {
+                    if( is_object($object)){
+
+                        $method = 'get'.ucfirst($attrs);
+                        $binded_objects[$dest] = method_exists($object,$method)?$object->$method(): false;
+                    }
+                    else{
+
+                        $binded_object[$dest] = isset($object[$source]) ? $object[$source] : false;
+                    }
+                }
+
+                $binded_objects[] = array_filter($binded_object);
+            }
+            else
+            {
+                if( is_object($object)){
+
+                    $method = 'get'.ucfirst($attrs);
+                    $binded_objects[] = method_exists($object,$method)?$object->$method(): false;
+                }
+                else
+                    $binded_objects[] = isset($object[$attrs]) ? $object[$attrs] : false;
+            }
+        }
+
+        return array_filter($binded_objects);
+    }
+
+    /**
+     * @param $string
+     * @return false|string
+     */
+    public function encrypt($string){
+
+        return openssl_encrypt($string, "AES-128-CTR", getenv('APP_SECRET'), 0, '1234567891011121');
+    }
+
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
@@ -180,16 +402,29 @@ class Site extends \Timber\Site {
 
         $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
 
-        $twig->addFunction( new Twig\TwigFunction( 'wp_head', 'wp_head' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'wp_footer', 'wp_footer' ) );
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_link_tags', [$this, 'renderWebpackLinkTags'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_script_tags', [$this, 'renderWebpackScriptTags'] ) );
+        $twig->addFunction( new Twig\TwigFunction( 'archive_url', 'get_post_type_archive_link' ) );
+        $twig->addFunction( new Twig\TwigFunction( 'post_query', function ($query){ return Timber::get_posts($query); }) );
+        $twig->addFunction( new Twig\TwigFunction( 'term_query', function ($query){ return Timber::get_terms($query); }) );
+        $twig->addFunction( new Twig\TwigFunction( 'get_posts', 'get_posts') );
+        $twig->addFunction( new Twig\TwigFunction( 'get_object_terms', 'wp_get_object_terms') );
 
         $twig->addFilter( new Twig\TwigFilter( 'picture', [$this, 'generatePicture'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 't', [$this,'translate'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'ucfirst', 'ucfirst' ) );
+        $twig->addFilter( new Twig\TwigFilter( 'encrypt', [$this,'encrypt'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'protect_email', [$this,'protectEmail'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'youtube_id', [$this,'youtubeID'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'encode', [$this,'encode'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'bind', [$this,'bind'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'nl2p', [$this,'lineBreakToP'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'space2span', [$this,'spaceToSpan'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'parse_url', [$this,'parseUrl'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'phone', [$this,'formatPhone'] ) );
 
         return $twig;
     }
-
 }
 
 new Site();
