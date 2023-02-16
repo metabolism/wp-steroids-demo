@@ -1,3 +1,3 @@
 {% if props and props.title and props.url %}
-    <a {% if props.icon|default %}data-icon_after="{{ props.icon }}"{% endif %} class="p-cta" href="{{ props.link }}" target="{{ props.target|default('_self') }}" rel="{% if props.target|default == '_blank' %}noreferrer noopener{% endif %}">{{ props.title }}</a>
+    <a {% if props.icon|default %}data-icon_after="{{ props.icon }}"{% endif %} class="p-cta {{ props.class|default }}" href="{{ props.url }}" target="{{ props.target|default('_self') }}" rel="{% if props.target|default == '_blank' %}noreferrer noopener{% endif %}">{{ props.title }}</a>
 {% endif %}
