@@ -72,6 +72,7 @@
     "wpackagist-plugin/wp-sweep": "^1.1.5"
   },
   "require-dev": {
+    "wpackagist-plugin/query-monitor": "^3.9.0",
     "roave/security-advisories": "dev-latest"
   },
   "config": {
