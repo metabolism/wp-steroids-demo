@@ -636,6 +636,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'get_posts', 'get_posts') );
         $twig->addFunction( new Twig\TwigFunction( 'get_object_terms', 'wp_get_object_terms') );
         $twig->addFunction( new Twig\TwigFunction( 'post_url',  [$this, 'getPermalink']) );
+        $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
         $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
 
         $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );
