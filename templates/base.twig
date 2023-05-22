@@ -7,15 +7,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#fff">
 	<title>{{ wp_title }}</title>
-	<link rel="author" href="{{ blog.theme.link }}/humans.txt" />
 	{% block stylesheets %}
 		{{ encore_entry_link_tags('bundle') }}
 	{% endblock %}
 	{{ wp_head }}
-	<script>
-		window.adjustFontSize = function (){ document.documentElement.style.fontSize = Math.max(7, Math.min(10, 10/(120/(window.innerWidth*0.061))))+'px' }
-		window.adjustFontSize();
-	</script>
 </head>
 <body class="is-front {{body_class}}">
 <div id="root">

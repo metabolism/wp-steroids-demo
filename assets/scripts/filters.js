@@ -5,4 +5,12 @@ const hash = function (value){
 	return object_hash(value)
 };
 
-export {hash}
+const formatNumber = function (number){
+
+	if( number === Math.round(number) )
+		return number
+
+	return number.toFixed(2);
+};
+
+export {hash, formatNumber}

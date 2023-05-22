@@ -73,9 +73,14 @@ input, button {
 	-webkit-appearance: none
 }
 
+sub{ font-size: min(13px, max(10px, 60%)) }
+sup{ font-size: min(13px, max(10px, 50%)) }
+
 textarea {
 	resize: none;
 }
+
+button{ color: inherit; border: 0; background: transparent }
 
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,

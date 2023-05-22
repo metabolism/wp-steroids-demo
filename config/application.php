@@ -96,8 +96,24 @@ Config::define('NONCE_SALT', env('NONCE_SALT'));
 /**
  * Custom Settings
  */
+
+if( $multisite = env('MULTISITE') ){
+
+    Config::define( 'MULTISITE', true );
+    Config::define( 'SUBDOMAIN_INSTALL', false );
+    Config::define( 'DOMAIN_CURRENT_SITE', $multisite );
+    Config::define( 'PATH_CURRENT_SITE', '/' );
+    Config::define( 'SITE_ID_CURRENT_SITE', 1 );
+    Config::define( 'BLOG_ID_CURRENT_SITE', 1 );
+}
+else{
+
+    Config::define('WP_ALLOW_MULTISITE', true);
+}
+
 Config::define('AUTOMATIC_UPDATER_DISABLED', true);
 Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
+Config::define('DEEPL_KEY', env('DEEPL_KEY') ?: false);
 // Disable the plugin and theme file editor in the admin
 Config::define('DISALLOW_FILE_EDIT', true);
 // Disable plugin and theme updates and installation from the admin

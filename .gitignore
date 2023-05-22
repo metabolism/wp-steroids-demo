@@ -29,3 +29,6 @@ package-lock.json
 
 # WP-CLI
 wp-cli.local.yml
+
+#Platform.sh
+.platform/local

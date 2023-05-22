@@ -31,7 +31,8 @@
         "url-loader": "4.1.1",
         "webpack": "^5.75.0",
         "webpack-cli": "^5.0.1",
-        "webpack-notifier": "1.15.0"
+        "webpack-notifier": "1.15.0",
+        "wml-scaffold": "^0.0.2"
     },
     "engines": {
         "npm": "8.19.3",
@@ -40,7 +41,8 @@
     "license": "UNLICENSED",
     "private": true,
     "scripts": {
-        "dev-server": "encore dev-server --public http://192.168.1.84:8080 --host 0.0.0.0",
+        "create-components": "create-components",
+        "dev-server": "encore dev-server --public http://localhost:8080 --host 0.0.0.0",
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"

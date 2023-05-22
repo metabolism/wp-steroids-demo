@@ -14,4 +14,5 @@ html :where(.wp-block){ max-width: none }
   &, input, textarea, select, button{ font-family: $font-text; @extend %text-medium }
   a{ text-decoration: none!important }
   p{ font-size: inherit }
+  section{ margin-top: 0 }
 }

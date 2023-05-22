@@ -40,4 +40,5 @@ Timber::$dirname = array( '../../../../templates', 'views' );
  */
 Timber::$autoescape = false;
 
+include ABSPATH.'../../src/Kernel.php';
 include ABSPATH.'../../src/Site.php';

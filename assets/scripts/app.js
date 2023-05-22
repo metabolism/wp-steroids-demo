@@ -32,12 +32,16 @@ import 'regenerator-runtime/runtime'
 Vue.config.productionTip = false;
 
 // load directives
-import {youtube} from './directives'
+import {youtube, anchor, link, table} from './directives'
 Vue.directive('youtube', youtube);
+Vue.directive('anchor', anchor);
+Vue.directive('link', link);
+Vue.directive('table', table);
 
 // load filters
-import {hash} from './filters'
+import {hash, formatNumber} from './filters'
 Vue.filter('hash', hash);
+Vue.filter('formatNumber', formatNumber);
 
 import Plugins from './plugins'
 Vue.use(Plugins);
@@ -45,7 +49,7 @@ Vue.use(Plugins);
 import store from './store'
 
 // load design system atoms, molecules, organisms
-let blocks = require.context("../../templates/block", true, /^\.\/[^.]+\.js$/);
+let blocks = require.context("../../templates", true, /^\.\/[^.]+\.js$/);
 blocks.keys().forEach(fileName => {
 
     const blockConfig = blocks(fileName)
@@ -115,6 +119,7 @@ let app = new Vue({
             let scroll = document.documentElement.scrollTop || document.body.scrollTop
             let sticky = scroll>150
             let scrolled = scroll>1000
+            let timeout = false;
 
             if( scrolled && !this.scrolled )
                 document.body.classList.add('has-seen-page')
@@ -129,7 +134,8 @@ let app = new Vue({
                 }
                 else{
 
-                    setTimeout(function (){
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function (){
                         document.body.classList.remove('has-seen-page')
                     },300)
 
@@ -191,8 +197,6 @@ let app = new Vue({
 
             this.heights.footer = this.$refs.footer.clientHeight;
             this.heights.header = this.$refs.header.clientHeight;
-
-            window.adjustFontSize();
         },
         emit(event, params){
             eventBus.$emit(event, params);

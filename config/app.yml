@@ -13,6 +13,7 @@ wordpress:
   gutenberg:
     replace_reset_styles: true
     remove_core_block: true
+    disable_classic_theme_styles: true
     remove_block_library: true
     load_remote_block_patterns: false
     block_editor_style: '/build/bundle.css'
@@ -102,6 +103,7 @@ wordpress:
   ## Add theme support
   ## https://developer.wordpress.org/reference/functions/add_theme_support/
   theme_support:
+    - disable-layout-styles
     - thumbnail #add thumbnails to post
     #- post-formats:
     #  - video
@@ -172,8 +174,10 @@ wordpress:
           - blockquote
           - superscript
           - subscript
+          - forecolor
           - bullist
           - numlist
+          - table
           - link
           - alignjustify
           - pastetext
@@ -423,9 +427,9 @@ wordpress:
   ##    Plugins specific    ##
   ############################
 
-  #plugins:
-  #  redirection:
-  #    redirection_role: edit_others_posts
+  plugins:
+    redirection:
+      redirection_role: edit_others_posts
 
   #########################
   ##    Optimisations    ##
