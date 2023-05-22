@@ -64,3 +64,10 @@ $ npm run dev-server
 ## Building enterprise solutions with WordPress ?
 
 You may want to try the [WordPress Bundle](https://github.com/wearemetabolism/wordpress-bundle) for Symfony.
+
+## Platform.sh
+
+This project is ready to be deployed on [Platform.sh](https://platform.sh/)
+
+[![Deploy](https://platform.sh/images/deploy/deploy-button-lg-blue.svg)](https://console.platform.sh/projects/create-project/?template=https://github.com/wearemetabolism/wp-steroids-demo&utm_campaign=deploy_on_platform?utm_medium=button&utm_source=affiliate_links&utm_content=https://github.com/wearemetabolism/wp-steroids-demo)
+

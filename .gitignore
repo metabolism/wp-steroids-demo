@@ -24,7 +24,6 @@ public/edition
 
 # Composer
 /vendor
-composer.lock
 package-lock.json
 
 # WP-CLI
