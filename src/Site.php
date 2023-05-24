@@ -9,11 +9,6 @@ use Timber\Menu;
 
 class Site extends Kernel {
 
-    public function __construct() {
-
-        parent::__construct();
-    }
-
     public function addToContext($context)
     {
         $context = parent::addToContext($context);

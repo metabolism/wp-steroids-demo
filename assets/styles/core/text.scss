@@ -56,7 +56,6 @@ html{
 }
 .text-small, %text-small{ font-weight:400; font-size: $font-xs; line-height: 120%; letter-spacing: 0; text-transform: uppercase }
 
-.color-alert{ color: $c-alert }
 
 .wysiwyg{
   h1{ @extend %title-main }
@@ -113,7 +112,7 @@ html{
     @media #{$to-phone} { margin-left: -$space-m; width: calc(100% + 2*$space-m); max-width: none }
   }
   blockquote{
-    padding: $space-l; background: $c-theme-light;
+    padding: $space-l;
     @media #{$to-phone} { padding: $space-m; margin-left: -$space-m; margin-right: -$space-m }
   }
   sup{ line-height: 1; font-size: 70% }

@@ -21,11 +21,11 @@ html{
 }
 
 * {
-  scroll-margin-top: $header-main-h;
+  scroll-margin-top: $header-h;
 }
 
 body{
-  overflow-x: hidden; width: 100%; background: #fafafa;
+  overflow-x: hidden; width: 100%;
   &.burger-is-open{
     @media #{$include-small} { overflow: hidden }
   }
@@ -37,7 +37,7 @@ main{
 }
 
 .sections{
-  width: 100%; overflow: hidden; background: $c-white;
+  width: 100%; overflow: hidden;
   margin-left: auto; margin-right: auto;
   min-height: calc(#{$app-init-h} - #{$header-h} - #{$footer-h});
 }

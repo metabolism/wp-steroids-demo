@@ -9,14 +9,14 @@
       width: 100%; color: inherit;
     }
     &[type=submit]{
-      height: 60px; padding: 0 $space; width: 100%; background: $c-dark-grey; color: $c-white; border: 1px solid $c-dark-grey;
+      height: 60px; padding: 0 $space; width: 100%; background: $c-theme; color: $c-white; border: 1px solid $c-theme;
       text-transform: uppercase;
     }
     &[type="checkbox"],  &[type="radio"]{
-      width: 15px; height: 15px; border: 1px solid $c-theme-dark-transparent; margin: 0; margin-right: $space-s;
+      width: 15px; height: 15px; border: 1px solid $c-theme; margin: 0; margin-right: $space-s;
       box-shadow: inset 0 0 0 1px $c-white; background: $c-white; flex-shrink: 0;
       &:checked{
-        background:  $c-theme-dark;
+        background:  $c-theme;
       }
     }
     &[type="checkbox"]{

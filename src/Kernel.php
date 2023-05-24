@@ -14,8 +14,12 @@ abstract class Kernel extends \Timber\Site {
     private $manifest;
     private $translations;
 
+    private $options;
+
     /** Add timber support. */
     public function __construct() {
+
+        $this->options = get_fields('option');
 
         add_filter('network_site_url', [$this, 'networkSiteURL'] );
         add_filter('option_siteurl', [$this, 'optionSiteURL'] );
@@ -143,9 +147,7 @@ abstract class Kernel extends \Timber\Site {
 
     private function get_translations()
     {
-        $options = get_fields('option');
-
-        if( $translations = $options['translations']??false )
+        if( $translations = $this->options['translations']??false )
         {
             $this->translations = [];
             foreach ($translations as $translation)
@@ -164,7 +166,7 @@ abstract class Kernel extends \Timber\Site {
 
         $context['environment'] = WP_ENV;
         $context['blog'] = $this;
-        $context['options'] = get_fields('option');
+        $context['options'] = $this->options;
 
         return $context;
     }
@@ -247,14 +249,17 @@ abstract class Kernel extends \Timber\Site {
                     if (is_int($media))
                         $media = 'max-width: ' . $media . 'px';
 
+                    $target_width = $size[0] ?? 0;
+                    $target_height = $size[1] ?? 0;
+
                     if ($ext == 'webp') {
 
                         $webp_src = ImageHelper::img_to_webp($src['url']);
                         $url = ImageHelper::resize($webp_src, $size[0] ?? 0, $size[1] ?? 0);
 
-                        if( (($size[0]??0) > 0 && ($size[0]??0) < 960) || (($size[1]??0) > 0 && ($size[1]??0) < 960) ) {
+                        if( ($target_width > 0 && $target_width < 960) || ($target_height > 0 && $target_height < 960) ) {
 
-                            $url_2x = ImageHelper::resize($webp_src, ($size[0] ?? 0) * 2, ($size[1] ?? 0) * 2);
+                            $url_2x = ImageHelper::resize($webp_src, $target_width * 2, $target_height * 2);
                             $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, ' . $url_2x . ' 2x" type="' . $mime . '"/>';
                         }
                         else{
@@ -265,9 +270,9 @@ abstract class Kernel extends \Timber\Site {
 
                     $url = ImageHelper::resize($src['url'], $size[0] ?? 0, $size[1] ?? 0);
 
-                    if( (($size[0]??0) > 0 && ($size[0]??0) < 960) || (($size[1]??0) > 0 && ($size[1]??0) < 960) ){
+                    if( ($target_width > 0 && $target_width < 960) || ($target_height > 0 && $target_height < 960) ){
 
-                        $url_2x = ImageHelper::resize($src['url'], ($size[0] ?? 0)*2, ($size[1] ?? 0)*2);
+                        $url_2x = ImageHelper::resize($src['url'], $target_width*2, $target_height*2);
                         $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="' . $src['mime_type'] . '"/>';
                     }
                     else{
@@ -282,7 +287,7 @@ abstract class Kernel extends \Timber\Site {
                 $webp_src = ImageHelper::img_to_webp($src['url']);
                 $url = ImageHelper::resize($webp_src, $width, $height);
 
-                if( $width < 960 || $height < 960 ){
+                if( ( $width> 0 && $width < 960 ) || ( $height > 0 && $height < 960 ) ){
 
                     $url_2x = ImageHelper::resize($webp_src, $width*2, $height*2);
                     $html .= '<source srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="image/webp"/>';
