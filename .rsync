@@ -13,4 +13,5 @@ package-lock.json
 postcss.config.js
 webpack.config.js
 wml.config.js
+.rsync
 node_modules
