@@ -1,0 +1,16 @@
+public/app/uploads
+assets
+.git
+.platform
+.env
+.env.example
+.environment
+.gitignore
+.nvmrc
+.platform.app.yaml
+package.json
+package-lock.json
+postcss.config.js
+webpack.config.js
+wml.config.js
+node_modules
