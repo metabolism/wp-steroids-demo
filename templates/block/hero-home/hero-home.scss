@@ -1,3 +1,7 @@
 .b-hero-home{
-  background: red;
+  &__item{
+    background: #eee; padding: 2rem;
+    &-suptitle{ @extend %title-small }
+    &-title{ @extend %title-main }
+  }
 }

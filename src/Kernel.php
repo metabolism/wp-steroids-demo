@@ -125,6 +125,12 @@ abstract class Kernel extends \Timber\Site {
         if( !($block['front']??true) && !is_admin() )
             return;
 
+        if( $image = $block['data']['_preview_image']??false ){
+
+            echo '<img src="'.get_home_url().$image.'" style="width:100%;height:auto" class="preview_image"/>';
+            return;
+        }
+
         $context = Timber::context();
 
         if( $id = get_the_ID() )
@@ -623,6 +629,30 @@ abstract class Kernel extends \Timber\Site {
             return false;
     }
 
+    /**
+     * @param $post
+     * @param $name
+     * @return bool
+     */
+    public function hasBlock($post, $name=false){
+
+        if( !has_blocks($post) )
+            return false;
+
+        if( !$name )
+            return true;
+
+        $blocks = parse_blocks($post->post_content);
+
+        foreach ($blocks as $block){
+
+            if( $block['blockName'] == $name || $block['blockName'] == 'acf/'.$name)
+                return true;
+        }
+
+        return false;
+    }
+
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
@@ -644,6 +674,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
         $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
 
+        $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );
         $twig->addFilter( new Twig\TwigFilter( 'table', [$this, 'generateTable'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'picture', [$this, 'generatePicture'] ) );
