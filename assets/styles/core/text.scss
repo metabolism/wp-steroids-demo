@@ -8,53 +8,53 @@ html{
   @media #{$to-phone} {
     font-size: 10px!important
   }
-  @media print {  font-size: 7px!important }
+  @media print { font-size: 7px!important }
 }
 
 .title-hero, %title-hero{
-  font-family:$font-title; font-weight:500; font-size: $font-xxxl; line-height: 110%; letter-spacing: -0.01em;
+  font-family:$font-title; font-weight:500; font-size: $font-xxxl; line-height: 1.1; letter-spacing: -0.01em;
   @media #{$to-phone} {
     font-size: $font-ll; word-break: break-word;
   }
 }
 
 .title-section, %title-section{
-  font-family:$font-title; font-weight:500; font-size: $font-xxl; line-height: 110%; letter-spacing: -0.01em;
+  font-family:$font-title; font-weight:500; font-size: $font-xxl; line-height: 1.1; letter-spacing: -0.01em;
   @media #{$to-phone} {
     font-size: $font-ll;
   }
 }
 
 .title-main, %title-main{
-  font-family:$font-title; font-weight:500; font-size: $font-xl; line-height: 110%; letter-spacing: -0.01em;
+  font-family:$font-title; font-weight:500; font-size: $font-xl; line-height: 1.1; letter-spacing: -0.01em;
   @media #{$to-phone} {
     font-size: $font-ll;
   }
 }
 
 .title-large, %title-large{
-  font-family:$font-title; font-weight:500; font-size: $font-ll; line-height: 110%; letter-spacing: -0.01em;
+  font-family:$font-title; font-weight:500; font-size: $font-ll; line-height: 1.1; letter-spacing: -0.01em;
   @media #{$to-phone} {
     font-size: $font-l;
   }
 }
 
-.title-small, %title-small{ font-family:$font-title; font-weight:700; font-size: $font-ml; line-height: 110%; letter-spacing: -0.01em }
-.title-small-upper, %title-small-upper{ font-family:$font-text; font-weight:400; font-size: $font-ml; line-height: 120%; letter-spacing: 0.05em; text-transform: uppercase }
+.title-small, %title-small{ font-family:$font-title; font-weight:700; font-size: $font-ml; line-height: 1.1; letter-spacing: -0.01em }
+.title-small-upper, %title-small-upper{ font-family:$font-text; font-weight:400; font-size: $font-ml; line-height: 1.2; letter-spacing: 0.05em; text-transform: uppercase }
 
 .text-hero, %text-hero{
-  font-size: 20px; font-size: max(20px, $font-l); line-height: 140%; letter-spacing: 0;
+  font-size: 20px; font-size: max(20px, $font-l); line-height: 1.4; letter-spacing: 0;
   @media #{$to-phone} {
     font-size: $font-ml;
   }
 }
 .text-medium, %text-medium{
-  font-weight:400; font-size: $font-m; line-height: 150%; letter-spacing: 0;
+  font-weight:400; font-size: $font-m; line-height: 1.5; letter-spacing: 0;
   @media screen and (min-width: 768px) and (max-width:1280px) {
     font-size: 15px;
   }
 }
-.text-small, %text-small{ font-weight:400; font-size: $font-xs; line-height: 120%; letter-spacing: 0; text-transform: uppercase }
+.text-small, %text-small{ font-weight:400; font-size: $font-xs; line-height: 1.2; letter-spacing: 0; text-transform: uppercase }
 
 
 .wysiwyg{
@@ -67,7 +67,7 @@ html{
   h3{ @extend %text-hero }
   h4{ @extend %text-medium }
   p, table, li{
-    @extend %text-medium; line-height: 150%;
+    @extend %text-medium; line-height: 1.5;
   }
   .a-cta{
     display: inline-block;

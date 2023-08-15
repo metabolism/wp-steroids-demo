@@ -20,13 +20,6 @@ import Vue from 'vue';
 import upperFirst from 'lodash/upperFirst'
 import camelCase from 'lodash/camelCase'
 
-// load Sentry
-import * as Sentry from "@sentry/vue";
-
-// import plugins
-import detect from 'browser-system-detect';
-window.system = detect({bodyClass:true})
-
 import 'regenerator-runtime/runtime'
 
 Vue.config.productionTip = false;
@@ -53,7 +46,7 @@ let blocks = require.context("../../templates", true, /^\.\/[^.]+\.js$/);
 blocks.keys().forEach(fileName => {
 
     const blockConfig = blocks(fileName)
-    const blockName = upperFirst(camelCase(fileName.split('/').pop().replace(/\.\w+$/, '')))
+    const blockName = blockConfig.default.name || upperFirst(camelCase(fileName.split('/').pop().replace(/\.\w+$/, '')))
 
     //create global block
     Vue.component(blockName, blockConfig.default || blockConfig)
@@ -68,12 +61,12 @@ Vue.component('ssr-carousel', SsrCarousel);
 import SlideUpDown from 'vue-slide-up-down'
 Vue.component('slide-up-down', SlideUpDown)
 
+import VueObserveVisibility from 'vue-observe-visibility'
+Vue.use(VueObserveVisibility)
+
 import Vue2TouchEvents from 'vue2-touch-events';
 import eventBus from "./event-bus";
 Vue.use(Vue2TouchEvents);
-
-if( location.hostname !== '127.0.0.1')
-    Sentry.init({Vue, dsn: ''});
 
 // start app
 let app = new Vue({
@@ -126,25 +119,27 @@ let app = new Vue({
 
             this.scrolled = scrolled;
 
-            if( sticky !== this.sticky ){
+            if( sticky && sticky !== this.sticky ){
 
-                if( sticky ){
-
-                    document.body.classList.add('has-scrolled')
-                }
-                else{
-
-                    clearTimeout(timeout);
-                    timeout = setTimeout(function (){
-                        document.body.classList.remove('has-seen-page')
-                    },300)
-
-                    document.body.classList.remove('has-scrolled')
-                    document.body.classList.remove('has-scrolled--down')
-                    document.body.classList.remove('has-scrolled--up')
-                }
+                document.body.classList.add('has-scrolled')
 
                 this.sticky = sticky;
+            }
+
+            if( !scroll ){
+
+                if( timeout )
+                    clearTimeout(timeout);
+                timeout = setTimeout(function (){
+                    document.body.classList.remove('has-seen-page')
+                },300)
+
+                document.body.classList.remove('has-scrolled')
+                document.body.classList.remove('has-scrolled--down')
+                document.body.classList.remove('has-scrolled--up')
+                document.body.classList.remove('has-scrolled--changed')
+
+                this.sticky = false;
             }
 
             if( sticky ){
@@ -154,7 +149,12 @@ let app = new Vue({
                     if( this.scroll_down === true ){
 
                         document.body.classList.add('has-scrolled--up')
-                        document.body.classList.remove('has-scrolled--down')
+
+                        if( document.body.classList.contains('has-scrolled--down') ){
+
+                            document.body.classList.add('has-scrolled--changed')
+                            document.body.classList.remove('has-scrolled--down')
+                        }
                     }
                 }
                 else{
@@ -162,7 +162,12 @@ let app = new Vue({
                     if( this.scroll_down === false ){
 
                         document.body.classList.add('has-scrolled--down')
-                        document.body.classList.remove('has-scrolled--up')
+
+                        if( document.body.classList.contains('has-scrolled--up') ){
+
+                            document.body.classList.add('has-scrolled--changed')
+                            document.body.classList.remove('has-scrolled--up')
+                        }
                     }
                 }
 

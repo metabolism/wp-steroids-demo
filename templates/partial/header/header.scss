@@ -1,5 +1,7 @@
 .p-header{
-  position: fixed; top: $admin-h; left: 0; width: 100%; z-index: 99; height: $header-h; background: #eee;
+  position: absolute; top: $admin-h; left: 0; width: 100%; z-index: 99; height: $header-h; background: #eee;
+  .has-scrolled--up &{ position: fixed; animation: slide-from-top $animation-duration $ease-out-cubic both }
+  .has-scrolled--down.has-scrolled--changed &{ position: fixed; animation: slide-to-top $animation-duration $ease-out-cubic both }
   .container{ height: 100%; align-items: center; flex-direction: row; }
   .p-menu{ margin-left: $space }
 }

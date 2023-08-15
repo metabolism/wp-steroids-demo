@@ -15,18 +15,8 @@ $animation-offset: 100% !default;
 @keyframes slide-left { 0%{ opacity: 0; transform: translateX($animation-offset-rem) } 100%{ opacity: 1; transform: none }}
 @keyframes unslide-right { 100%{ opacity: 0; transform: translateX($animation-offset-rem) } 0%{ opacity: 1; transform: none }}
 
-@keyframes slide-from-top {
-  0%{ transform: translateY(-$animation-offset); opacity: 0 }
-  50%{ transform: translateY(-$animation-offset); opacity: 0 }
-  50.1%{ transform: translateY(-$animation-offset); opacity: 1 }
-  100%{ transform: none; opacity: 1 }
-}
-@keyframes slide-from-bottom {
-  0%{ transform: translateY($animation-offset); opacity: 0 }
-  50%{ transform: translateY($animation-offset); opacity: 0 }
-  50.1%{ transform: translateY($animation-offset); opacity: 1 }
-  100%{ transform: none; opacity: 1 }
-}
+@keyframes slide-from-top { 0%{ transform: translateY(-$animation-offset) } 100%{transform: none }}
+@keyframes slide-from-bottom { 0%{ transform: translateY($animation-offset) } 100%{transform: none }}
 @keyframes slide-from-left { 0%{ transform: translateX(-$animation-offset) } 100%{transform: none }}
 @keyframes slide-from-right { 0%{ transform: translateX($animation-offset) } 100%{ transform: none }}
 @keyframes slide-to-top { 0%{ transform: none } 100%{ transform: translateY(-$animation-offset) } }

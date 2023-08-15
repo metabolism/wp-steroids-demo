@@ -1,6 +1,6 @@
 $font-families : ()!default;
 $font-woof2 : true!default;
-$font-display : fallback!default;
+$font-display : auto!default;
 
 @each $font in $fonts {
 

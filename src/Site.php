@@ -1,8 +1,11 @@
 <?php
 
 /**
+ * Activate Timber theme to use this file
+ *
  * Write specific project code here
  * Kernel extends \Timber\Site to add useful functions
+ *
  */
 
 use Timber\Menu;
