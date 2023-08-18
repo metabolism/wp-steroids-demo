@@ -636,7 +636,7 @@ abstract class Kernel extends \Timber\Site {
      */
     public function hasBlock($post, $name=false){
 
-        if( !has_blocks($post) )
+        if( !$post || !$post->post_content || !has_blocks($post) )
             return false;
 
         if( !$name )
@@ -653,6 +653,15 @@ abstract class Kernel extends \Timber\Site {
         return false;
     }
 
+    public function enqueue_contact_form_scripts(){
+
+        if ( function_exists( 'wpcf7_enqueue_scripts' ) )
+            wpcf7_enqueue_scripts();
+
+        if ( function_exists( 'wpcf7_enqueue_styles' ) )
+            wpcf7_enqueue_styles();
+    }
+
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
@@ -663,6 +672,7 @@ abstract class Kernel extends \Timber\Site {
 
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_link_tags', [$this, 'renderWebpackLinkTags'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'encore_entry_script_tags', [$this, 'renderWebpackScriptTags'] ) );
+        $twig->addFunction( new Twig\TwigFunction( 'enqueue_contact_form_scripts', [$this, 'enqueue_contact_form_scripts'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'asset', [$this, 'asset'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'nonce', [$this, 'nonce'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'archive_url', 'get_post_type_archive_link' ) );

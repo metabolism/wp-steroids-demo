@@ -32,7 +32,7 @@ if ( is_day() ) {
 	array_unshift( $templates, 'archive-' . get_query_var( 'cat' ) . '.twig' );
 } elseif ( is_post_type_archive() ) {
 	$context['title'] = post_type_archive_title( '', false );
-	array_unshift( $templates, 'archive-' . get_post_type() . '.twig' );
+    array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '.twig' );
 }
 
 $context['posts'] = new Timber\PostQuery();

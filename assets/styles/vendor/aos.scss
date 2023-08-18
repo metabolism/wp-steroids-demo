@@ -1,0 +1,44 @@
+on-scroll, [v-on-scroll]{ visibility: hidden }
+
+$aos-duration: 0.5s!default;
+$aos-delay: $aos-duration/10!default;
+$aos-easing: cubic-bezier(0.215, 0.610, 0.355, 1.000)!default;
+$aos-animations-list:
+		fade-in     'opacity',
+		fade-out    'opacity',
+		slide-down  'opacity, transform',
+		slide-up    'opacity, transform',
+		slide-left  'opacity, transform',
+		slide-right 'opacity, transform',
+		zoom-out    'opacity, transform',
+		zoom-in     'opacity, transform',
+		unzoom-in   'opacity, transform',
+		unzoom-out  'opacity, transform',
+		rotate-x    'opacity, transform',
+		rotate-y    'opacity, transform',
+		pop         'opacity, transform',
+		enlarge     'width';
+
+.on-scroll{
+	animation-fill-mode: both; animation-duration: $aos-duration; animation-timing-function: $aos-easing; backface-visibility: hidden;
+	animation-delay: 0.1s;
+	&--wait{ visibility: hidden }
+	@each $animation in $aos-animations-list{
+		$name       : nth($animation, 1);
+		$properties : nth($animation, 2);
+		&--#{$name}{ animation-name: $name; will-change: unquote($properties) }
+	}
+	&--increment{ animation-name: fade-in; will-change: opacity }
+	&--stack{
+		animation: none;
+		> *{
+			animation-fill-mode: both; animation-duration: $aos-duration; animation-timing-function: $aos-easing; backface-visibility: hidden;
+			animation-name: slide-up; will-change: opacity, transform;
+			@for $i from 1 through 10{
+
+				&:nth-child(#{$i}){ animation-delay: $i*$aos-delay}
+			}
+		}
+	}
+	&--parallax{ animation: none; will-change: transform }
+}

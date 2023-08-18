@@ -68,6 +68,9 @@ import Vue2TouchEvents from 'vue2-touch-events';
 import eventBus from "./event-bus";
 Vue.use(Vue2TouchEvents);
 
+import VueAOS from './plugins/aos';
+Vue.use(VueAOS);
+
 // start app
 let app = new Vue({
     store,
