@@ -683,6 +683,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'post_url',  [$this, 'getPermalink']) );
         $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
         $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
+        $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
 
         $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );

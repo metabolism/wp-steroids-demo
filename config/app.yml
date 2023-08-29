@@ -223,6 +223,12 @@ wordpress:
       icon: 'editor-alignleft'
       post_types:
         - page
+    contact:
+      title: Contact
+      #description: Featured article
+      icon: 'email'
+      post_types:
+        - page
 
     #hero-home:
     #  title: Homepage hero

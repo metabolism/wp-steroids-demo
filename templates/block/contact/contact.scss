@@ -1,0 +1,11 @@
+.b-contact{
+    .wpcf7-form{
+      *+p,*+div{ margin-top: $space }
+      p:first-of-type{ margin-top: 0 }
+      div{
+        display: flex; grid-gap: $space;
+        p{ margin-top: 0 }
+      }
+    }
+  .wpcf7-form-control-wrap{ margin-top: $space-s; display: block }
+}

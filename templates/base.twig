@@ -30,6 +30,9 @@
 
 {% block javascripts %}
 	{{ encore_entry_script_tags('bundle') }}
+	{% if post|has_block('contact') %}
+		{{ enqueue_contact_form_scripts() }}
+	{% endif %}
 {% endblock %}
 
 {{ wp_footer }}
