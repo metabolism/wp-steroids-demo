@@ -662,6 +662,50 @@ abstract class Kernel extends \Timber\Site {
             wpcf7_enqueue_styles();
     }
 
+    /**
+     * Generate transparent pixel base64 image
+     * @param $w
+     * @param $h
+     * @return string
+     */
+    public function generatePixel($w = 1, $h = 1) {
+
+        ob_start();
+
+        if( $h == 0 )
+            $h = $w;
+        elseif( $w == 0 )
+            $w = $h;
+
+        $img = imagecreatetruecolor($w, $h);
+        imagetruecolortopalette($img, false, 1);
+        imagesavealpha($img, true);
+        $color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+        imagefill($img, 0, 0, $color);
+        imagepng($img, null, 9);
+        imagedestroy($img);
+
+        $imagedata = ob_get_contents();
+        ob_end_clean();
+
+        return 'data:image/png;base64,' . base64_encode($imagedata);
+    }
+
+    /**
+     * @param $file
+     * @param int $max_w
+     * @param int $max_h
+     * @return string
+     */
+    public function generateLottiePlaceholder($file, $max_w=0, $max_h=0){
+
+        $json = json_decode(file_get_contents($file), true);
+        $w = $json['w']??800;
+        $h = $json['h']??600;
+
+        return '<img src="'.$this->generatePixel($w, $h).'" style="'.($max_h?'max-height:'.$max_h.'px':'').($max_w?';max-width:'.$max_w.'px':'').'"/>';
+    }
+
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
@@ -684,8 +728,10 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
         $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
         $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
+        $twig->addFunction( new Twig\TwigFunction( 'pixel', [$this, 'generatePixel'] ) );
 
         $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'lottie_placeholder', [$this, 'generateLottiePlaceholder'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );
         $twig->addFilter( new Twig\TwigFilter( 'table', [$this, 'generateTable'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'picture', [$this, 'generatePicture'] ) );
