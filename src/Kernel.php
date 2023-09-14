@@ -38,7 +38,7 @@ abstract class Kernel extends \Timber\Site {
         add_action( 'init', [$this, 'redirect']);
         add_filter( 'timber/context', [$this, 'addToContext'] );
         add_filter( 'timber/twig', [$this, 'addToTwig'] );
-        add_filter( 'block_render_callback', function (){ return [self::class, 'renderBlock']; });
+        add_filter( 'block_render_callback', [$this,'renderBlock']);
 
         if( file_exists(__DIR__.'/../public/build/entrypoints.json'))
             $this->entrypoints = json_decode(file_get_contents(__DIR__.'/../public/build/entrypoints.json'), true);

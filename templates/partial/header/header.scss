@@ -3,5 +3,17 @@
   .has-scrolled--up &{ position: fixed; animation: slide-from-top $animation-duration $ease-out-cubic both }
   .has-scrolled--down.has-scrolled--changed &{ position: fixed; animation: slide-to-top $animation-duration $ease-out-cubic both }
   .container{ height: 100%; align-items: center; flex-direction: row; }
-  .p-menu{ margin-left: $space }
+  .p-burger{
+    margin-left: $space-l; display: none;
+    @media #{$to-tablet} { display: block }
+  }
+  .p-menu{
+    @media #{$to-tablet} { display: none }
+  }
+  &__brand{ flex-basis: 50% }
+  &__logo{ font-size: $font-l }
+  &__baseline{
+    @media #{$to-tablet} { display: none }
+  }
+  &__actions{ flex-basis: 50%; display: flex; justify-content: flex-end; align-items: center }
 }

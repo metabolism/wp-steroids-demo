@@ -4,7 +4,7 @@
 	$color: $c-text;
 	$offset: 350%;
 
-	display: inline-flex;
+	display: inline-flex; padding: 0;
 	&__link{ margin-right: $space-s }
 	&__icon {
 		height:$width; width: $width; cursor: pointer; background: none; border: 0; position: relative;

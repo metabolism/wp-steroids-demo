@@ -1,6 +1,6 @@
 .p-menu{
   &__items{
-    display: flex; grid-gap: $space; text-transform: uppercase;
+    display: flex; grid-gap: $space;
   }
   .current-menu-item a{ text-decoration: underline }
 }

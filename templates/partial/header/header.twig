@@ -1,8 +1,12 @@
 <header ref="header" class="p-header">
     <div class="container">
-        <h1 role="banner">
-            <a href="{{site.url}}" rel="home">{{site.name}}</a>
-        </h1>
-        {% include "partial/menu/menu.twig" with {'items': menu.header.get_items } %}
+       <div class="p-header__brand">
+            <a class="p-header__logo" href="{{site.url}}" rel="home">{{site.name}}</a>
+           <p class="p-header__baseline">{{site.description}}</p>
+        </div>
+        <div class="p-header__actions">
+            {% include "partial/menu/menu.twig" with {'items': menu.header.get_items } %}
+            {% include "partial/burger/burger.twig" %}
+        </div>
     </div>
 </header>

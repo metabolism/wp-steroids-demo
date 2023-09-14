@@ -107,6 +107,7 @@ AddOutputFilterByType DEFLATE text/xml
     RewriteCond %{HTTP:Authorization} ^(.*)
     RewriteRule ^(.*) - [E=HTTP_AUTHORIZATION:%1]
 
+    RewriteRule ^/?api/?$ /edition/wp-admin/admin-ajax.php?&%{QUERY_STRING} [L,QSA]
     RewriteRule ^index\.php$ - [L]
 
     RewriteCond %{REQUEST_FILENAME} !-f
