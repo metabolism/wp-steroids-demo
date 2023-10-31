@@ -19,7 +19,8 @@ abstract class Kernel extends \Timber\Site {
     /** Add timber support. */
     public function __construct() {
 
-        $this->options = get_fields('option');
+        if( function_exists('get_fields') )
+            $this->options = get_fields('option');
 
         add_filter('network_site_url', [$this, 'networkSiteURL'] );
         add_filter('option_siteurl', [$this, 'optionSiteURL'] );
@@ -146,7 +147,7 @@ abstract class Kernel extends \Timber\Site {
         $context['is_front_page'] = is_front_page();
 
         // Render the block.
-        $name = str_replace('_', '-', str_replace('acf/', '', $block['name']));
+        $name = str_replace('_', '-', str_replace('acf/', '', $block['name']??''));
 
         Timber::render( 'block/'.$name.'/'.$name.'.twig', $context );
     }
@@ -244,7 +245,7 @@ abstract class Kernel extends \Timber\Site {
 
         if($src['mime_type'] == 'image/svg+xml' || $src['mime_type'] == 'image/svg' || $src['mime_type'] == 'image/gif' ){
 
-            $html .= '<img src="'.$src['url'].'" alt="'.$src['alt'].'" loading="'.$loading.'" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
+            $html .= '<img loading="'.$loading.'" src="'.$src['url'].'" alt="'.$src['alt'].'" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
         }
         else {
 
@@ -311,7 +312,7 @@ abstract class Kernel extends \Timber\Site {
 
             $image_info = getimagesize($upload_dir['basedir'].$au['subdir'].'/'.$au['basename']);
 
-            $html .= '<img src="' . $url . '" alt="' . ($alt ?: $src['alt']) . '" loading="' . $loading . '" '.($image_info[0]?'width="'.$image_info[0].'"':'').' '.($image_info[1]?'height="'.$image_info[1].'"':'').'/>';
+            $html .= '<img loading="' . $loading . '" src="' . $url . '" alt="' . ($alt ?: $src['alt']) . '" '.($image_info[0]?'width="'.$image_info[0].'"':'').' '.($image_info[1]?'height="'.$image_info[1].'"':'').'/>';
         }
 
         $html .='</picture>';
@@ -363,7 +364,10 @@ abstract class Kernel extends \Timber\Site {
                 $email = $potentialEmail[2];
                 $email = explode( '@', $email );
 
-                $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="'.$potentialEmail[4].'">@' . $potentialEmail[4] . '</email>', $text );
+                if( filter_var( $potentialEmail[4], FILTER_VALIDATE_EMAIL ) )
+                    $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="">@</email>', $text );
+                else
+                    $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="'.$potentialEmail[4].'">@' . $potentialEmail[4] . '</email>', $text );
             }
         }
 
@@ -378,7 +382,7 @@ abstract class Kernel extends \Timber\Site {
                 $email = $potentialEmails[$i][0];
                 $email = explode( '@', $email );
 
-                $text = str_replace( $potentialEmails[$i][0], '<email name="' . $email[0] . '" domain="' . $email[1] . '">@' . $email[0] . '</email>', $text );
+                $text = str_replace( $potentialEmails[$i][0], '<email name="' . $email[0] . '" domain="' . $email[1] . '" text="">@' . $email[0] . '</email>', $text );
             }
         }
 
@@ -396,6 +400,19 @@ abstract class Kernel extends \Timber\Site {
     {
         preg_match( '/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&">]+)/', $url, $matches );
 
+        return count( $matches ) > 1 ? $matches[1] : '';
+    }
+
+
+    /**
+     * Returns the video ID of a vimeo video.
+     *
+     * @param $url
+     * @return string
+     */
+    public function vimeoID($url)
+    {
+        preg_match( "/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:player\.)?vimeo\.com\/([0-9]{6,11})[?]?.*/", $url, $matches );
         return count( $matches ) > 1 ? $matches[1] : '';
     }
 
@@ -728,7 +745,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
         $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
         $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'pixel', [$this, 'generatePixel'] ) );
+        $twig->addFunction( new Twig\TwigFunction( 'is_front_page',  'is_front_page' ) );
 
         $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'lottie_placeholder', [$this, 'generateLottiePlaceholder'] ) );
@@ -746,6 +763,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFilter( new Twig\TwigFilter( 'parse_url', [$this,'parseUrl'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'phone', [$this,'formatPhone'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'youtube_id', [$this, 'youtubeId'] ) );
+        $twig->addFilter( new Twig\TwigFilter( 'vimeo_id', [$this, 'vimeoID'] ) );
 
         return $twig;
     }

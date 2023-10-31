@@ -1,6 +1,6 @@
-.is-root-container{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgb(0 0 0 / 5%); min-height: calc(100vh - 170px) }
+.is-desktop-preview .is-root-container{ background: #fff; padding: 1px; box-shadow: 0 0 6px rgb(0 0 0 / 5%); min-height: calc(100vh - 170px) }
 .edit-post-visual-editor__post-title-wrapper h1{ font-size: revert; margin: revert }
-.editor-styles-wrapper{ background: #eee; padding: 20px!important; }
+.is-desktop-preview .editor-styles-wrapper{ background: #eee; padding: 20px!important }
 .block-list-appender{ margin-top: 40px }
 .wp-block:first-of-type .acf-block-preview{ margin-top: 0 }
 .wp-block:last-of-type .acf-block-preview{ margin-bottom: 0 }
@@ -8,11 +8,14 @@
 .block-editor-block-list__layout, .edit-post-visual-editor__post-title-wrapper{
   max-width: 1920px; margin: auto; overflow: hidden;
 }
-html :where(.wp-block){ max-width: none }
+.block-editor-iframe__body .edit-post-visual-editor__post-title-wrapper{
+  display: none;
+}
 .acf-block-preview{
-  margin: 10rem 0; color: $c-text;
+  margin: $space-section 0; color: $c-theme;
   &, input, textarea, select, button{ font-family: $font-text; @extend %text-medium }
   a{ text-decoration: none!important }
+  .wysiwyg a{ text-decoration: underline!important }
   p{ font-size: inherit }
-  section{ margin-top: 0 }
 }
+.is-mobile-preview{ border: 0!important; border-radius: 8px!important; }
