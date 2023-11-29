@@ -11,6 +11,8 @@
  * @since   Timber 0.1
  */
 
+use Timber\Timber;
+
 $timberContext = $GLOBALS['timberContext']; // @codingStandardsIgnoreFile
 if ( ! isset( $timberContext ) ) {
 	throw new \Exception( 'Timber context not set in footer.' );

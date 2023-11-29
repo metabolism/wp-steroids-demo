@@ -21,10 +21,9 @@
  * @since    Timber 0.1
  */
 
-$context = Timber::context();
+use Timber\Timber;
 
-$timber_post     = new Timber\Post();
-$context['post'] = $timber_post;
+$context = Timber::context();
 
 $templates       = array( 'page.twig' );
 

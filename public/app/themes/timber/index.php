@@ -13,9 +13,11 @@
  * @since   Timber 0.1
  */
 
+use Timber\Timber;
+
 $context          = Timber::context();
-$context['posts'] = new Timber\PostQuery();
 $context['foo']   = 'bar';
+
 $templates        = array( 'index.twig' );
 
 if ( is_home() )

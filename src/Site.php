@@ -8,7 +8,7 @@
  *
  */
 
-use Timber\Menu;
+use Timber\Timber;
 
 class Site extends Kernel {
 
@@ -17,8 +17,8 @@ class Site extends Kernel {
         $context = parent::addToContext($context);
 
         $context['menu'] = [
-            'header'=>new Menu('header'),
-            'footer'=>new Menu('footer')
+            'header'=>Timber::get_menu('header'),
+            'footer'=>Timber::get_menu('footer')
         ];
 
         return $context;

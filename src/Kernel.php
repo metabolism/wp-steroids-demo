@@ -19,13 +19,31 @@ abstract class Kernel extends \Timber\Site {
     /** Add timber support. */
     public function __construct() {
 
+        if( wp_maintenance_mode() ){
+
+            $templates = array( 'maintenance.twig' );
+            $context = Timber::context();
+
+            $context['wp_title'] = __( 'Maintenance' );
+
+            if( $html = Timber::compile( $templates, $context ) ){
+
+                echo $html;
+                exit;
+            }
+            else{
+
+                wp_die(__( 'Briefly unavailable for scheduled maintenance. Check back in a minute.' ), __( 'Maintenance' ),503);
+            }
+        }
+
         if( function_exists('get_fields') )
             $this->options = get_fields('option');
 
         add_filter('network_site_url', [$this, 'networkSiteURL'] );
         add_filter('option_siteurl', [$this, 'optionSiteURL'] );
 
-        add_filter( 'timber_post_get_meta_pre', function ($post_meta, $pid){
+        add_filter('timber/post/pre_meta', function ($post_meta, $pid){
 
             $post = get_post($pid);
 
@@ -739,11 +757,9 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'archive_url', 'get_post_type_archive_link' ) );
         $twig->addFunction( new Twig\TwigFunction( 'post_query', function ($query){ return Timber::get_posts($query); }) );
         $twig->addFunction( new Twig\TwigFunction( 'term_query', function ($query){ return Timber::get_terms($query); }) );
-        $twig->addFunction( new Twig\TwigFunction( 'get_posts', 'get_posts') );
         $twig->addFunction( new Twig\TwigFunction( 'get_object_terms', 'wp_get_object_terms') );
         $twig->addFunction( new Twig\TwigFunction( 'post_url',  [$this, 'getPermalink']) );
         $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'shortcode', 'do_shortcode' ) );
         $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
         $twig->addFunction( new Twig\TwigFunction( 'is_front_page',  'is_front_page' ) );
 

@@ -32,7 +32,7 @@ body{
 }
 
 main{
-  position: relative; width: 100%; margin-top: $header-h; overflow: hidden;
+  position: relative; width: 100%; margin-top: $header-h; overflow: hidden; padding-top: $space;
   @media print { margin-top: 0 }
 }
 

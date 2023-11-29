@@ -14,11 +14,14 @@
  * @since   Timber 0.2
  */
 
+use Timber\Timber;
+
 $templates = array( 'archive.twig', 'index.twig' );
 
 $context = Timber::context();
 
 $context['title'] = 'Archive';
+
 if ( is_day() ) {
 	$context['title'] = 'Archive: ' . get_the_date( 'D M Y' );
 } elseif ( is_month() ) {
@@ -34,7 +37,5 @@ if ( is_day() ) {
 	$context['title'] = post_type_archive_title( '', false );
     array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '.twig' );
 }
-
-$context['posts'] = new Timber\PostQuery();
 
 Timber::render( $templates, $context );

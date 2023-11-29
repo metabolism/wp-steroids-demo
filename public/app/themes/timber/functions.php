@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Timber theme
  *
@@ -7,11 +8,13 @@
  * @since   Timber 0.1
  */
 
+use Timber\Timber;
+
 /**
  * This ensures that Timber is loaded and available as a PHP class.
  * If not, it gives an error message to help direct developers on where to activate
  */
-if ( ! class_exists( 'Timber' ) ) {
+if ( ! class_exists( 'Timber\Timber' ) ) {
 
     add_action(
         'admin_notices',
@@ -34,11 +37,7 @@ if ( ! class_exists( 'Timber' ) ) {
  */
 Timber::$dirname = array( '../../../../templates', 'views' );
 
-/**
- * By default, Timber does NOT autoescape values. Want to enable Twig's autoescape?
- * No prob! Just set this value to true
- */
-Timber::$autoescape = false;
+Timber::init();
 
 include ABSPATH.'../../src/Kernel.php';
 include ABSPATH.'../../src/Site.php';
