@@ -255,7 +255,7 @@ wordpress:
       #disable_for_blogs:
       #  - 2#
       #has_options: true #add acf page option to post type menu
-      capability_type: post
+      #capability_type: true
       #publicly_queryable: false
       ## options for archive page
       #posts_per_page: 11
@@ -311,6 +311,7 @@ wordpress:
       #radio: true #display terms selection as radio instead of checkbox
       #publicly_queryable: false
       show_in_rest: true
+      #capability_type: true
       object_type:
         - guide
       #capabilities:
