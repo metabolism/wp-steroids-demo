@@ -5,6 +5,7 @@
  * Add most used twig functions and filters
  */
 
+use Timber\Image;
 use Timber\ImageHelper;
 use Timber\Timber;
 
@@ -248,10 +249,21 @@ abstract class Kernel extends \Timber\Site {
      */
     public function generatePicture($src, $width, $height=0, $sources=[], $alt=false, $loading='lazy') {
 
-        if( $src instanceof \Timber\Image )
-            $src = acf_get_attachment($src->id);
+        $post_id = false;
+        $crop = 'center';
+
+        if( $src instanceof Image )
+            $post_id = $src->id;
         elseif( is_int($src) )
-            $src = acf_get_attachment($src);
+            $post_id = $src;
+
+        if( $post_id ){
+
+            if( $_crop = get_post_meta($post_id, 'crop', true) )
+                $crop = $_crop;
+
+            $src = acf_get_attachment($src->id);
+        }
 
         if( !$src )
             return '';
@@ -280,11 +292,11 @@ abstract class Kernel extends \Timber\Site {
                     if ($ext == 'webp') {
 
                         $webp_src = ImageHelper::img_to_webp($src['url']);
-                        $url = ImageHelper::resize($webp_src, $size[0] ?? 0, $size[1] ?? 0);
+                        $url = ImageHelper::resize($webp_src, $size[0] ?? 0, $size[1] ?? 0, $crop);
 
                         if( ($target_width > 0 && $target_width < 960) || ($target_height > 0 && $target_height < 960) ) {
 
-                            $url_2x = ImageHelper::resize($webp_src, $target_width * 2, $target_height * 2);
+                            $url_2x = ImageHelper::resize($webp_src, $target_width * 2, $target_height * 2, $crop);
                             $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, ' . $url_2x . ' 2x" type="' . $mime . '"/>';
                         }
                         else{
@@ -293,11 +305,11 @@ abstract class Kernel extends \Timber\Site {
                         }
                     }
 
-                    $url = ImageHelper::resize($src['url'], $size[0] ?? 0, $size[1] ?? 0);
+                    $url = ImageHelper::resize($src['url'], $size[0] ?? 0, $size[1] ?? 0, $crop);
 
                     if( ($target_width > 0 && $target_width < 960) || ($target_height > 0 && $target_height < 960) ){
 
-                        $url_2x = ImageHelper::resize($src['url'], $target_width*2, $target_height*2);
+                        $url_2x = ImageHelper::resize($src['url'], $target_width*2, $target_height*2, $crop);
                         $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="' . $src['mime_type'] . '"/>';
                     }
                     else{
@@ -310,11 +322,11 @@ abstract class Kernel extends \Timber\Site {
             if ($ext == 'webp') {
 
                 $webp_src = ImageHelper::img_to_webp($src['url']);
-                $url = ImageHelper::resize($webp_src, $width, $height);
+                $url = ImageHelper::resize($webp_src, $width, $height, $crop);
 
                 if( ( $width> 0 && $width < 960 ) || ( $height > 0 && $height < 960 ) ){
 
-                    $url_2x = ImageHelper::resize($webp_src, $width*2, $height*2);
+                    $url_2x = ImageHelper::resize($webp_src, $width*2, $height*2, $crop);
                     $html .= '<source srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="image/webp"/>';
                 }
                 else{
@@ -323,7 +335,7 @@ abstract class Kernel extends \Timber\Site {
                 }
             }
 
-            $url = ImageHelper::resize($src['url'], $width, $height);
+            $url = ImageHelper::resize($src['url'], $width, $height, $crop);
 
             $au = ImageHelper::analyze_url($url);
             $upload_dir = wp_upload_dir();
