@@ -8,6 +8,7 @@
 use Timber\Image;
 use Timber\ImageHelper;
 use Timber\Timber;
+use Timber\URLHelper;
 
 abstract class Kernel extends \Timber\Site {
 
@@ -191,6 +192,7 @@ abstract class Kernel extends \Timber\Site {
     public function addToContext( $context ) {
 
         $context['environment'] = WP_ENV;
+        $context['current_url'] = URLHelper::get_current_url();
         $context['blog'] = $this;
         $context['options'] = $this->options;
 

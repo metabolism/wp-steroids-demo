@@ -125,8 +125,23 @@ Config::define('DEEPL_KEY', env('DEEPL_KEY') ?: false);
 Config::define('DISALLOW_FILE_EDIT', true);
 // Disable plugin and theme updates and installation from the admin
 Config::define('DISALLOW_FILE_MODS', true);
-// Limit the number of post revisions that Wordpress stores (true (default WP): store every revision)
+// Limit the number of post revisions that WordPress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
+
+/**
+ * Redefine cookie name without WordPress
+ */
+Config::define( 'COOKIEHASH', md5( config::get('WP_SITEURL') )  );
+
+if( $cookie_prefix = env('COOKIE_PREFIX') ) {
+
+    Config::define('USER_COOKIE', $cookie_prefix . '_user_' . config::get('COOKIEHASH'));
+    Config::define('PASS_COOKIE', $cookie_prefix . '_pass_' . config::get('COOKIEHASH'));
+    Config::define('AUTH_COOKIE', $cookie_prefix . '_' . config::get('COOKIEHASH'));
+    Config::define('SECURE_AUTH_COOKIE', $cookie_prefix . '_sec_' . config::get('COOKIEHASH'));
+    Config::define('LOGGED_IN_COOKIE', $cookie_prefix . '_logged_in_' . config::get('COOKIEHASH'));
+    Config::define('TEST_COOKIE', 'test_cookie_' . config::get('COOKIEHASH'));
+}
 
 /**
  * Debugging Settings
@@ -134,7 +149,6 @@ Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: true);
 Config::define('WP_DEBUG_DISPLAY', false);
 Config::define('WP_DEBUG_LOG', false);
 Config::define('SCRIPT_DEBUG', false);
-ini_set('display_errors', '0');
 
 /**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
@@ -146,14 +160,13 @@ if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROT
 
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 
-if (file_exists($env_config)) {
+if (file_exists($env_config))
     require_once $env_config;
-}
+
+Config::define('WPS_YAML_FILE', __DIR__.'/app.yml');
+Config::define('GOOGLE_MAP_API_KEY', env('GOOGLE_MAP_API_KEY') ?: false);
 
 Config::apply();
-
-define('WPS_YAML_FILE', __DIR__.'/app.yml');
-define('GOOGLE_MAP_API_KEY', env('GOOGLE_MAP_API_KEY') ?: false);
 
 /**
  * Bootstrap WordPress
