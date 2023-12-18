@@ -31,8 +31,7 @@ This is a modified version using [Timber](https://fr.wordpress.org/plugins/timbe
   - Optionally, you can define `DATABASE_URL` for using a DSN instead of using the variables above (e.g. `mysql://user:password@127.0.0.1:3306/db_name`)
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
 - `WP_HOME` - Full URL to WordPress home (https://example.com)
-- `WP_SITEURL` - Full URL to WordPress including subdirectory (https://example.com/wp)
-- `ACF_PRO_KEY` - Your ACF Lience key
+- `ACF_PRO_KEY` - Your ACF Licence key
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
   - Generate with [WordPress salts generator](https://roots.io/salts.html)
 
