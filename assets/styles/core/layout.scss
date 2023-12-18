@@ -1,21 +1,3 @@
-.container{
-  margin-left: auto; margin-right: auto; display: flex; flex-flow: column;
-  position: relative; max-width: $container-w; width: calc( 100% - 80px);
-  @media #{$include-small} { width: calc( 100% - 60px) }
-  .container{ width: 100% }
-  &--empty{
-    text-align: center; padding-top: $space-section; position: static;
-    &:after{
-      content: ''; background-image: linear-gradient(45deg, #204575 25%, #ffffff 25%, #ffffff 50%, #204575 50%, #204575 75%, #ffffff 75%, #ffffff 100%);
-      background-size: 56.57px 56.57px; position: overlay(); opacity: 0.04;
-    }
-  }
-  &--large{
-    max-width: none; width: 100%;
-    .container{ width: calc( 100% - #{$space-xxl}) }
-  }
-}
-
 html{
   scroll-behavior: smooth;
 }
@@ -25,36 +7,95 @@ html{
 }
 
 body{
-  overflow-x: hidden; width: 100%;
   &.burger-is-open{
     @media #{$include-small} { overflow: hidden }
   }
 }
 
-main{
-  position: relative; width: 100%; margin-top: $header-h; overflow: hidden; padding-top: $space;
-  @media print { margin-top: 0 }
-}
+.is-root-container{
+  width: 100%; overflow-x: hidden; position: relative;
+  .container{
+    margin-left: auto; margin-right: auto; display: flex; flex-flow: column;
+    position: relative; max-width: $container-w; width: calc( 100% - 80px);
+    @media #{$include-small} { width: calc( 100% - 60px) }
+    @media #{$to-phone} { width: calc( 100% - 40px) }
+    .container{ width: 100% }
+    &--empty{
+      text-align: center; padding-top: $space-section; position: static;
+      &:after{
+        content: ''; background-image: linear-gradient(45deg, #204575 25%, #ffffff 25%, #ffffff 50%, #204575 50%, #204575 75%, #ffffff 75%, #ffffff 100%);
+        background-size: 56.57px 56.57px; position: overlay(); opacity: 0.04;
+      }
+    }
+    &--large{
+      max-width: $container-max-w; width: calc( 100% - 40px);
+      .container{ width: 100% }
+    }
+  }
 
-.sections{
-  width: 100%; overflow: hidden;
-  margin-left: auto; margin-right: auto;
-  min-height: calc(#{$app-init-h} - #{$header-h} - #{$footer-h});
-}
+  main{
+    position: relative; width: 100%; margin-top: $header-h; overflow-x: hidden;
+    @media print { margin-top: 0 }
+  }
 
-section{
-  margin-top: $space-section; position: relative;
-  .container{ z-index: 2 }
-}
+  .sections{
+    width: 100%; overflow: hidden;
+    margin-left: auto; margin-right: auto;
+    min-height: calc(#{$app-init-h} - #{$header-h} - #{$footer-h});
+  }
 
-#next{ display: inline; height: 0 }
+  section{
+    margin-top: $space-section; position: relative;
+    &:first-of-type{ margin-top: 0 }
+  }
 
-#root{
-  min-height: calc(#{$app-h} - #{$admin-h}); display: flex; flex-flow: column; overflow: hidden;
-}
+  #next{ display: inline; height: 0 }
 
-figure{
-  figcaption{
-    text-align: right; font-size: $font-xs; margin-top: $space-xs; font-style: italic; line-height: 1.1;
+  #root{
+    min-height: #{$app-h}; display: flex; flex-flow: column; overflow: hidden;
+  }
+
+  figure{
+    figcaption{
+      text-align: right; font-size: $font-xs; margin-top: $space-xs; font-style: italic; line-height: 1.1;
+    }
+  }
+
+  dialog{
+    position: fixed; left: 0; top: $admin-h; width: 100%; height: 100%; z-index: 999; border: 0; margin: 0; padding: 0;
+    align-items: center; justify-content: center; background: none; display: flex;
+    &:after{
+      background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); content: ''; position: overlay();
+      transition: allow(opacity);
+      @media #{$to-phone} { backdrop-filter: none }
+    }
+    .p-form{ max-width: 600px }
+    .dialog-title{
+      @extend %title-main; font-weight: bold!important; margin-bottom: $space;
+      @media #{$to-phone} { margin-bottom: $space; border-bottom: 1px solid $c-border-input; padding-bottom: $space }
+    }
+    .dialog-button{
+      position: absolute; right: $space; top: $space; width: $space; height: $space; cursor: pointer; padding: 0;
+      @media #{$to-phone} { width: 24px; height: 24px }
+      &:after,&:before{
+        position: absolute; top: 50%; width: 100%; content: ''; border-bottom: 2px solid;
+      }
+      &:after{ transform: rotate(45deg) }
+      &:before{ transform: rotate(-45deg) }
+    }
+    .container{
+      background: #fff; width: fit-content; padding: $space-xl $space-l; box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      max-height: 90vh; overflow: auto; z-index: 1; overflow-scrolling: touch;
+      @media #{$to-phone} { width: 100%; padding: $space; height: 100%; max-height: none; box-shadow: none }
+    }
+  }
+
+  .image-placeholder{
+    position: relative;
+    &:after{
+      position: overlay(); content: ''; background: url("../../media/images/logo.svg") no-repeat center;
+      background-size: 60% auto; opacity: 0.1;
+    }
+    background: $c-image-placeholder; display: block;
   }
 }

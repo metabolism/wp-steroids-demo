@@ -5,8 +5,14 @@
 
 html{
   font-size: 10px;
+  @media #{$to-small} {
+    font-size: 9px
+  }
+  @media #{$include-small} {
+    font-size: 7px
+  }
   @media #{$to-phone} {
-    font-size: 10px!important
+    font-size: 10px
   }
   @media print { font-size: 7px!important }
 }

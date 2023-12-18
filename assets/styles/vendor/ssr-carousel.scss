@@ -1,13 +1,25 @@
 @import "vue-ssr-carousel/index.css";
 
 .ssr-carousel{
-  width: 100%;
+  width: 100%; position: relative;
   &-back-button, &-next-button{
     position: static; transform: none; margin-top: $space;
   }
   &-mask.disabled &-slide[aria-hidden='true']{ display: revert }
   &-next-button{ margin-left: $space }
-  &-track{ justify-content: left!important }
+  &-track{ justify-content: left }
+  &-slide[href="#"]{ cursor: inherit }
+  &-dots{
+    justify-content: flex-end; position: absolute; bottom: $space-s; right: $space-s;
+  }
+  &-dot-icon{
+    width: 6px; height: 6px; border: 0; background: #ddd ; margin: 0 2px; transition: allow(background);
+    [disabled] > &{ background: #000 }
+    :not([disabled]) > &{ opacity: 1 }
+  }
+  &-dot-button{
+    line-height: 1!important;
+  }
 }
 
 

@@ -22,7 +22,7 @@ class Site extends Kernel {
             if ( !is_user_logged_in() )
                 return null;
 
-            if ( !current_user_can('editor') && !current_user_can('administrator') ) {
+            if ( !current_user_can('editor') && !current_user_can('administrator') && !wp_doing_ajax() ) {
 
                 wp_redirect(home_url(), 301);
                 exit;

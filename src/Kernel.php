@@ -106,6 +106,13 @@ abstract class Kernel extends \Timber\Site {
         if( defined('DOING_CRON') && DOING_CRON )
             return;
 
+        if( isset($_REQUEST['s']) && !is_admin() ){
+
+            $permalink = get_search_link(sanitize_text_field($_REQUEST['s']));
+            wp_redirect($permalink);
+            exit;
+        }
+
         $path = rtrim($_SERVER['REQUEST_URI'], '/');
 
         if( ($path == '/edition' || $path == '/edition/') && 'POST' !== $_SERVER['REQUEST_METHOD'] ){
@@ -264,7 +271,7 @@ abstract class Kernel extends \Timber\Site {
             if( $_crop = get_post_meta($post_id, 'crop', true) )
                 $crop = $_crop;
 
-            $src = acf_get_attachment($src->id);
+            $src = acf_get_attachment($post_id);
         }
 
         if( !$src )
@@ -741,6 +748,18 @@ abstract class Kernel extends \Timber\Site {
     }
 
     /**
+     * @param $picture
+     * @return string
+     */
+    public function placeholder($picture){
+
+        if( empty($picture) )
+            $picture = '<span class="image-placeholder"></span>';
+
+        return $picture;
+    }
+
+    /**
      * @param $file
      * @param int $max_w
      * @param int $max_h
@@ -769,6 +788,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'asset', [$this, 'asset'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'nonce', [$this, 'nonce'] ) );
         $twig->addFunction( new Twig\TwigFunction( 'archive_url', 'get_post_type_archive_link' ) );
+        $twig->addFunction( new Twig\TwigFunction( 'search_url', 'get_search_link' ) );
         $twig->addFunction( new Twig\TwigFunction( 'post_query', function ($query){ return Timber::get_posts($query); }) );
         $twig->addFunction( new Twig\TwigFunction( 'term_query', function ($query){ return Timber::get_terms($query); }) );
         $twig->addFunction( new Twig\TwigFunction( 'get_object_terms', 'wp_get_object_terms') );
@@ -777,6 +797,7 @@ abstract class Kernel extends \Timber\Site {
         $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
         $twig->addFunction( new Twig\TwigFunction( 'is_front_page',  'is_front_page' ) );
 
+        $twig->addFilter( new Twig\TwigFilter( 'placeholder', [$this, 'placeholder'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'lottie_placeholder', [$this, 'generateLottiePlaceholder'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );

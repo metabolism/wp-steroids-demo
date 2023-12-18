@@ -55,7 +55,7 @@ Edit `/config/app.yml` to edit WordPress configuration ( custom post type, custo
    ```
 2. Edit twig files in `/templates`
 3. Edit site configuration in `/src/Site.php`
-4. Edit page context in `/public/app/themes/timber`
+4. Edit page context in `/src/Controller`
 5. Run dev server
 ```sh
 $ npm run dev-server

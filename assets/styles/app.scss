@@ -6,11 +6,12 @@
 
 @import "config";
 
+@import "reset";
+
 /*
 * Services
 */
 
-@import "reset";
 @import "function/**/*.scss";
 @import "variable/**/*.scss";
 @import "mixin/**/*.scss";

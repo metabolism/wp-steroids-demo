@@ -23,7 +23,6 @@ $context = Timber::context();
 if ( is_tax() ) {
 	array_unshift( $templates, 'archive-' . get_query_var( 'taxonomy' ) . '.twig' );
 } elseif ( is_post_type_archive() ) {
-	$context['title'] = post_type_archive_title( '', false );
     array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '.twig' );
 }
 

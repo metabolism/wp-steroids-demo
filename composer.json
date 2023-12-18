@@ -70,10 +70,10 @@
     "wpackagist-plugin/redirection": "^5.3.2",
     "wpackagist-plugin/wordpress-seo": "^21.5.0",
     "wpackagist-plugin/acf-content-analysis-for-yoast-seo": "^3.0.1",
+    "wpackagist-plugin/cache-control": "^2.2.5",
     "wpackagist-plugin/contact-form-7": "^5.7.4",
     "akhela/wp-carbon-calculator": "^1.0.3",
-    "wpackagist-plugin/wp-2fa": "^2.3.0",
-    "wpackagist-plugin/cache-enabler":"^1.8.13"
+    "wpackagist-plugin/wp-2fa": "^2.3.0"
   },
   "require-dev": {
     "wpackagist-plugin/query-monitor": "^3.9.0",

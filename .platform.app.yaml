@@ -23,6 +23,10 @@ dependencies:
     n: "*"
     yarn: "*"
 
+runtime:
+  extensions:
+    - imagick
+
 hooks:
   build: |
     set -e
@@ -46,7 +50,7 @@ web:
       root: "public"
       # The front-controller script to send non-static requests to.
       passthru: "/index.php"
-      # Wordpress has multiple roots (wp-admin) so the following is required
+      # WordPress has multiple roots (wp-admin) so the following is required
       index:
         - "index.php"
       # The number of seconds whitelisted (static) content should be cached.
@@ -60,6 +64,8 @@ web:
           allow: false
         ^/readme\.html$:
           allow: false
+        ^/api$:
+          passthru: '/edition/wp-admin/admin-ajax.php'
     "/public/app/cache":
       scripts: false
       allow: false

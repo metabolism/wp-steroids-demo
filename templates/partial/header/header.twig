@@ -5,7 +5,7 @@
            <p class="p-header__baseline">{{site.description}}</p>
         </div>
         <div class="p-header__actions">
-            {% include "partial/menu/menu.twig" with {'items': menu.header.get_items } %}
+            {% include "partial/menu/menu.twig" with {name: 'header' } %}
             {% include "partial/burger/burger.twig" %}
         </div>
     </div>

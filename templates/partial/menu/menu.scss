@@ -2,5 +2,6 @@
   &__items{
     display: flex; grid-gap: $space;
   }
+  &__item{ white-space: nowrap }
   .current-menu-item a{ text-decoration: underline }
 }

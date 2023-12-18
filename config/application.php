@@ -82,10 +82,10 @@ if (env('DATABASE_URL')) {
 }
 
 /** Enabling support for connecting external MYSQL over SSL*/
-$mysql_sslconnect = env('DB_SSL_CONNECTION') ?: 'true';
+/*$mysql_sslconnect = env('DB_SSL_CONNECTION') ?: 'true';
 if (strtolower($mysql_sslconnect) != 'false' && !is_numeric(strpos(Config::get('DB_HOST'), "127.0.0.1")) && !is_numeric(strpos(strtolower(Config::get('DB_HOST')), "localhost"))) {
     Config::define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
-}
+}*/
 
 
 /**

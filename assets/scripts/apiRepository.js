@@ -1,4 +1,7 @@
 import Vue from "vue";
+
+let ajax_url = document.head.querySelector('meta[name="home-url"]').content+'/api'
+
 export default {
 
     getData(){
