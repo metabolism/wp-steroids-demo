@@ -215,14 +215,15 @@ wordpress:
   ##########################
 
   block:
-    hero-home:
-      title: Homepage hero
-      description: Display a slider
+    hero:
+      title: Hero
+      description: Page Hero
       supports:
         multiple: false
       icon: 'editor-alignleft'
       post_types:
         - page
+        - guide
     contact:
       title: Contact
       #description: Featured article
@@ -247,6 +248,14 @@ wordpress:
   ##########################
 
   post_type: # https://developer.wordpress.org/reference/functions/register_post_type/
+
+    page:
+      template:
+        - - acf/hero
+          - lock:
+              move: true
+              remove: true
+
     guide:
       menu_icon: book #https://developer.wordpress.org/resource/dashicons/
       has_archive: true
@@ -262,11 +271,11 @@ wordpress:
       #orderby: name #https://developer.wordpress.org/reference/classes/wp_query/#order-orderby-parameters
       #order: ASC
       show_in_rest: true
-      #template:
-      #  - - acf/title-text
-      #    - lock:
-      #        move: true
-      #        remove: true
+      template:
+        - - acf/hero
+          - lock:
+              move: true
+              remove: true
       supports:
         - title
         - excerpt

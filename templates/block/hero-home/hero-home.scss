@@ -1,7 +1,0 @@
-.b-hero-home{
-  &__item{
-    background: #eee; padding: 2rem;
-    &-suptitle{ @extend %title-small }
-    &-title{ @extend %title-main }
-  }
-}

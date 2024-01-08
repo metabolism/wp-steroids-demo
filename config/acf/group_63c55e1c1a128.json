@@ -1,13 +1,13 @@
 {
     "key": "group_63c55e1c1a128",
-    "title": "Hero home",
+    "title": "Hero",
     "fields": [
         {
-            "key": "field_63c55e210cba3",
-            "label": "",
-            "name": "items",
+            "key": "field_63c55e460cba4",
+            "label": "Suptitle",
+            "name": "suptitle",
             "aria-label": "",
-            "type": "repeater",
+            "type": "text",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
@@ -16,99 +16,100 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "block",
-            "pagination": 0,
-            "min": 0,
-            "max": 0,
-            "collapsed": "",
-            "button_label": "Add Row",
-            "rows_per_page": 20,
-            "sub_fields": [
-                {
-                    "key": "field_63c55e460cba4",
-                    "label": "Suptitle",
-                    "name": "suptitle",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "tag": 0,
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_63c55e210cba3"
-                },
-                {
-                    "key": "field_63c55e4e0cba5",
-                    "label": "Title",
-                    "name": "title",
-                    "aria-label": "",
-                    "type": "text",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "tag": 0,
-                    "default_value": "",
-                    "maxlength": "",
-                    "placeholder": "",
-                    "prepend": "",
-                    "append": "",
-                    "parent_repeater": "field_63c55e210cba3"
-                },
-                {
-                    "key": "field_63c55e570cba6",
-                    "label": "Content",
-                    "name": "content",
-                    "aria-label": "",
-                    "type": "wysiwyg",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "tag": 0,
-                    "default_value": "",
-                    "tabs": "all",
-                    "toolbar": "basic",
-                    "media_upload": 0,
-                    "delay": 0,
-                    "parent_repeater": "field_63c55e210cba3"
-                },
-                {
-                    "key": "field_63c55e6b0cba7",
-                    "label": "",
-                    "name": "cta",
-                    "aria-label": "",
-                    "type": "link",
-                    "instructions": "",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "tag": 0,
-                    "return_format": "array",
-                    "parent_repeater": "field_63c55e210cba3"
-                }
-            ]
+            "tag": 0,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "parent_repeater": "field_63c55e210cba3"
+        },
+        {
+            "key": "field_63c55e4e0cba5",
+            "label": "Title",
+            "name": "title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tag": 0,
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": "",
+            "parent_repeater": "field_63c55e210cba3"
+        },
+        {
+            "key": "field_63c55e570cba6",
+            "label": "Content",
+            "name": "content",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tag": 0,
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0,
+            "parent_repeater": "field_63c55e210cba3"
+        },
+        {
+            "key": "field_659c221c86026",
+            "label": "",
+            "name": "image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "thumbnail"
+        },
+        {
+            "key": "field_63c55e6b0cba7",
+            "label": "",
+            "name": "cta",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tag": 0,
+            "return_format": "array",
+            "parent_repeater": "field_63c55e210cba3"
         }
     ],
     "location": [
@@ -116,7 +117,7 @@
             {
                 "param": "block",
                 "operator": "==",
-                "value": "acf\/hero-home"
+                "value": "acf\/hero"
             }
         ]
     ],
@@ -130,5 +131,5 @@
     "description": "",
     "show_in_rest": 0,
     "is_acf_component": 0,
-    "modified": 1673882205
+    "modified": 1704731610
 }

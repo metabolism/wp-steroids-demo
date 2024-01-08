@@ -1,26 +1,35 @@
 .p-form{
+  width: 100%;
   &, &__step{
     display: flex; flex-wrap: wrap; grid-gap: $space-s;
     @media #{$to-phone} { flex-flow: column }
   }
   &__error{ color: red; background: rgba(255,0,0,0.1); width: 100%; padding: $space-s; border: 1px solid }
+  &__reveal{
+    position: absolute; right: $space; top: 50%; @include icon('eye'); text-decoration: none!important;
+    transform: translateY(-50%);
+  }
   &__field{
     position: relative; flex-basis: 100%;
     a{ text-decoration: underline; cursor: pointer }
+    &--message{ @extend %title-small-upper; margin-top: $space }
+    &--select+&--captcha{ opacity: 0; pointer-events: none }
     &--half{ flex-basis: calc(50% - $space-s/2) }
     &--one-third{ flex-basis: calc(33.33% - $space-s/2) }
     &--two-third{ flex-basis: calc(66.66% - $space-s/2) }
     &--radios{ padding-top: $space; padding-bottom: $space-s }
-    input+label, select+label{
+    input+label, select+label, textarea+label{
       position: absolute; top: 50%; left: $space; transform: translateY(-50%); color: $c-placeholder-color;
       transition: allow(font-size top background); pointer-events: none; line-height: 1.1;
     }
-    input:focus+label, input:not(:placeholder-shown)+label, select:valid+label{
+    textarea+label{ top: $space-l }
+    input:focus+label, textarea:focus+label, input:not(:placeholder-shown)+label, textarea:not(:placeholder-shown)+label, select:valid+label{
       top: 0; background: $c-white; font-size: $font-xxs;
     }
   }
   button{ text-decoration: underline; cursor: pointer }
   input{
+    max-width: none;
     &::placeholder {
       color: $c-placeholder-color;
       opacity: 1;
@@ -31,9 +40,12 @@
     }
     &[type=submit], &[type=button]{
       height: 60px; padding: 0 $space; width: 100%; background: $c-theme no-repeat center; color: $c-black; border: 1px solid $c-theme;
-      text-transform: uppercase;
+      text-transform: uppercase; transition: allow(background border);
       &.is-loading{
         pointer-events: none; background-image:url('../../../assets/media/images/loader-black.svg'); color: transparent;
+      }
+      &.is-valid{
+        pointer-events: none; background: #c2fd10; border-color: #c2fd10;
       }
     }
     &[type="checkbox"],  &[type="radio"]{
@@ -53,7 +65,7 @@
 
   textarea, select{
     border-radius: $border-radius; padding: $space; border: 1px solid $c-border-input; background: $c-white;
-    width: 100%;
+    width: 100%; max-width: none;
     &::placeholder {
       color: $c-placeholder-color;
       opacity: 1;

@@ -16,6 +16,3 @@ Config::define('DISALLOW_INDEXING', true);
 
 ini_set('display_errors', '1');
 error_reporting(E_ALL ^ E_DEPRECATED);
-
-// Enable plugin and theme updates and installation from the admin
-Config::define('DISALLOW_FILE_MODS', false);

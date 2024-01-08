@@ -1,0 +1,13 @@
+<section class="b-hero">
+    <div class="container">
+        <h2 class="b-hero__suptitle">{{ props.suptitle }}</h2>
+        <h1 class="b-hero__title">{{ props.title|default(post.title|default('Add title'|t)) }}</h1>
+        <div class="b-hero__content">{{ props.content|raw }}</div>
+        {% include 'partial/cta/cta.twig' with { props: props.cta } %}
+        {% if props.image %}
+            <div class="b-hero__image">
+                {{ props.image|picture(800,200) }}
+            </div>
+        {% endif %}
+    </div>
+</section>

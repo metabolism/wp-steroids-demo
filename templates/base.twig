@@ -8,7 +8,7 @@
 	<meta name="theme-color" content="#fff">
 	<meta name="home-url" content="{{ blog.home_url }}">
 	<link rel="icon" href="{{ asset('images/favicon.svg') }}"/>
-	<link rel=”mask-icon” href=”{{ asset('images/favicon.svg') }}” color=”#000000">
+	<link rel="mask-icon" href="{{ asset('images/favicon.svg') }}" color="#000000">
 	<link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
 	<title>{{ wp_title }}</title>
 	{% block stylesheets %}
@@ -17,8 +17,8 @@
 	<link rel="stylesheet" href="{{ asset('print.css') }}" type="text/css" media="print">
 	{{ function('wp_head') }}
 </head>
-<body class="is-front {{body_class}}">
-<div id="root" class="is-root-container">
+<body class="is-front is-root-container {{body_class}}">
+<div id="root">
 	{% include 'partial/header/header.twig' %}
 
 	<main>

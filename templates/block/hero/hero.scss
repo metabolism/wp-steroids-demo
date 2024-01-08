@@ -1,0 +1,8 @@
+.b-hero{
+  background: #eee; padding: 2rem;
+  .container{ align-items: center }
+  &__suptitle{ @extend %title-small }
+  &__title{ @extend %title-main }
+  .p-cta{ margin-top: $space }
+  &__image{ margin-top: $space }
+}
