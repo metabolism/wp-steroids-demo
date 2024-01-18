@@ -29,6 +29,8 @@ COPY composer.* ./
 
 # Run Composer to install dependencies
 RUN composer install --prefer-dist --no-dev --no-interaction
+
+# Run Composer to update dependencies
 RUN composer update --prefer-dist --no-dev --no-interaction
 
 COPY . /var/www/html
@@ -41,13 +43,12 @@ COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
 
-RUN chmod -R 0777 public/build
-
 # Install app dependencies
 RUN npm install
 
+# Create build folder
+RUN mkdir public/build
+RUN chmod -R 0777 public/build
+
 # Run npm run build during the build process
 RUN npm run build
-
-# Copying the files into the Docker image
-COPY public/build public/build
