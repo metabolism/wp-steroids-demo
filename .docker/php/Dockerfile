@@ -1,4 +1,5 @@
 FROM node:16 AS node
+FROM composer:2.5 AS composer
 FROM php:8.2-fpm
 
 # Set the working directory
@@ -15,7 +16,7 @@ RUN docker-php-ext-install pdo_mysql mysqli
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-install -j$(nproc) gd
 
-# Run Composer to install dependencies
+# Copy Composer bin
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # Allow Composer to run as superuser
@@ -38,7 +39,7 @@ COPY . /var/www/html
 # Optimizing Composer autoloader for better performance
 RUN composer dump-autoload --optimize
 
-# Run Node to install dependencies
+# Copy Node bin
 COPY --from=node /usr/local/lib/node_modules /usr/local/lib/node_modules
 COPY --from=node /usr/local/bin/node /usr/local/bin/node
 RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm

@@ -50,8 +50,9 @@ This is a modified version using [Timber](https://fr.wordpress.org/plugins/timbe
 
 4. Set the document root on your webserver to Bedrock's `public` folder: `/path/to/site/public/`
 
-5. Access WordPress admin at `https://example.com/edition/wp-admin/`
+5. Allow 'write' permissions to `/path/to/site/var/` and `/path/to/site/public/app/uploads`
 
+6. Access WordPress admin at `https://example.com/edition/wp-admin/`
 
 ## Development
 
@@ -66,11 +67,11 @@ This is a modified version using [Timber](https://fr.wordpress.org/plugins/timbe
 
 ## Docker
 
-Project is shipped with docker files samples.
+Project is shipped with Docker files samples.
 
-Please feel free to update WP_HOME and WP_SITEURL in `docker-compose.yml` and server_name in `.docker/nginx/default.conf`
+Feel free to update WP_HOME and WP_SITEURL in `docker-compose.yml` and server_name in `.docker/nginx/default.conf`
 
-Run project using
+Run the project using 
 
 ```sh
  docker-compose build --build-arg ACF_PRO_KEY=your_licence_key
@@ -78,3 +79,20 @@ Run project using
 ```
 
 Access WordPress admin at `http://localhost:8000`
+
+### Useful Docker commands ( use with caution )
+
+**Stop containers**
+```sh
+docker-compose down
+```
+
+**Remove all stopped containers**
+```sh
+docker system prune -a
+```
+
+**Remove orphaned volumes**
+```sh
+docker volume rm $(docker volume ls -q)
+```

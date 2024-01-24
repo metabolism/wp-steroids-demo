@@ -33,7 +33,7 @@
       "type": "package",
       "package": {
         "name": "elliotcondon/advanced-custom-fields-pro",
-        "version": "6.2.1",
+        "version": "6.2.5",
         "type": "wordpress-plugin",
         "dist": {"type": "zip", "url": "https://connect.advancedcustomfields.com/index.php?p=pro&a=download&k={%ACF_PRO_KEY}&t={%version}"},
         "require": {
