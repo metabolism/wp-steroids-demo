@@ -109,6 +109,22 @@ wordpress:
     #  - video
     #  - gallery
 
+  options_page: #add option pages https://www.advancedcustomfields.com/resources/options-page/
+    global:
+      fields:
+        gtm:
+          type: text
+    translations:
+      fields:
+        translations:
+          type: repeater
+          layout: table
+          sub_fields:
+            key:
+              type: text
+            translation:
+              type: text
+
   ## Use Wordpress as a headless cms
   #headless:
   #  mapping: true
@@ -133,9 +149,6 @@ wordpress:
       autoload: true #autoload options
     user_settings:
       gallery_height: 210
-    options_page: #add option pages https://www.advancedcustomfields.com/resources/options-page/
-      - 'Global'
-      - 'Translations'
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
@@ -192,7 +205,11 @@ wordpress:
   menu:
     depth: 1
     register:
-      footer: Footer
+      footer:
+        title: Footer
+        fields:
+          sample:
+            type: text
       header: Header
 
 
@@ -224,6 +241,20 @@ wordpress:
       post_types:
         - page
         - guide
+      fields:
+        suptitle:
+          type: text
+        title:
+          type: text
+        content:
+          type: wysiwyg
+          toolbar: basic
+          media_upload: false
+        image:
+          type: image
+        cta:
+          type: link
+
     contact:
       title: Contact
       #description: Featured article
@@ -305,6 +336,11 @@ wordpress:
       #  search_items:   'Rechercher un guide'
       #  popular_items:  'Guides populaires'
       #  not_found:      'Aucun guide trouvé'
+      field_group:
+        position: side
+      fields:
+        sample:
+          type: text
 
 
   ##########################
@@ -340,7 +376,9 @@ wordpress:
       #  search_items:   'Rechercher une catégorie'
       #  popular_items:  'Catégories populaires'
       #  not_found:      'Aucune catégorie trouvée'
-
+      fields:
+        sample:
+          type: text
 
     ####################################
     ##    Templates/States/Formats    ##

@@ -21,24 +21,6 @@ abstract class Kernel extends \Timber\Site {
     /** Add timber support. */
     public function __construct() {
 
-        if( wp_maintenance_mode() ){
-
-            $templates = array( 'maintenance.twig' );
-            $context = Timber::context();
-
-            $context['wp_title'] = __( 'Maintenance' );
-
-            if( $html = Timber::compile( $templates, $context ) ){
-
-                echo $html;
-                exit;
-            }
-            else{
-
-                wp_die(__( 'Briefly unavailable for scheduled maintenance. Check back in a minute.' ), __( 'Maintenance' ),503);
-            }
-        }
-
         if( function_exists('get_fields') )
             $this->options = get_fields('option');
 
@@ -56,10 +38,11 @@ abstract class Kernel extends \Timber\Site {
 
         },10, 2);
 
+        add_action( 'init', [$this, 'maintenance']);
         add_action( 'init', [$this, 'redirect']);
         add_filter( 'timber/context', [$this, 'addToContext'] );
         add_filter( 'timber/twig', [$this, 'addToTwig'] );
-        add_filter( 'block_render_callback', [$this,'renderBlock']);
+        add_filter( 'block_render_callback', [$this, 'renderBlock']);
 
         if( file_exists(__DIR__.'/../public/build/entrypoints.json'))
             $this->entrypoints = json_decode(file_get_contents(__DIR__.'/../public/build/entrypoints.json'), true);
@@ -69,10 +52,39 @@ abstract class Kernel extends \Timber\Site {
 
         if( is_admin() )
             add_action('enqueue_block_editor_assets', [$this, 'enqueueBlockEditorAssets']);
-        else
-            $this->get_translations();
+
+        $this->get_translations();
 
         parent::__construct();
+    }
+
+    public function maintenance()
+    {
+        $path = rtrim($_SERVER['REQUEST_URI'], '/');
+
+        if( wp_maintenance_mode() && !is_admin() && !is_login() && !($path == '/edition' || $path == '/edition/') ){
+
+            $templates = array( 'maintenance.twig' );
+            $context = Timber::context();
+
+            $context['wp_title'] = __( 'Maintenance' );
+
+            if( $post_id = get_page_by_state('maintenance') )
+                $context['post'] = \Timber::get_post($post_id);
+
+            if( $html = Timber::compile( $templates, $context ) ){
+
+                status_header(503);
+                nocache_headers();
+
+                echo $html;
+                exit;
+            }
+            else{
+
+                wp_die(__( 'Briefly unavailable for scheduled maintenance. Check back in a minute.' ), $context['wp_title'],503);
+            }
+        }
     }
 
     /**
@@ -131,9 +143,7 @@ abstract class Kernel extends \Timber\Site {
 
             wp_enqueue_style('block_editor_style','http://localhost:8080/build/bundle.css');
         }
-        else{
-
-            $path = $this->manifest['build/bundle.css']??false;
+        elseif( $path = $this->manifest['build/bundle.css']??false ){
 
             if( is_multisite() )
                 wp_enqueue_style('block_editor_style', network_home_url($path));
@@ -263,6 +273,8 @@ abstract class Kernel extends \Timber\Site {
 
         if( $src instanceof Image )
             $post_id = $src->id;
+        elseif( is_array($src) )
+            $post_id = $src['ID']??false;
         elseif( is_int($src) )
             $post_id = $src;
 
@@ -271,7 +283,8 @@ abstract class Kernel extends \Timber\Site {
             if( $_crop = get_post_meta($post_id, 'crop', true) )
                 $crop = $_crop;
 
-            $src = acf_get_attachment($post_id);
+            if( !is_array($src) )
+                $src = acf_get_attachment($post_id);
         }
 
         if( !$src )
