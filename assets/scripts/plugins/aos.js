@@ -56,7 +56,7 @@ let aosPrefixAnimation = (function(){
     return {};
 })();
 
-function AOSInterface($el, props){
+export default function AOSInterface($el, props){
 
     let data = {
         clientY: 0,
@@ -89,6 +89,9 @@ function AOSInterface($el, props){
                 (props.small !== "disabled" && window.innerWidth <= 1024 && window.innerWidth > 768) ||
                 (window.innerWidth > 1024)
             ) {
+
+                $el.classList.add('on-scroll');
+
                 if( props.animation && props.animation !== 'increment' )
                     $el.classList.add('on-scroll--wait');
 
@@ -106,7 +109,6 @@ function AOSInterface($el, props){
             }
             else{
                 data.disabled = true;
-                $el.classList.remove('on-scroll');
             }
         },
         update(){
@@ -302,6 +304,13 @@ function AOSInterface($el, props){
                 }
             }
         },
+        getLastRealChild(el) {
+            let child = el.lastChild;
+            while (child && child.nodeType === Node.TEXT_NODE && child.textContent.trim() === '') {
+                child = child.previousSibling;
+            }
+            return child;
+        },
         scroll(){
 
             let pos = 0;
@@ -337,10 +346,15 @@ function AOSInterface($el, props){
                     if (data.duration)
                         $el.style[aosPrefixAnimation.fn + 'Duration'] = data.duration + (data.duration < 10 ? 's' : 'ms');
 
-                    if( props.animation === 'stack' )
-                       $el.childNodes[$el.childNodes.length-1].addEventListener(aosPrefixAnimation.end, methods.end, false);
-                    else
+                    if( props.animation === 'stack' ){
+
+                        let lastChild = methods.getLastRealChild($el);
+                        lastChild.addEventListener(aosPrefixAnimation.end, methods.end, false);
+                    }
+                    else{
+
                         $el.addEventListener(aosPrefixAnimation.end, methods.end, false);
+                    }
                 }
 
                 if( props.setAttribute && !data.shown )
@@ -389,91 +403,3 @@ function AOSInterface($el, props){
 
     return methods;
 }
-
-let AOSComponent = {
-    name :'on-scroll',
-    render(h) {
-        if( this.active )
-            return h(this.tag, {class:'on-scroll'}, this.$slots.default);
-        else
-            return this.$slots.default;
-    },
-    props:{
-        animation: { default: 'slide-up' },
-        delay: { default: 0 },
-        offset: { default: 100 },
-        strength: { default: 100 },
-        duration: { default: 0.5 },
-        tag: { default: 'div' },
-        invert: { default: false },
-        center: { default: false },
-        loop: { default: false },
-        active: { default: true },
-        small: { default: 'active' },
-        tablet: { default: 'active' },
-        phone: { default: 'active' }
-    },
-    data(){
-        return{
-            interface: null
-        };
-    },
-    mounted() {
-
-        if( this.active ){
-
-            this.interface = new AOSInterface(this.$el, this);
-            this.interface.mounted();
-
-            this.$nextTick(this.interface.update);
-        }
-    },
-    destroyed() {
-
-        this.interface.destroyed();
-    }
-};
-
-
-let AOSDirective = {
-    name :'on-scroll',
-    mounted(el, binding, vnode) {
-
-        let props = {
-            animation: 'slide-up' ,
-            delay: 0,
-            offset: 150,
-            strength: 200,
-            duration: 0.5,
-            invert: false,
-            center: false,
-            loop: false,
-            small: 'active',
-            tablet: 'active',
-            phone: 'disabled'
-        };
-
-        if( typeof binding.value == 'string' )
-            props.animation = binding.value;
-        else
-            props = Object.assign(props, binding.value);
-
-        el.classList.add('on-scroll');
-
-        el.aos = new AOSInterface(el, props);
-        el.aos.mounted();
-    },
-    unmounted(el, binding, vnode) {
-        el.aos.destroyed();
-    }
-};
-
-let install = function (Vue, globalOptions) {
-    Vue.component(AOSComponent.name, AOSComponent);
-    Vue.directive(AOSDirective.name, AOSDirective);
-};
-
-let VueAOS = { AOSComponent, AOSDirective, install }
-
-export default VueAOS;
-export { AOSComponent, AOSDirective, install };

@@ -2,10 +2,13 @@
 @use "/assets/styles/layout/text" as *;
 
 .b-toggles{
-  .c-dropdown{
-    &__toggle{
-      background: $c-theme-alt; padding: $space-l; padding-right: $space-section; position: relative; display: block;
-      @extend %text-hero; font-weight: 500;
+    &__item{
+      &-cta{
+        background: $c-theme-alt; padding: $space-l; padding-right: $space-section; position: relative; display: block;
+        @extend %text-hero; font-weight: 500; cursor: pointer; width: 100%; text-align: left;
+      }
+      &-content{
+        background: $c-theme; color: $c-white; padding: $space-l; display: none;
+      }
     }
-  }
 }

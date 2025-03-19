@@ -1,19 +1,25 @@
-export default {
+import {LitElement, html} from 'lit';
 
-    props: ['link'],
+export default class Burger extends LitElement {
 
-    template :
-        `<button class="p-burger" @click="toggleVisibility">
-          <span class="p-burger__link" v-if="link">{{ link }}</span>
+    static properties = {
+        link: {type: String},
+    };
+
+    // Disable Shadow node
+    createRenderRoot() {
+        return this;
+    }
+
+    render() {
+        return  html`<button class="p-burger" @click="${this.toggleVisibility}">
+          <span class="p-burger__link">${this.link}</span>
           <span class="p-burger__icon"><i></i></span>
         </button>`
-    ,
+    }
 
-    methods:{
+    toggleVisibility(){
 
-        toggleVisibility(){
-
-            document.body.classList.toggle('burger-is-open');
-        }
+        document.body.classList.toggle('burger-is-open');
     }
 }

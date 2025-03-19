@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite'
+import * as path from 'path'
 import sassGlobImports from 'vite-plugin-sass-glob-import';
 
 // https://vite.dev/config/
@@ -16,9 +17,10 @@ export default defineConfig(({ command }) =>{
       },
     ],
     resolve: {
-      alias:{
-        vue: 'vue/dist/vue.esm-bundler.js'
-      }
+      alias:[
+          { find: '@', replacement: path.resolve(__dirname, 'assets') },
+          { find: 'vue', replacement: 'vue/dist/vue.esm-bundler.js' }
+      ]
     },
     define: {
       __VUE_OPTIONS_API__: true,
@@ -28,11 +30,18 @@ export default defineConfig(({ command }) =>{
     base: '/build',
     css: {
       devSourcemap: true,
+      preprocessorOptions: {
+        scss: {
+          api: 'modern',
+          silenceDeprecations: ['import'],
+        },
+      },
     },
     server:{
       host: 'localhost',
       strictPort: true,
-      port: 8080
+      port: 8080,
+      cors: { origin: '*' },
     },
     build: {
       target: 'esnext',

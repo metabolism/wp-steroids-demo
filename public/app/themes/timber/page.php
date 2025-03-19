@@ -28,7 +28,12 @@ $context = Timber::context();
 $templates       = array( 'page.twig' );
 
 if ( is_front_page() ){
+
     $context['wp_title'] = get_bloginfo('name');
+
+    global $wp_query;
+    $context['paged'] = $wp_query->query['paged']??1;
+
     $templates = ['front-page.twig', 'home.twig'];
 }
 

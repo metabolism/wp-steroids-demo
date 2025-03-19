@@ -46,10 +46,10 @@
 	{% block seo %}
 		{% include 'partial/seo.twig' %}
 	{% endblock %}
-	{{ function('wp_head') }}
+	{{ wp_head() }}
 </head>
 <body class="is-front is-root-container {{body_class}}">
-<div id="root">
+<x-app id="root">
 	{% block header %}
 		{% include 'partial/header/header.twig' %}
 	{% endblock %}
@@ -65,7 +65,7 @@
 	{% block footer %}
 		{% include 'partial/footer/footer.twig' %}
 	{% endblock %}
-</div>
+</x-app>
 
 {% block javascripts %}
 	{{ vite_entry_script_tags('app') }}
@@ -74,7 +74,7 @@
 	{% endif %}
 {% endblock %}
 
-{{ function('wp_footer') }}
+{{ wp_footer() }}
 
 {% include 'partial/grid-debug.twig' %}
 

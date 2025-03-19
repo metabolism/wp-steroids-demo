@@ -1,5 +1,5 @@
 /*
-* Boilerplate - 2024
+* Boilerplate - 2025
 *
 * Akhela.fr
 
@@ -10,57 +10,29 @@
 * Core
 */
 
-//@use "core/*.scss";
-@use "core/animations";
-@use "core/fonts.scss";
-@use "core/icons.scss";
-@use "core/keyframes.scss";
-@use "core/mqpacker.scss";
+@use "core/*.scss";
 
 /*
 * Layout
 */
 
-//@use "layout/*.scss";
-@use "layout/base.scss";
-@use "layout/button.scss";
-@use "layout/gutemberg.scss";
-@use "layout/responsive.scss";
-@use "layout/text.scss";
-@use "layout/unsupported-browsers.scss";
+@use "layout/*.scss";
 
 
 /*
 * Vendors
 */
 
-//@use "vendor/*.scss";
-@use "vendor/aos.scss";
-@use "vendor/ecoindex.scss";
-@use "vendor/swiper.scss";
-@use "vendor/vuejs.scss";
+@use "vendor/*.scss";
 
 
 /* Partials
 *  Example : cta
 */
-//@use "../../templates/partial/**/*.scss";
-@use "../../templates/partial/burger/burger";
-@use "../../templates/partial/cta/cta";
-@use "../../templates/partial/footer/footer";
-@use "../../templates/partial/form/form";
-@use "../../templates/partial/header/header";
-@use "../../templates/partial/menu/menu";
-@use "../../templates/partial/youtube/youtube";
+@use "../../templates/partial/**/*.scss";
 
 
 /* Blocks
 *  Example : hero
 */
-//@use "../../templates/block/**/*.scss";
-@use "../../templates/block/carousel/carousel";
-@use "../../templates/block/contact/contact";
-@use "../../templates/block/dropdown/dropdown";
-@use "../../templates/block/hero/hero";
-@use "../../templates/block/toggles/toggles";
-@use "../../templates/block/video/video";
+@use "../../templates/block/**/*.scss";

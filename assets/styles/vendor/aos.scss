@@ -2,7 +2,7 @@
 @use "sass:list";
 @use "sass:string";
 
-on-scroll, [v-on-scroll]{
+x-on-scroll:not([style]){
 	visibility: hidden;
 	.acf-block-preview &{ visibility: visible }
 }

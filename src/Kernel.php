@@ -6,17 +6,12 @@
  * v1.2
  */
 
-use Timber\Factory\PostFactory;
-use Timber\Image;
-use Timber\ImageHelper;
+
 use Timber\Timber;
 use Timber\URLHelper;
-use Twig\Runtime\EscaperRuntime;
+use Twig\Extra\Intl\IntlExtension;
 
 abstract class Kernel extends \Timber\Site {
-
-    private $manifest;
-    private $translations;
 
     private $options;
 
@@ -41,16 +36,10 @@ abstract class Kernel extends \Timber\Site {
 
         add_action( 'init', [$this, 'maintenance']);
         add_action( 'init', [$this, 'redirect']);
-        add_action( 'init', [$this, 'get_translations']);
 
         add_filter( 'timber/context', [$this, 'addToContext'] );
-        add_filter( 'timber/twig', [$this, 'addToTwig'] );
+        add_filter( 'timber/loader/twig', [$this, 'addTwigExtensions'] );
         add_filter( 'block_render_callback', [$this, 'renderBlock']);
-
-        if( file_exists(__DIR__.'/../public/build/.vite/manifest.json'))
-            $this->manifest = json_decode(file_get_contents(__DIR__.'/../public/build/.vite/manifest.json'), true);
-
-        add_filter('block_editor_settings_theme_css', [$this, 'block_editor_settings_theme_css']);
 
         parent::__construct();
     }
@@ -132,35 +121,9 @@ abstract class Kernel extends \Timber\Site {
     }
 
     /**
-     * @return string
-     */
-    function block_editor_settings_theme_css() {
-
-        $entry = $this->manifest["assets/styles/app.scss"]['file']??false;
-
-        if( !$entry ){
-
-            if( WP_DEBUG )
-                return "http://localhost:8080/build/assets/styles/app.scss";
-            else
-                return '';
-        }
-
-        $path = '/build/'.$entry;
-
-        if( str_starts_with($path, 'http') )
-            return $path;
-
-        if( is_multisite() )
-            return network_home_url($path);
-        else
-            return home_url($path);
-    }
-
-    /**
      * @return false|int|mixed|string|null
      */
-    public static function get_post_id() {
+    public static function getPostId() {
 
         if ( $post_id = get_the_ID() )
             return $post_id;
@@ -213,12 +176,30 @@ abstract class Kernel extends \Timber\Site {
         }
 
         $context = Timber::context();
+        $block_context = self::getBlockContext( $block, self::getPostId() );
 
-        if( $id = self::get_post_id() )
-            $context['post'] = Timber::get_post($id);
+        $context = array_merge( $context, $block_context );
 
-        //todo: optimize to use $block['data']??
-        $context['props'] = get_fields();
+        // Render the block.
+        $name = str_replace('_', '-', str_replace('acf/', '', $block['name']??''));
+
+        Timber::render( 'block/'.$name.'/'.$name.'.twig', $context );
+    }
+
+    /**
+     * @param $block
+     * @param $post_id
+     * @param $is_preview
+     * @return array
+     */
+    public static function getBlockContext($block, $post_id=false, $is_preview=false)
+    {
+        $context = [];
+
+        if( $post_id )
+            $context['post'] = Timber::get_post($post_id);
+
+        $context['props'] = get_fields($block['id']);
 
         // Store field values.
         $context['block'] = $block;
@@ -228,23 +209,7 @@ abstract class Kernel extends \Timber\Site {
         $context['is_admin'] = is_admin();
         $context['is_front_page'] = is_front_page();
 
-        // Render the block.
-        $name = str_replace('_', '-', str_replace('acf/', '', $block['name']??''));
-
-        Timber::render( 'block/'.$name.'/'.$name.'.twig', $context );
-    }
-
-    private function get_translations()
-    {
-        if( $translations = $this->options->get('translations') )
-        {
-            $this->translations = [];
-            foreach ($translations as $translation)
-            {
-                $key = sanitize_title($translation['key']);
-                $this->translations[$key] = $translation['translation'];
-            }
-        }
+        return $context;
     }
 
     /** This is where you add some context
@@ -253,10 +218,22 @@ abstract class Kernel extends \Timber\Site {
      */
     public function addToContext( $context ) {
 
+        global $_config;
+
         $context['environment'] = WP_ENV;
         $context['current_url'] = URLHelper::get_current_url();
-        $context['blog'] = $this;
-        $context['options'] = $this->options;
+        $context['blog']        = $this;
+        $context['options']     = $this->options;
+        $context['paged']       = get_query_var('paged', 1);
+
+        $context['menu'] = [];
+
+        $menus = $_config->get('menu.register',[]);
+
+        foreach ($menus as $key=>$config){
+
+            $context['menu'][$key] = Timber::get_menu($key);
+        }
 
         if( is_archive() ){
 
@@ -275,965 +252,27 @@ abstract class Kernel extends \Timber\Site {
         return $context;
     }
 
-    /**
-     * @param $entryName
-     * @return string
-     */
-    public function renderLinkTags($entryName) {
-
-        $entry = $this->manifest["assets/styles/".$entryName.".scss"]['file']??false;
-
-        if( empty($entry) ){
-
-            if( WP_DEBUG )
-                return "<link rel='stylesheet' href='http://localhost:8080/build/assets/styles/{$entryName}.scss' type='text/css' media='all' />";
-            else
-                return '';
-        }
-
-        return "<link rel='stylesheet' href='/build/{$entry}' type='text/css' media='all' />";
-    }
-
-    /**
-     * @param $entryName
-     * @return string
-     */
-    public function renderScriptTags($entryName ) {
-
-        $entry = $this->manifest["assets/scripts/".$entryName.".js"]['file']??false;
-
-        if( !$entry && WP_DEBUG)
-            return "<script type='module' src='http://localhost:8080/build/@vite/client'></script>".
-                   "<script type='module' src='http://localhost:8080/build/assets/scripts/{$entryName}.js'></script>";
-
-        return "<script type='text/javascript' src='/build/{$entry}' defer></script>";
-    }
-
-    /**
-     * @param $entryName
-     * @param $version
-     * @return false|mixed
-     */
-    public function asset($entryName, $version=0) {
-
-        if( str_starts_with($entryName, 'http') )
-            return $entryName;
-
-        $url = '/static/' . $entryName;
-
-        if( !file_exists(__DIR__.'/../public'.$url) )
-            return '';
-
-        if( $version )
-            $url .= (str_contains($url, '?') ? '&v=' : '?v=' ).$version;
-
-        if( is_multisite() )
-            return network_home_url($url);
-        else
-            return home_url($url);
-    }
-
-    /**
-     * @param $object
-     * @param $property
-     * @param $value
-     */
-    public function assign($object, $property, $value) {
-
-       if( is_object($object) )
-           $object->$property = $value;
-
-       return $object;
-    }
-
-    /**
-     * @param $src
-     * @param $width
-     * @param $height
-     * @param $sources
-     * @param $alt
-     * @param $loading
-     * @return string
-     */
-    public function generateFigure($src, $width, $height=0, $sources=[], $alt=false, $loading='lazy') {
-
-        $post_id = false;
-        $html = '';
-
-        if( $src instanceof Image )
-            $post_id = $src->id;
-        elseif( is_array($src) )
-            $post_id = $src['ID']??false;
-        elseif( is_int($src) )
-            $post_id = $src;
-
-        if( $post_id ){
-
-            $post = get_post($post_id);
-
-            $image = $this->generatePicture($src, $width, $height, $sources, $alt, $loading);
-            $html = '<figure class="figure'.(strlen($post->post_excerpt)?' has-caption':'').'">';
-            $html .= $image;
-
-            if( strlen($post->post_excerpt) )
-                $html .= '<figcaption>'.$post->post_excerpt.'</figcaption>';
-
-            $html .= '</figure>';
-        }
-
-        return $html;
-    }
-
-    /**
-     * @param $width
-     * @param int $height
-     * @return string
-     */
-    public function generatePlaceholder($width, $height=0) {
-
-        $params = '';
-
-        if( !$width ){
-
-            $params = '?text=0x'.$height;
-            $width = $height;
-        }
-
-        if( !$height ){
-
-            $params = '?text='.$width.'x0';
-            $height = $width;
-        }
-
-        $height = !$height?$width:$height;
-        $width = !$width?$height:$width;
-
-        return 'https://placehold.co/'.$width.'x'.$height.$params;
-    }
-
-    /**
-     * @param $src
-     * @param $width
-     * @param int $height
-     * @param string $crop
-     * @return string
-     */
-    public function resizeImage($src, $width, $height=0, $crop='center') {
-
-        $debug = ($_GET['debug']??false) == 'image' && defined('WP_DEBUG') && WP_DEBUG;
-
-        if( $debug )
-            return $this->generatePlaceholder($width, $height);
-        else
-            return ImageHelper::resize($src, $width, $height, $crop);
-    }
-
-    /**
-     * @param $image
-     * @param $width
-     * @param int $height
-     * @param bool $ext
-     * @return string
-     */
-    public function cropImage($image, $width, $height=0, $ext=false) {
-
-        $post_id = false;
-        $debug = ($_GET['debug']??false) == 'image' && defined('WP_DEBUG') && WP_DEBUG;
-        $crop = 'center';
-
-        if( $image instanceof Image )
-            $post_id = $image->id;
-        elseif( is_array($image) )
-            $post_id = $image['ID']??false;
-        elseif( is_int($image) )
-            $post_id = $image;
-        elseif( is_string($image) )
-            $image = ['url'=>$image];
-
-        if( $post_id ){
-
-            $src = wp_get_original_image_path($post_id);
-            if( !file_exists($src) )
-                return '';
-
-            if( $_crop = get_post_meta($post_id, 'crop', true) )
-                $crop = $_crop;
-
-            if( !is_array($image) or !isset($image['url'], $image['alt'], $image['mime_type']) ){
-
-                $attachment = get_post( $post_id );
-
-                $image = ['url'=>wp_get_attachment_url( $attachment->ID )];
-            }
-        }
-
-        if( !$image )
-            return '';
-
-        $src = $ext == 'webp' && function_exists('imagewebp') ? ImageHelper::img_to_webp($image['url']) : $image['url'];
-
-        return $debug ? $this->generatePlaceholder($width, $height) : $this->resizeImage($src, $width, $height, $crop);
-    }
-
-    /**
-     * @param $image
-     * @param $width
-     * @param $height
-     * @param $sources
-     * @param $alt
-     * @param $loading
-     * @return string
-     */
-    public function generatePicture($image, $width, $height=0, $sources=[], $alt=false, $loading='lazy') {
-
-        $post_id = false;
-        $debug = ($_GET['debug']??false) == 'image' && defined('WP_DEBUG') && WP_DEBUG;
-        $crop = 'center';
-
-        if( $image instanceof Image )
-            $post_id = $image->id;
-        elseif( is_array($image) )
-            $post_id = $image['ID']??false;
-        elseif( is_int($image) )
-            $post_id = $image;
-
-        if( isset($sources['lazy']) ){
-
-            if( !$sources['lazy'] )
-                $loading = 'eager';
-
-            unset( $sources['lazy'] );
-        }
-
-        if( isset($sources['alt']) ){
-
-            $alt = $sources['alt'];
-            
-            unset( $sources['alt'] );
-        }
-
-        if( $post_id ){
-
-            $src = wp_get_original_image_path($post_id);
-            if( !file_exists($src) )
-                return '';
-
-            if( $_crop = get_post_meta($post_id, 'crop', true) )
-                $crop = $_crop;
-
-            if( !is_array($image) or !isset($image['url'], $image['alt'], $image['mime_type']) ){
-
-                $attachment = get_post( $post_id );
-
-                $image = [
-                    'url' => wp_get_attachment_url( $attachment->ID ),
-                    'alt' => get_post_meta( $attachment->ID, '_wp_attachment_image_alt', true ),
-                    'mime_type' => $attachment->post_mime_type
-                ];
-            }
-        }
-
-        if( !$image )
-            return '';
-
-        $image['alt'] = htmlspecialchars($alt?:$image['alt'], ENT_QUOTES, 'UTF-8');
-
-        $ext = function_exists('imagewebp') ? 'webp' : null;
-        $mime = function_exists('imagewebp') ? 'image/webp' : $image['mime_type'];
-
-        $html = '<picture class="responsive-picture">';
-
-        if($image['mime_type'] == 'image/svg+xml' || $image['mime_type'] == 'image/svg' || $image['mime_type'] == 'image/gif' ){
-
-            $img_src = $debug ? $this->generatePlaceholder($width, $height) : $image['url'];
-            $html .= '<img loading="'.$loading.'" src="'.$img_src.'" alt="'.$image['alt'].'" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
-        }
-        else {
-
-            $webp_src = $ext ? ImageHelper::img_to_webp($image['url']) : false;
-
-            if ($sources && is_array($sources)) {
-
-                foreach ($sources as $media => $size) {
-
-                    if (is_int($media))
-                        $media = 'max-width: ' . $media . 'px';
-
-                    $target_width = $size[0] ?? 0;
-                    $target_height = $size[1] ?? 0;
-
-                    if ( $webp_src ) {
-
-                        $url = $this->resizeImage($webp_src, $size[0] ?? 0, $size[1] ?? 0, $crop);
-
-                        if( ($target_width > 0 && $target_width < 960 && $target_height < 960) || ($target_height > 0 && $target_height < 960 && $target_width < 960) ) {
-
-                            $url_2x = $this->resizeImage($webp_src, $target_width * 2, $target_height * 2, $crop);
-                            $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, ' . $url_2x . ' 2x" type="' . $mime . '"/>';
-                        }
-                        else{
-
-                            $html .= '<source media="(' . $media . ')" srcset="' . $url . '" type="' . $mime . '"/>';
-                        }
-                    }
-
-                    $url = $this->resizeImage($image['url'], $size[0] ?? 0, $size[1] ?? 0, $crop);
-
-                    if( ($target_width > 0 && $target_width < 960 && $target_height < 960) || ($target_height > 0 && $target_height < 960 && $target_width < 960) ){
-
-                        $url_2x = $this->resizeImage($image['url'], $target_width*2, $target_height*2, $crop);
-                        $html .= '<source media="(' . $media . ')" srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="' . $image['mime_type'] . '"/>';
-                    }
-                    else{
-
-                        $html .= '<source media="(' . $media . ')" srcset="' . $url . '" type="' . $image['mime_type'] . '"/>';
-                    }
-                }
-            }
-
-            if ( $webp_src ) {
-
-                $url = $this->resizeImage($webp_src, $width, $height, $crop);
-
-                if( ( $width> 0 && $width < 960 && $height < 960 ) || ( $height > 0 && $height < 960 && $width < 960 ) ){
-
-                    $url_2x = $this->resizeImage($webp_src, $width*2, $height*2, $crop);
-                    $html .= '<source srcset="' . $url . ' 1x, '.$url_2x.' 2x" type="image/webp"/>';
-                }
-                else{
-
-                    $html .= '<source srcset="' . $url . '" type="image/webp"/>';
-                }
-            }
-
-            $url = $this->resizeImage($image['url'], $width, $height, $crop);
-
-            $au = ImageHelper::analyze_url($url);
-            $upload_dir = wp_upload_dir();
-
-            if( !$image_info = getimagesize($upload_dir['basedir'].$au['subdir'].'/'.$au['basename']) )
-                return '';
-
-            $html .= '<img loading="' . $loading . '" src="' . $url . '" alt="' . $image['alt'] . '" '.($image_info[0]?'width="'.$image_info[0].'"':'').' '.($image_info[1]?'height="'.$image_info[1].'"':'').'/>';
-        }
-
-        $html .='</picture>';
-
-        return $html;
-    }
-
-    /**
-     * @param $text
-     * @param array $params
-     * @return string
-     */
-    public function translate($text, $params=[])
-    {
-        $key = sanitize_title($text);
-        $params = (array)$params;
-
-        if( isset($this->translations[$key]) ){
-
-            return vsprintf($this->translations[$key], $params);
-        }
-        else{
-
-            $debug = ($_GET['debug']??false) == 'translation' && defined('WP_DEBUG') && WP_DEBUG;
-
-            if( $debug )
-                return '{{'.htmlspecialchars($text).'}}';
-
-            return vsprintf($text, $params);
-        }
-    }
-
-    /**
-     * Email string verification.
-     *
-     * @param        $text
-     * @return mixed
-     */
-    public function protectEmail($text)
-    {
-        if( !$text )
-            return;
-
-        preg_match_all( '/<a (.*)href="mailto:([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})"(.*)>(.*)<\/a>/', $text, $potentialEmails, PREG_SET_ORDER );
-
-        $potentialEmailsCount = count( $potentialEmails );
-
-        for ( $i = 0; $i < $potentialEmailsCount; $i++ )
-        {
-            $potentialEmail = $potentialEmails[$i];
-
-            if ( filter_var( $potentialEmail[2], FILTER_VALIDATE_EMAIL ) )
-            {
-                $email = $potentialEmail[2];
-                $email = explode( '@', $email );
-
-                if( filter_var( $potentialEmail[4], FILTER_VALIDATE_EMAIL ) )
-                    $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="">@</email>', $text );
-                else
-                    $text = str_replace( $potentialEmail[0], '<email ' . $potentialEmail[1] .$potentialEmail[3] . ' name="' . $email[0] . '" domain="' . $email[1] . '" text="'.$potentialEmail[4].'">@' . $potentialEmail[4] . '</email>', $text );
-            }
-        }
-
-        preg_match_all( '/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6})/', $text, $potentialEmails, PREG_SET_ORDER );
-
-        $potentialEmailsCount = count( $potentialEmails );
-
-        for ( $i = 0; $i < $potentialEmailsCount; $i++ )
-        {
-            if ( filter_var( $potentialEmails[$i][0], FILTER_VALIDATE_EMAIL ) )
-            {
-                $email = $potentialEmails[$i][0];
-                $email = explode( '@', $email );
-
-                $text = str_replace( $potentialEmails[$i][0], '<email name="' . $email[0] . '" domain="' . $email[1] . '" text="">@' . $email[0] . '</email>', $text );
-            }
-        }
-
-        return new \Twig\Markup($text, 'UTF-8');;
-    }
-
-
-    /**
-     * Returns the video ID of a youtube video.
-     *
-     * @param $url
-     * @return string
-     */
-    public function youtubeID($url)
-    {
-        preg_match( '/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&">]+)/', $url, $matches );
-
-        return count( $matches ) > 1 ? $matches[1] : '';
-    }
-
-
-    /**
-     * Returns the video ID of a vimeo video.
-     *
-     * @param $url
-     * @return string
-     */
-    public function vimeoID($url)
-    {
-        preg_match( "/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:player\.)?vimeo\.com\/([0-9]{6,11})[?]?.*/", $url, $matches );
-        return count( $matches ) > 1 ? $matches[1] : '';
-    }
-
-
-    /**
-     * @param $text
-     * @return mixed
-     */
-    public function encode($text)
-    {
-        return substr($text, 0,1).base64_encode(str_replace('@','$', $text));
-    }
-
-    /**
-     * @return string
-     */
-    public function formatPhone($text)
-    {
-        return chunk_split($text, 2, ' ');
-    }
-
-    /**
-     * @return string
-     * @throws \Twig\Error\RuntimeError
-     */
-    public function clean($text)
-    {
-        if( !is_string($text) )
-            return "";
-
-        $text = trim(strip_tags(str_replace("\n"," ", str_replace("\r"," ", str_replace("\n\n"," ", $text)))));
-        $escaper = new EscaperRuntime();
-
-        return $escaper->escape($text);
-    }
-
-    /**
-     * @param $text
-     * @return \Twig\Markup
-     */
-    public function spaceToSpan($text)
-    {
-        $text = explode(' ', $text);
-        $html = '<span>'.implode('</span><span>', $text).'</span>';
-
-        return new \Twig\Markup($html, 'UTF-8');
-    }
-
-    /**
-     * @param $text
-     * @return \Twig\Markup
-     */
-    public function lineBreakToP($text)
-    {
-        $text = explode("\n", $text);
-        $html = '<p>'.implode('</p><p>', array_filter($text)).'</p>';
-        $html = str_replace("<p>\r</p>", '', $html);
-
-        return new \Twig\Markup($html, 'UTF-8');
-    }
-
-    /**
-     * @param $text
-     * @return \Twig\Markup
-     */
-    public function lineBreakToSpan($text)
-    {
-        $text = explode("\n", $text);
-        $html = '<span>'.implode('</span><span>', array_filter($text)).'</span>';
-        $html = str_replace("<span>\r</span>", '', $html);
-
-        return new \Twig\Markup($html, 'UTF-8');
-    }
-
-
-    /**
-     * Returns a proper url
-     *
-     * @param $url
-     * @param bool $full
-     * @return string
-     */
-    public function parseUrl($url, $full=true)
-    {
-        $parsed_url = parse_url($url);
-
-        $scheme   = isset($parsed_url['scheme']) ? $parsed_url['scheme'] . '://' : 'https://';
-        $host     = $parsed_url['host'] ?? '';
-        $port     = isset($parsed_url['port']) ? ':' . $parsed_url['port'] : '';
-        $user     = $parsed_url['user'] ?? '';
-        $pass     = isset($parsed_url['pass']) ? ':' . $parsed_url['pass']  : '';
-        $pass     = ($user || $pass) ? "$pass@" : '';
-        $path     = $parsed_url['path'] ?? '';
-        $query    = isset($parsed_url['query']) ? '?' . $parsed_url['query'] : '';
-        $fragment = isset($parsed_url['fragment']) ? '#' . $parsed_url['fragment'] : '';
-
-        if( $full )
-            return $scheme.$user.$pass.$host.$port.$path.$query.$fragment;
-        else
-            return str_replace('www.', '', empty($host)?$path:$host);
-    }
-
-    /**
-     * @param $objects
-     * @param $attrs
-     * @return mixed
-     * @internal param $text
-     */
-    public function bind($objects, $attrs)
-    {
-        $binded_objects = [];
-        $objects = (array)$objects;
-
-        foreach ($objects as $object)
-        {
-            if( is_array($attrs) )
-            {
-                $binded_object = [];
-                foreach ($attrs as $dest=>$source)
-                {
-                    if( is_object($object)){
-
-                        $method = 'get'.ucfirst($attrs);
-                        $binded_objects[$dest] = method_exists($object,$method)?$object->$method(): false;
-                    }
-                    else{
-
-                        $binded_object[$dest] = isset($object[$source]) ? $object[$source] : false;
-                    }
-                }
-
-                $binded_objects[] = array_filter($binded_object);
-            }
-            else
-            {
-                if( is_object($object)){
-
-                    $method = 'get'.ucfirst($attrs);
-                    $binded_objects[] = method_exists($object,$method)?$object->$method(): false;
-                }
-                else
-                    $binded_objects[] = isset($object[$attrs]) ? $object[$attrs] : false;
-            }
-        }
-
-        return array_filter($binded_objects);
-    }
-
-    /**
-     * @param $object
-     * @return string
-     */
-    public function generateTable($object){
-
-        $html = '<table>';
-
-        if( !empty($object['caption']) )
-            $html .= '<caption>'.$object['caption'].'</caption>';
-
-        if( !empty($object['header']) ){
-
-            $html .= '<thead><tr>';
-
-            foreach ($object['header'] as $col){
-                $html .= '<th>'.$col['c'].'</th>';
-            }
-
-            $html .= '</tr></thead>';
-        }
-
-        $html .= '<tbody>';
-
-        foreach ($object['body'] as $row){
-
-            $html .= '<tr>';
-
-            foreach ($row as $col)
-                $html .= '<td>'.$col['c'].'</td>';
-
-            $html .= '</tr>';
-        }
-
-        $html .= '</tbody></table>';
-
-        return $html;
-    }
-
-    /**
-     * @param $string
-     * @return false|string
-     */
-    public function encrypt($string){
-
-        return openssl_encrypt($string, "AES-128-CTR", getenv('APP_SECRET'), 0, '1234567891011121');
-    }
-
-    /**
-     * @param $string
-     * @return false|string
-     */
-    public function nonce($string){
-
-        return wp_create_nonce($string);
-    }
-
-    /**
-     * @param $page
-     * @param $by
-     * @return false|string
-     */
-    public function getPermalink($page, $by=false )
-    {
-        switch ( $by ){
-
-            case 'state':
-
-                if( !function_exists('get_page_by_state') )
-                    return false;
-
-                $page = get_page_by_state($page);
-                break;
-
-            case 'path':
-
-                $page = get_page_by_path($page);
-                break;
-
-            case 'title':
-
-                $page = get_page_by_title($page);
-                break;
-
-            case 'slug':
-
-                if( !is_array($page) or count($page) != 2 )
-                    return false;
-
-                $post_ids = get_posts([
-                    'name'   => $page[0],
-                    'post_type'   => $page[1],
-                    'numberposts' => 1,
-                    'fields' => 'ids'
-                ]);
-
-                if( count($post_ids) )
-                    $page = $post_ids[0];
-        }
-
-        if( $page ){
-
-            $link = get_permalink($page);
-
-            if( !is_string($link) )
-                return false;
-
-            return $link;
-        }
-        else
-            return false;
-    }
-
-    /**
-     * @param $post
-     * @param $name
-     * @return bool
-     */
-    public function hasBlock($post, $name=false){
-
-        if( !$post || !$post->post_content || !has_blocks($post) )
-            return false;
-
-        if( !$name )
-            return true;
-
-        $blocks = parse_blocks($post->post_content);
-
-        foreach ($blocks as $block){
-
-            if( $block['blockName'] == $name || $block['blockName'] == 'acf/'.$name)
-                return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $post
-     * @param bool $field
-     * @return mixed
-     */
-    public function getFirstBlock($post, $field=false){
-
-        $blocks = $this->getBlocks($post);
-
-        if( !$field )
-            return $blocks[0]['attrs']??false;
-
-        return $blocks[0]['attrs']['data'][$field]??null;
-    }
-
-    /**
-     * @param $hex
-     * @return bool
-     */
-    function isColorDark($hex)
-    {
-        $average = 381; // range 1 - 765
-
-        if(strlen(trim($hex)) == 4)
-            $hex = "#" . substr($hex,1,1) . substr($hex,1,1) . substr($hex,2,1) . substr($hex,2,1) . substr($hex,3,1) . substr($hex,3,1);
-
-        return hexdec(substr($hex,1,2))+hexdec(substr($hex,3,2))+hexdec(substr($hex,5,2)) < $average;
-    }
-
-    /**
-     * @param WPS_Post $post
-     * @param $taxonomy
-     * @return int|string|null
-     */
-    function getPostPositionInTaxonomy($post, $taxonomy ) {
-
-        if( !$post instanceof \Timber\Post )
-            return null;
-
-        $terms = wp_get_post_terms( $post->id, $taxonomy );
-
-        if ( !empty( $terms ) && !is_wp_error( $terms ) ) {
-
-            $term_id = $terms[0]->term_id;
-
-            $args = array(
-                'post_type' => $post->post_type,
-                'posts_per_page' => -1,
-                'tax_query' => array(
-                    array(
-                        'taxonomy' => $taxonomy,
-                        'field'    => 'term_id',
-                        'terms'    => $term_id,
-                    ),
-                ),
-                'fields'  => 'ids'
-            );
-
-            $post_ids = get_posts( $args );
-
-            $position = array_search( $post->id, $post_ids );
-
-            if ( $position !== false )
-                return $position + 1;
-        }
-
-        return null;
-    }
-
-    /**
-     * @param $post
-     * @return array
-     */
-    public function getBlocks($post){
-
-        if( !$post || !$post->post_content || !has_blocks($post) )
-            return [];
-
-        return parse_blocks($post->post_content);
-    }
-
-    public function enqueue_contact_form_scripts(){
-
-        if ( function_exists( 'wpcf7_enqueue_scripts' ) )
-            wpcf7_enqueue_scripts();
-
-        if ( function_exists( 'wpcf7_enqueue_styles' ) )
-            wpcf7_enqueue_styles();
-    }
-
-    /**
-     * Generate transparent pixel base64 image
-     * @param $w
-     * @param $h
-     * @return string
-     */
-    public function generatePixel($w = 1, $h = 1) {
-
-        ob_start();
-
-        if( $h == 0 )
-            $h = $w;
-        elseif( $w == 0 )
-            $w = $h;
-
-        $img = imagecreatetruecolor($w, $h);
-        imagetruecolortopalette($img, false, 1);
-        imagesavealpha($img, true);
-        $color = imagecolorallocatealpha($img, 0, 0, 0, 127);
-        imagefill($img, 0, 0, $color);
-        imagepng($img, null, 9);
-        imagedestroy($img);
-
-        $imagedata = ob_get_contents();
-        ob_end_clean();
-
-        return 'data:image/png;base64,' . base64_encode($imagedata);
-    }
-
-    /**
-     * @param $picture
-     * @return string
-     */
-    public function placeholder($picture){
-
-        if( empty($picture) )
-            $picture = '<span class="image-placeholder"></span>';
-
-        return $picture;
-    }
-
-    /**
-     * @param $file
-     * @param int $max_w
-     * @param int $max_h
-     * @return string
-     */
-    public function generateLottiePlaceholder($file, $max_w=0, $max_h=0){
-
-        $json = json_decode(file_get_contents($file), true);
-        $w = $json['w']??800;
-        $h = $json['h']??600;
-
-        return '<img src="'.$this->generatePixel($w, $h).'" style="'.($max_h?'max-height:'.$max_h.'px':'').($max_w?';max-width:'.$max_w.'px':'').'"/>';
-    }
-
-    /**
-     * @param $state
-     * @return object|bool
-     */
-    public function getPageByState($state){
-
-        $postFactory = new PostFactory();
-
-        if( $post = get_page_by_state($state) )
-            return $postFactory->from($post);
-
-        return false;
-    }
-
-    /**
-     * @return false|mixed
-     */
-    public function getArchivePostType(){
-
-        global $wp_query;
-
-        return $wp_query->query['post_type']??false;
-    }
-
     /** This is where you can add your own functions to twig.
      *
      * @param Twig_Environment $twig get extension.
      */
-    public function addToTwig( $twig ) {
+    public function addTwigExtensions( $twig ) {
 
+        $twig->addExtension( new IntlExtension());
         $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
 
-        $twig->addFunction( new Twig\TwigFunction( 'vite_entry_link_tags', [$this, 'renderLinkTags'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'vite_entry_script_tags', [$this, 'renderScriptTags'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'enqueue_contact_form_scripts', [$this, 'enqueue_contact_form_scripts'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'asset', [$this, 'asset'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'nonce', [$this, 'nonce'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'archive_url', 'get_post_type_archive_link' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'search_url', 'get_search_link' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'post_query', function ($query){ return Timber::get_posts($query); }) );
-        $twig->addFunction( new Twig\TwigFunction( 'term_query', function ($query){ return Timber::get_terms($query); }) );
-        $twig->addFunction( new Twig\TwigFunction( 'get_object_terms', 'wp_get_object_terms') );
-        $twig->addFunction( new Twig\TwigFunction( 'post_url',  [$this, 'getPermalink']) );
-        $twig->addFunction( new Twig\TwigFunction( 'permalink', 'get_permalink' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'calculated_carbon', 'get_calculated_carbon' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_front_page',  'is_front_page' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_404',  'is_404' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_privacy_policy',  'is_privacy_policy' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'archive_post_type',  [$this, 'getArchivePostType'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_archive',  'is_archive' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_sticky',  'is_sticky' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'archive_title',  'get_the_archive_title' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_singular',  'is_singular' ) );
-        $twig->addFunction( new Twig\TwigFunction( 'get_page_by_state',  [$this, 'getPageByState'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'get_position_in_tax',  [$this, 'getPostPositionInTaxonomy'] ) );
-        $twig->addFunction( new Twig\TwigFunction( 'is_dark',  [$this, 'isColorDark'] ) );
+        $folder = __DIR__.'/Twig/';
+        $files = scandir($folder);
 
-        $twig->addFilter( new Twig\TwigFilter( 'assign', [$this, 'assign'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'intval', 'intval' ) );
-        $twig->addFilter( new Twig\TwigFilter( 'placeholder', [$this, 'placeholder'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'has_block', [$this, 'hasBlock'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'first_block', [$this, 'getFirstBlock'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'get_blocks', [$this, 'getBlocks'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'lottie_placeholder', [$this, 'generateLottiePlaceholder'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'handle', 'sanitize_title' ) );
-        $twig->addFilter( new Twig\TwigFilter( 'table', [$this, 'generateTable'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'picture', [$this, 'generatePicture'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'crop', [$this, 'cropImage'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'figure', [$this, 'generateFigure'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 't', [$this,'translate'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'ucfirst', 'ucfirst' ) );
-        $twig->addFilter( new Twig\TwigFilter( 'encrypt', [$this,'encrypt'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'protect', [$this,'protectEmail'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'encode', [$this,'encode'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'bind', [$this,'bind'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'nl2p', [$this,'lineBreakToP'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'nl2span', [$this,'lineBreakToSpan'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'space2span', [$this,'spaceToSpan'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'parse_url', [$this,'parseUrl'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'phone', [$this,'formatPhone'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'youtube_id', [$this, 'youtubeId'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'vimeo_id', [$this, 'vimeoID'] ) );
-        $twig->addFilter( new Twig\TwigFilter( 'clean', [$this, 'clean'] ) );
+        foreach($files as $file){
+
+            if( !in_array($file, ['.','..']) )
+            {
+                $classname = str_replace('.php', '', $file);
+                include_once $folder.'/'.$file;
+                $twig->addExtension( new $classname() );
+            }
+        }
 
         return $twig;
     }

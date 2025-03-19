@@ -21,9 +21,10 @@ global $wp_query;
 $templates = array( 'archive.twig', 'index.twig' );
 
 $context = Timber::context();
-$context['paged'] = (get_query_var('paged')) ? get_query_var('paged') : 1;
+$context['paged'] = max(1, get_query_var('paged',1));
 $context['max_num_pages'] = $wp_query->max_num_pages;
-$context['posts_per_page'] = $default_posts_per_page = get_option( 'posts_per_page' );
+$context['posts_per_page'] = $wp_query->get('posts_per_page')?:get_option( 'posts_per_page' );
+$context['queried_object'] = get_queried_object();
 
 if ( is_category() ) {
     $context['current_category'] = get_query_var( 'cat' );

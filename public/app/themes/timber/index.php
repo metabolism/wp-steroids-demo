@@ -16,8 +16,6 @@
 use Timber\Timber;
 
 $context          = Timber::context();
-$context['foo']   = 'bar';
-
 $templates        = array( 'index.twig' );
 
 if ( is_home() )

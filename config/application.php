@@ -65,6 +65,9 @@ if (!env('WP_ENVIRONMENT_TYPE') && in_array(WP_ENV, ['production', 'staging', 'd
 Config::define('WP_HOME', env('WP_HOME'));
 Config::define('WP_SITEURL', env('WP_SITEURL'));
 
+if( env('WP_DEFAULT_DOMAIN') )
+    Config::define('WP_DEFAULT_DOMAIN', env('WP_DEFAULT_DOMAIN'));
+
 /**
  * Custom Content Directory
  */
@@ -77,6 +80,9 @@ Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_D
  */
 if (env('DB_SSL')) {
     Config::define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
+    if (env('DB_SSL_CA')) {
+        Config::define('MYSQL_SSL_CERT', env('DB_SSL_CA'));
+    }
 }
 
 Config::define('DB_NAME', env('DB_NAME'));
@@ -109,6 +115,24 @@ Config::define('LOGGED_IN_SALT', env('LOGGED_IN_SALT'));
 Config::define('NONCE_SALT', env('NONCE_SALT'));
 
 /**
+ * Define proxy for http request
+ */
+if( $proxy_host = env('WP_PROXY_HOST') ) {
+
+    Config::define('WP_PROXY_HOST', $proxy_host);
+    Config::define('WP_PROXY_PORT', env('WP_PROXY_PORT')?:'8080');
+
+    if( $proxy_username = env('WP_PROXY_USERNAME') ){
+
+        Config::define('WP_PROXY_USERNAME', $proxy_username);
+        Config::define('WP_PROXY_PASSWORD', env('WP_PROXY_PASSWORD')?:'');
+    }
+
+    if( $proxy_bypass_hosts = env('WP_PROXY_BYPASS_HOSTS') )
+        Config::define('WP_PROXY_BYPASS_HOSTS', $proxy_bypass_hosts);
+}
+
+/**
  * Custom Settings
  */
 
@@ -137,6 +161,10 @@ Config::define('DISALLOW_FILE_MODS', true);
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: 10);
 // Increase memory limit
 Config::define('WP_MEMORY_LIMIT', env('WP_MEMORY_LIMIT') ?: '512M');
+// Allow cache
+Config::define('WP_CACHE', env('WP_CACHE') ?? false);
+// Define file system method
+Config::define('FS_METHOD', env('FS_METHOD') ?? 'direct');
 
 /**
  * Redefine cookie name without WordPress

@@ -1,17 +1,14 @@
 <section class="b-toggles">
 	<div class="container">
-		<toggles v-slot:default="{ update, opened }">
+		<x-toggles>
 			{% for item in props.items %}
-				<dropdown title="{{ item.title }}" @toggle="update" :current="{{ loop.index }}" :opened="opened">
-					{% if is_admin %}
-						<a class="c-dropdown__toggle">{{ item.title }}</a>
-						<a class="c-dropdown__toggle">{{ item.title }}</a>
-					{% endif %}
-					<div class="wysiwyg b-dropdown__content">
+				<div class="b-toggles__item">
+					<button class="b-toggles__item-cta js-cta" data-index="{{ loop.index0 }}">{{ item.title }}</button>
+					<div class="wysiwyg b-toggles__item-content js-content">
 						{{ item.description|raw }}
 					</div>
-				</dropdown>
+				</div>
 			{% endfor %}
-		</toggles>
+		</x-toggles>
 	</div>
 </section>

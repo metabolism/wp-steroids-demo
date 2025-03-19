@@ -6,7 +6,9 @@
 }
 
 .edit-post-visual-editor__post-title-wrapper{
-  margin: 0 !important; padding: 20px; font-size: 30px; border-bottom: 1px solid #ddd;
+  margin: 0 !important; padding: 20px; font-size: 30px; border-bottom: 1px solid #ddd; background: #fff;
 }
+
+:root :where(.editor-styles-wrapper)::after{ display: none!important }
 
 #wpadminbar { position: fixed!important; }

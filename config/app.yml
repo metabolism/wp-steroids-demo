@@ -29,6 +29,8 @@ wordpress:
 
   image:
     compression: 95 #on the fly compression ratio
+    svg: true
+    max_size: 1
     resize: #resize image on upload to save server space
       max_width: 1920
       max_height: 2160
@@ -65,30 +67,33 @@ wordpress:
 
   ## Customize WYSIWYG Editor TinyMCE Buttons
   ##https://www.tiny.cloud/docs/advanced/editor-control-identifiers/
-  mce_buttons:
-    - formatselect
-    - bold
-    - italic
-    - underline
-    - sup
-    - strikethrough
-    - superscript
-    - subscript
-    - bullist
-    - numlist
-    - blockquote
-    - hr
-    - table
-    - alignleft
-    - aligncenter
-    - alignright
-    - alignjustify
-    - link
-    - unlink
-    - wp_more
-    - spellchecker
-    - wp_adv
-    - dfw
+  mce:
+    css: '/static/editor_style.css'
+    buttons:
+      - formatselect
+      - bold
+      - italic
+      - underline
+      - sup
+      - strikethrough
+      - superscript
+      - subscript
+      - bullist
+      - numlist
+      - blockquote
+      - hr
+      - table
+      - alignleft
+      - aligncenter
+      - alignright
+      - alignjustify
+      - link
+      - unlink
+      - wp_more
+      - spellchecker
+      - wp_adv
+      - dfw
+
 
   #editor_style: backoffice.css
 
@@ -112,7 +117,7 @@ wordpress:
   ## Add theme support
   ## https://developer.wordpress.org/reference/functions/add_theme_support/
   theme_support:
-    - disable-layout-styles
+    #- core-block-patterns
     - thumbnail #add thumbnails to post
     #- post-formats:
     #  - video
@@ -567,6 +572,8 @@ wordpress:
   plugins:
     redirection:
       redirection_role: edit_others_posts
+    relevanssi:
+      options_capability: edit_others_posts
 
   #########################
   ##    Optimisations    ##

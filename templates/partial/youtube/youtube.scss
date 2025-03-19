@@ -9,10 +9,10 @@
 	  max-height: 80vh;
   }
 
-  iframe{ position: overlay(); z-index: 1; width: 100%; height: 100% }
+  iframe, a{ position: overlay(); z-index: 1; width: 100%; height: 100% }
 
-  a, youtube{
-    display: block; @include icon('play');
+  a{
+    display: block; @include icon('play'); cursor: pointer;
     &:after{
       content: ""; position: absolute; left: 50%; top: 50%; width: 10rem; height: 10rem;
       border-radius: 50%; background: $c-theme; transform: translate(-50%, -50%);

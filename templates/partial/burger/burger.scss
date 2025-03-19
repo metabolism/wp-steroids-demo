@@ -7,7 +7,10 @@
 	$offset: 800%;
 
 	display: inline-flex; padding: 0; align-items: center;
-	&__link{ margin-right: $space-s; line-height:1 }
+	&__link{
+		margin-right: $space-s; line-height:1;
+		&:empty{ display: none }
+	}
 	&__icon {
 		height:$width; width: $width; cursor: pointer; background: none; border: 0; position: relative;
 		display: inline-block;

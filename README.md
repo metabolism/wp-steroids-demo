@@ -4,13 +4,26 @@ Bedrock is a modern WordPress stack that helps you get started with the best dev
 
 This is a modified version using [Timber](https://fr.wordpress.org/plugins/timber-library/), [WP Steroid](https://github.com/wearemetabolism/wp-steroids). 
 
-This project is designed to bootstrap a custom-made website without using a theme, utilizing custom fields with [ACF](https://www.advancedcustomfields.com) or [Carbon Fields](https://carbonfields.net) instead.
+This project is designed to bootstrap a custom-made website without using a theme.
+
+### Tech Stack
+- Vite for fast development and optimized builds
+- Sass with globbing support for easier imports
+- LitJS for building lightweight and efficient web components
+- Gutenberg Blocks built using ACF or Carbon Fields for a flexible, structured content experience
+
+### Deployment & DevOps
+- Docker configuration for local development and deployment
+- Platform.sh integration for scalable and secure hosting
+- Azure App Service support for cloud-based deployment ( pipeline, nginx configuration and startup script )
+
+## Screenshots
 
 ![](.demo/screenshot.png)
 
 ![](.demo/code.png)
 
-## Features
+## Features from WP Steroids plugin
 
 - Better folder structure
 - YML configuration

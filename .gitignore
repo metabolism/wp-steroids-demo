@@ -25,8 +25,6 @@ public/edition
 
 # Composer
 /vendor
-/package-lock.json
-/composer.lock
 # WP-CLI
 wp-cli.local.yml
 

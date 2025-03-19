@@ -1,5 +1,5 @@
 <section class="b-hero b-hero--{{ block.align_text }}">
-    <div class="container" v-on-scroll="'stack'">
+    <x-on-scroll animation="stack" class="container">
         <h2 class="b-hero__suptitle">{{ props.suptitle }}</h2>
         <h1 class="b-hero__title">{{ props.title|default(post.title|default('Add title'|t)) }}</h1>
         <div class="b-hero__content">{{ props.content|raw }}</div>
@@ -9,5 +9,5 @@
                 {{ props.image|picture(800,200,{'max-width: 480px':[480,350], 'lazy':false})|placeholder }}
             </div>
         {% endif %}
-    </div>
+    </x-on-scroll>
 </section>
