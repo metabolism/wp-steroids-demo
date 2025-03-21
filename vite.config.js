@@ -1,12 +1,17 @@
 import { defineConfig } from 'vite'
 import * as path from 'path'
 import sassGlobImports from 'vite-plugin-sass-glob-import';
+import eslint from 'vite-plugin-eslint';
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) =>{
   return{
     plugins: [
       sassGlobImports(),
+      eslint({
+        cwd: process.cwd(),
+        exclude: [/node_modules/]
+      }),
       {
         name: 'twig',
         handleHotUpdate({ file, server }) {

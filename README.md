@@ -7,12 +7,13 @@ This is a modified version using [Timber](https://fr.wordpress.org/plugins/timbe
 This project is designed to bootstrap a custom-made website without using a theme.
 
 ### Tech Stack
-- Vite for fast development and optimized builds
-- Sass with globbing support for easier imports
-- LitJS for building lightweight and efficient web components
-- Gutenberg Blocks built using ACF or Carbon Fields for a flexible, structured content experience
+- [Vite](https://vitejs.dev/) for fast development and optimized builds
+- [Sass](https://sass-lang.com/) with globbing support for easier imports
+- [LitJS](https://lit.dev/) for building lightweight and efficient web components
+- Gutenberg Blocks built using [ACF](https://www.advancedcustomfields.com/resources/blocks/) or [Carbon Fields](https://docs.carbonfields.net/learn/containers/gutenberg-blocks.html) for a flexible, structured content experience
+- [ESLint](https://eslint.org/) for code quality and consistency
 
-### Deployment & DevOps
+### Deployment & DevOps configurations
 - Docker configuration for local development and deployment
 - Platform.sh integration for scalable and secure hosting
 - Azure App Service support for cloud-based deployment ( pipeline, nginx configuration and startup script )
@@ -93,6 +94,7 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
     - Optionally, you can define `DATABASE_URL` for using a DSN instead of using the variables above (e.g. `mysql://user:password@127.0.0.1:3306/db_name`)
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
 - `WP_HOME` - Full URL to WordPress home (http://wordpress.io)
+- `BUGSNAG_API_KEY` - Error monitoring tool
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
     - Generate with [WordPress salts generator](https://roots.io/salts.html)
 
@@ -130,7 +132,7 @@ If you need to change the url, perform a search & replace in the demo.sql, and e
 1. Edit `/config/app.yml` to edit WordPress configuration ( custom post type, custom taxonomy and so much more )
 1. Edit twig files in `/templates`
 2. Add specific site functions in `/src/Site.php`
-3. Edit page context in `/src/Controller`
+3. Edit theme in `/src/Controller`
 4. Run dev server do rebuild sources
    ```sh
    $ npm run dev-server

@@ -56,7 +56,7 @@ class App extends LitElement {
         this.elements_height = {
             footer: 0,
             header: 0
-        }
+        };
 
         this.$header = this.querySelector('header');
         this.$footer = this.querySelector('footer');
@@ -66,7 +66,7 @@ class App extends LitElement {
 
         if( e ){
 
-            e.target.classList.toggle('is-'+classname)
+            e.target.classList.toggle('is-'+classname);
         }
         else{
 
@@ -75,7 +75,7 @@ class App extends LitElement {
             else
                 this.popin = classname;
 
-            document.body.classList.toggle('has-'+classname)
+            document.body.classList.toggle('has-'+classname);
         }
     }
 
@@ -84,25 +84,25 @@ class App extends LitElement {
         clearTimeout(this.scroll_timer);
 
         if(!document.body.classList.contains('disable-hover'))
-            document.body.classList.add('disable-hover')
+            document.body.classList.add('disable-hover');
 
         this.scroll_timer = setTimeout(function(){
-            document.body.classList.remove('disable-hover')
+            document.body.classList.remove('disable-hover');
         }, 200);
 
-        let scroll = document.documentElement.scrollTop || document.body.scrollTop
-        let sticky = scroll>150
-        let scrolled = scroll>1000
+        const scroll = document.documentElement.scrollTop || document.body.scrollTop;
+        const sticky = scroll>150;
+        const scrolled = scroll>1000;
         let timeout = false;
 
         if( scrolled && !this.scrolled )
-            document.body.classList.add('has-seen-page')
+            document.body.classList.add('has-seen-page');
 
         this.scrolled = scrolled;
 
         if( sticky && sticky !== this.sticky ){
 
-            document.body.classList.add('has-scrolled')
+            document.body.classList.add('has-scrolled');
 
             this.sticky = sticky;
         }
@@ -113,13 +113,13 @@ class App extends LitElement {
                 clearTimeout(timeout);
 
             timeout = setTimeout(function (){
-                document.body.classList.remove('has-seen-page')
-            },300)
+                document.body.classList.remove('has-seen-page');
+            },300);
 
-            document.body.classList.remove('has-scrolled')
-            document.body.classList.remove('has-scrolled--down')
-            document.body.classList.remove('has-scrolled--up')
-            document.body.classList.remove('has-scrolled--changed')
+            document.body.classList.remove('has-scrolled');
+            document.body.classList.remove('has-scrolled--down');
+            document.body.classList.remove('has-scrolled--up');
+            document.body.classList.remove('has-scrolled--changed');
 
             this.sticky = false;
         }
@@ -130,12 +130,12 @@ class App extends LitElement {
 
                 if( this.scroll_down === true ){
 
-                    document.body.classList.add('has-scrolled--up')
+                    document.body.classList.add('has-scrolled--up');
 
                     if( document.body.classList.contains('has-scrolled--down') ){
 
-                        document.body.classList.add('has-scrolled--changed')
-                        document.body.classList.remove('has-scrolled--down')
+                        document.body.classList.add('has-scrolled--changed');
+                        document.body.classList.remove('has-scrolled--down');
                     }
                 }
             }
@@ -143,24 +143,24 @@ class App extends LitElement {
 
                 if( this.scroll_down === false ){
 
-                    document.body.classList.add('has-scrolled--down')
+                    document.body.classList.add('has-scrolled--down');
 
                     if( document.body.classList.contains('has-scrolled--up') ){
 
-                        document.body.classList.add('has-scrolled--changed')
-                        document.body.classList.remove('has-scrolled--up')
+                        document.body.classList.add('has-scrolled--changed');
+                        document.body.classList.remove('has-scrolled--up');
                     }
                 }
             }
 
-            this.scroll_down = scroll > this.scroll_position
+            this.scroll_down = scroll > this.scroll_position;
         }
 
         if( document.documentElement.offsetHeight - window.innerHeight - scroll < this.elements_height.footer && document.body.offsetHeight > window.innerHeight )
         {
             if( !this.sticky_bottom ){
 
-                document.body.classList.add('has-scrolled--bottom')
+                document.body.classList.add('has-scrolled--bottom');
                 this.sticky_bottom = true;
             }
         }
@@ -168,7 +168,7 @@ class App extends LitElement {
 
             if( this.sticky_bottom ){
 
-                document.body.classList.remove('has-scrolled--bottom')
+                document.body.classList.remove('has-scrolled--bottom');
                 this.sticky_bottom = false;
             }
         }
@@ -195,12 +195,12 @@ class App extends LitElement {
 
         if( !browser.satisfies({"internet explorer": ">11", safari: '>=13', chrome: ">=85", firefox: ">=83", edge: ">=84"}) ){
 
-            document.body.classList.add('unsupported-browser')
+            document.body.classList.add('unsupported-browser');
         }
         else{
 
-            document.body.classList.add(browser.getPlatformType(true))
-            document.body.classList.add(browser.getOSName(true))
+            document.body.classList.add(browser.getPlatformType(true));
+            document.body.classList.add(browser.getOSName(true));
         }
     }
 

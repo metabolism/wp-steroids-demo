@@ -43,7 +43,7 @@ export default class OnScroll extends LitElement {
 
         super.connectedCallback();
 
-        let props = {};
+        const props = {};
 
         for (const key in this.constructor.properties)
             props[key] = this[key];
@@ -54,7 +54,7 @@ export default class OnScroll extends LitElement {
 
     disconnectedCallback() {
 
-        super.disconnectedCallback()
+        super.disconnectedCallback();
         this.aos.destroyed();
     }
 };

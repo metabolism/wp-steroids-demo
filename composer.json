@@ -52,6 +52,7 @@
     "platformsh/config-reader": "^2.4",
     "mnsami/composer-custom-directory-installer": "^2.0",
     "kornrunner/blurhash": "^1.2",
+    "bugsnag/bugsnag": "^3.0",
     "twig/intl-extra": "^3.18",
     "timber/timber": "^2.0",
     "metabolism/wp-steroids": "^1.4.0",
@@ -63,7 +64,6 @@
     "wpackagist-plugin/cache-control": "^2.2.5",
     "wpackagist-plugin/cache-enabler": "^1.8.15",
     "wpackagist-plugin/wp-2fa": "^2.3.0",
-    "wpackagist-plugin/bugsnag": "^1.6.3",
     "wpackagist-plugin/duplicate-post": "^4.5",
     "wpackagist-plugin/wp-crontrol": "^1.14.0"
   },

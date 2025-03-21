@@ -7,9 +7,11 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta name="theme-color" content="#fff">
 	<meta name="home-url" content="{{ blog.home_url }}">
-	<link rel="icon" href="{{ asset('images/favicon.svg') }}"/>
-	<link rel="mask-icon" href="{{ asset('images/favicon.svg') }}" color="#000000">
-	<link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
+	{% if asset('images/favicon.svg') %}
+		<link rel="icon" href="{{ asset('images/favicon.svg') }}"/>
+		<link rel="mask-icon" href="{{ asset('images/favicon.svg') }}" color="#000000">
+		<link rel="apple-touch-icon" href="{{ asset('images/favicon.png') }}">
+	{% endif %}
 	{% if options.piwik_account %}
 		<script type="text/javascript">
             (function(window, document, dataLayerName, id) {
@@ -32,7 +34,6 @@
 			})(window,document,'script','dataLayer','{{ options.gtm }}');</script>
 		<!-- End Google Tag Manager -->
 	{% endif %}
-	{% set bugsnag_api_key = blog.option('bugsnag_api_key') %}
 	{% if bugsnag_api_key %}
 		<script type="module">
             import BugsnagPerformance from '//d2wy8f7a9ursnm.cloudfront.net/v1/bugsnag-performance.min.js'

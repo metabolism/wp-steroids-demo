@@ -2,6 +2,6 @@
 	{% if props.cover|default %}
 		<img class="p-youtube__cover" src="{{ props.cover|picture(1280, 720) }}" alt="" loading="lazy" width="1280" height="720"/>
 	{% else %}
-		<img class="p-youtube__cover p-youtube__cover--hosted" src="https://img.youtube.com/vi/{{ props.video|youtube_id }}/maxresdefault.jpg" alt="" loading="lazy" width="1280" height="720"/>
+		<img class="p-youtube__cover p-youtube__cover--hosted" src="https://i1.ytimg.com/vi/{{ props.video|youtube_id }}/maxresdefault.jpg" alt="" loading="lazy" width="1280" height="720"/>
 	{% endif %}
 </x-youtube>

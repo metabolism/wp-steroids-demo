@@ -1,4 +1,4 @@
-let modules = import.meta.glob(["../../templates/**/*.js", "./custom_elements/*.js"], { eager: true });
+const modules = import.meta.glob(["../../templates/**/*.js", "./custom_elements/*.js"], { eager: true });
 
 export default function defineCustomElements() {
 

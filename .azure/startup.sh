@@ -7,6 +7,8 @@ apt update
 apt install libfreetype6-dev libjpeg62-turbo-dev libwebp-dev libpng-dev
 docker-php-ext-configure gd --with-webp --with-jpeg --with-freetype
 docker-php-ext-install gd
+# Install nginx headers more filter
+apt install -y libnginx-mod-http-headers-more-filter
 # Install cron
 apt-get update -qq && apt-get install cron -yqq
 # Starting cron

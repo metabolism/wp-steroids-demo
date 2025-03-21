@@ -47,6 +47,17 @@ $env_files = file_exists($root_dir . '/.env.local')
 }
 
 /**
+ * Load Bugsnag error reporter
+ */
+if( env('BUGSNAG_API_KEY') ){
+
+    define('BUGSNAG_API_KEY', env('BUGSNAG_API_KEY'));
+
+    $bugsnag = Bugsnag\Client::make(env('BUGSNAG_API_KEY'));
+    Bugsnag\Handler::register($bugsnag);
+}
+
+/**
  * Set up our global environment constant and load its config first
  * Default: production
  */
@@ -98,8 +109,35 @@ if (env('DATABASE_URL')) {
 
     Config::define('DB_NAME', substr($dsn->path, 1));
     Config::define('DB_USER', $dsn->user);
-    Config::define('DB_PASSWORD', isset($dsn->pass) ? $dsn->pass : null);
+    Config::define('DB_PASSWORD', $dsn->pass ?? null);
     Config::define('DB_HOST', isset($dsn->port) ? "{$dsn->host}:{$dsn->port}" : $dsn->host);
+}
+
+/**
+ * Using managed identity to fetch MySQL access token
+ */
+if ( env('ENABLE_MYSQL_MANAGED_IDENTITY') ) {
+
+    try {
+
+        if( !file_exists($root_dir . '/.azure/EntraID_Database_Token_Utilities.php') )
+            throw new Exception('EntraID_Database_Token_Utilities.php not found');
+
+        require_once($root_dir . '/.azure/EntraID_Database_Token_Utilities.php');
+
+        if (strtolower(getenv('CACHE_MYSQL_ACCESS_TOKEN')) !== 'true')
+            $dbpassword = EntraID_Database_Token_Utilities::getAccessToken();
+        else
+            $dbpassword = EntraID_Database_Token_Utilities::getOrUpdateAccessTokenFromCache();
+    }
+    catch (Exception $e) {
+
+        $dbpassword = '<dummy-value>';
+
+        error_log($e->getMessage());
+    }
+
+    Config::define('DB_PASSWORD', $dbpassword);
 }
 
 /**
@@ -160,7 +198,8 @@ Config::define('DISALLOW_FILE_MODS', true);
 // Limit the number of post revisions that WordPress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: 10);
 // Increase memory limit
-Config::define('WP_MEMORY_LIMIT', env('WP_MEMORY_LIMIT') ?: '512M');
+Config::define('WP_MEMORY_LIMIT', env('WP_MEMORY_LIMIT') ?: '128M');
+Config::define('WP_MAX_MEMORY_LIMIT', env('WP_MAX_MEMORY_LIMIT') ?: '256M');
 // Allow cache
 Config::define('WP_CACHE', env('WP_CACHE') ?? false);
 // Define file system method

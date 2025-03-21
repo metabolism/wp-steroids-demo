@@ -15,7 +15,7 @@ export default class Burger extends LitElement {
         return  html`<button class="p-burger" @click="${this.toggleVisibility}">
           <span class="p-burger__link">${this.link}</span>
           <span class="p-burger__icon"><i></i></span>
-        </button>`
+        </button>`;
     }
 
     toggleVisibility(){

@@ -9,6 +9,6 @@ export default class Mail extends LitElement {
     };
 
     render() {
-        return  html`<a href="mailto:${this.name}@${this.domain}"><span>${this.text?this.text:this.name+'@'+this.domain}</span></a>`
+        return  html`<a href="mailto:${this.name}@${this.domain}"><span>${this.text?this.text:this.name+'@'+this.domain}</span></a>`;
     }
 }

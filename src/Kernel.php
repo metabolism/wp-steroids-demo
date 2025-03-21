@@ -226,6 +226,9 @@ abstract class Kernel extends \Timber\Site {
         $context['options']     = $this->options;
         $context['paged']       = get_query_var('paged', 1);
 
+        if( defined('BUGSNAG_API_KEY') )
+            $context['bugsnag_api_key'] = BUGSNAG_API_KEY;
+
         $context['menu'] = [];
 
         $menus = $_config->get('menu.register',[]);

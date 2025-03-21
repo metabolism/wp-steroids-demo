@@ -1,7 +1,7 @@
 let supportsPassive = false;
 
 try {
-    let opts = Object.defineProperty({}, 'passive', {
+    const opts = Object.defineProperty({}, 'passive', {
         get: function() {
             supportsPassive = true;
         }
@@ -10,7 +10,7 @@ try {
     window.removeEventListener("testPassive", null, opts);
 } catch (e) {}
 
-let aosPrefixAnimation = (function(){
+const aosPrefixAnimation = (function(){
 
     function lowerCaseEventTypes(prefix) {
         prefix = prefix || '';
@@ -33,8 +33,9 @@ let aosPrefixAnimation = (function(){
             iteration: prefix + 'AnimationIteration'
         };
     }
-    let prefixes = ['webkit', 'Moz', 'O', ''];
-    let style = document.documentElement.style;
+
+    const prefixes = ['webkit', 'Moz', 'O', ''];
+    const style = document.documentElement.style;
 
     if(style.animationName !== undefined)
         return lowerCaseEventTypes();
@@ -58,7 +59,7 @@ let aosPrefixAnimation = (function(){
 
 export default function AOSInterface($el, props){
 
-    let data = {
+    const data = {
         clientY: 0,
         clientX: 0,
         onShow: false,
@@ -81,7 +82,7 @@ export default function AOSInterface($el, props){
     data.delay = parseFloat(String(props.delay).replace('ms','').replace('s',''));
     data.duration = parseFloat(String(props.duration).replace('ms','').replace('s',''));
 
-    let methods = {
+    const methods = {
         mounted() {
             if(
                 (props.phone !== "disabled" && window.innerWidth <= 640) ||
@@ -97,12 +98,12 @@ export default function AOSInterface($el, props){
 
                 if( props.animation === 'increment' ){
 
-                    $el.setAttribute('data-increment', $el.textContent.replace(/ /g, '').replace(',', '.'))
-                    $el.textContent = 0
+                    $el.setAttribute('data-increment', $el.textContent.replace(/ /g, '').replace(',', '.'));
+                    $el.textContent = 0;
                 }
 
                 if( props.setAttribute )
-                    $el.setAttribute('data-'+props.attribute, $el.getAttribute(props.attribute))
+                    $el.setAttribute('data-'+props.attribute, $el.getAttribute(props.attribute));
 
                 methods.listen();
                 data.init = true;
@@ -116,7 +117,7 @@ export default function AOSInterface($el, props){
             if( data.disabled )
                 return;
 
-            let rect = $el.getBoundingClientRect(),
+            const rect = $el.getBoundingClientRect(),
                 scrollLeft = window.pageXOffset || document.documentElement.scrollLeft,
                 scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 
@@ -147,7 +148,7 @@ export default function AOSInterface($el, props){
 
                 $el.animate({
                     transform: `translate(${distance.x/20}px, ${distance.y/20}px`
-                }, {duration: 1000, fill: "forwards"})
+                }, {duration: 1000, fill: "forwards"});
             }
         },
         listen(){
@@ -178,7 +179,7 @@ export default function AOSInterface($el, props){
 
             const duration = (data.duration||1)*1000;
 
-            const start = 0 // Get start and end values
+            const start = 0; // Get start and end values
             const end = parseFloat(el.getAttribute('data-increment'));
             const isInt = end % 1 === 0;
 
@@ -195,7 +196,7 @@ export default function AOSInterface($el, props){
             };
 
             const countDecimals = Math.floor(end) === end ? 0 :(end.toString().split(".")[1].length || 0);
-            const formater = new Intl.NumberFormat(document.documentElement.lang)
+            const formater = new Intl.NumberFormat(document.documentElement.lang);
 
             const loop = () => {
                 let elaps = Date.now() - timeStart;
@@ -204,9 +205,9 @@ export default function AOSInterface($el, props){
                 const step = norm * range; // Calculate the value step
                 curr = start + step; // Increment or Decrement current value
                 const increment = isInt?Math.trunc(curr):curr.toFixed(countDecimals);
-                el.textContent = formater.format(increment)
+                el.textContent = formater.format(increment);
                 if (elaps < duration) requestAnimationFrame(loop);
-                else data.locked = false
+                else data.locked = false;
             };
 
             requestAnimationFrame(loop); // Start the loop!
@@ -214,14 +215,14 @@ export default function AOSInterface($el, props){
         increment(pos){
 
             if (pos > data.bounding.top && !data.locked && document.documentElement.lang.length)
-                methods.startCounter($el)
+                methods.startCounter($el);
         },
         follow(pos){
 
             if (pos > data.bounding.top && data.bounding.bottom > window.scrollY)
-                data.locked = false
+                data.locked = false;
             else
-                data.locked = true
+                data.locked = true;
         },
         rotate(pos){
 
@@ -248,7 +249,7 @@ export default function AOSInterface($el, props){
             {
                 data.current = offset;
 
-                let value = data.strengthPercent ? Math.round(offset*data.strength*1000)/1000 : Math.round(offset*data.strength*10)/10;
+                const value = data.strengthPercent ? Math.round(offset*data.strength*1000)/1000 : Math.round(offset*data.strength*10)/10;
                 let strength = 0;
 
                 strength = value+'deg';
@@ -348,7 +349,7 @@ export default function AOSInterface($el, props){
 
                     if( props.animation === 'stack' ){
 
-                        let lastChild = methods.getLastRealChild($el);
+                        const lastChild = methods.getLastRealChild($el);
                         lastChild.addEventListener(aosPrefixAnimation.end, methods.end, false);
                     }
                     else{
@@ -358,10 +359,10 @@ export default function AOSInterface($el, props){
                 }
 
                 if( props.setAttribute && !data.shown )
-                    $el.setAttribute(props.setAttribute, props.value)
+                    $el.setAttribute(props.setAttribute, props.value);
 
                 if( props.onShow && !data.shown )
-                    props.onShow()
+                    props.onShow();
 
                 if( !data.shown ){
 
@@ -387,16 +388,16 @@ export default function AOSInterface($el, props){
                 }
                 else{
 
-                    $el.textContent = 0
+                    $el.textContent = 0;
                 }
 
                 data.shown = false;
 
                 if( props.setAttribute)
-                    $el.setAttribute(props.setAttribute, $el.getAttribute('data-'+props.setAttribute))
+                    $el.setAttribute(props.setAttribute, $el.getAttribute('data-'+props.setAttribute));
 
                 if( props.onHide )
-                    props.onHide()
+                    props.onHide();
             }
         }
     };

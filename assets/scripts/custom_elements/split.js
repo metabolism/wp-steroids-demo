@@ -1,5 +1,5 @@
 import {LitElement} from 'lit';
-import SplitType from 'split-type'
+import SplitType from 'split-type';
 
 export default class Split extends LitElement {
 
@@ -12,11 +12,11 @@ export default class Split extends LitElement {
 
         super.connectedCallback();
 
-        let value = {tagName:'span'};
+        const value = {tagName:'span'};
 
         if( this.tag )
-            value.tagName = this.tag
+            value.tagName = this.tag;
 
-        this.text = new SplitType(this, value)
+        this.text = new SplitType(this, value);
     }
 };

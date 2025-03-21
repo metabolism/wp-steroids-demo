@@ -26,13 +26,13 @@ export default class Toggles extends LitElement {
     connectedCallback() {
 
         super.connectedCallback();
-        this.addEventListener('click', this.click)
+        this.addEventListener('click', this.click);
     }
 
     disconnectedCallback() {
 
         super.disconnectedCallback();
-        this.removeEventListener('click', this.click)
+        this.removeEventListener('click', this.click);
     }
 
     click(e){
@@ -80,8 +80,8 @@ export default class Toggles extends LitElement {
                 element.style.removeProperty('transition-duration');
                 element.style.removeProperty('transition-property');
                 resolve(true);
-            }, duration)
-        })
+            }, duration);
+        });
     }
 
     /**
@@ -102,7 +102,7 @@ export default class Toggles extends LitElement {
                 display = 'block';
 
             element.style.display = display;
-            let height = element.offsetHeight;
+            const height = element.offsetHeight;
             element.style.overflow = 'hidden';
             element.style.height = '0px';
             element.style.paddingTop = '0px';
@@ -124,8 +124,8 @@ export default class Toggles extends LitElement {
                 element.style.removeProperty('transition-duration');
                 element.style.removeProperty('transition-property');
                 resolve(false);
-            }, duration)
-        })
+            }, duration);
+        });
     }
 
     select(index, animate = true){
@@ -135,7 +135,7 @@ export default class Toggles extends LitElement {
 
         this.lock = true;
 
-        let oldIndex = this.index;
+        const oldIndex = this.index;
         this.index = index;
 
         this.$content.forEach((el, index) => {
