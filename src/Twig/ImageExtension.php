@@ -32,7 +32,7 @@ final class ImageExtension extends AbstractExtension
 
         if( $post_id ){
 
-            $src = wp_get_original_image_path($post_id);
+            $src = get_attached_file($post_id);
 
             if( !file_exists($src) )
                 return '';
@@ -213,22 +213,28 @@ final class ImageExtension extends AbstractExtension
         if( isset($attachment_metadata['blurhash']) )
             return $attachment_metadata['blurhash'];
 
-        if( !isset($attachment_metadata['width']) || !$url = wp_get_attachment_url($attachment_id) )
+        $src = get_attached_file($attachment_id);
+        $upload_dir = wp_upload_dir();
+
+        $path = str_replace($upload_dir['basedir'], $upload_dir['relative'], $src);
+
+        if( !isset($attachment_metadata['width']) || empty($path) )
             return false;
 
         $src_ratio = $attachment_metadata['width']/$attachment_metadata['height'];
         $width = round($attachment_metadata['width'] >= $attachment_metadata['height'] ? 64 : 64*$src_ratio);
         $height = round($attachment_metadata['width'] >= $attachment_metadata['height'] ? 64/$src_ratio : 64);
 
-        $url = ImageHelper::resize($url, $width, $height, false);
-        $url = ImageHelper::analyze_url($url);
+        $path64 = ImageHelper::resize($path, $width, $height, false);
 
-        $upload_dir = \wp_upload_dir();
-        $path = $upload_dir['basedir'].$url['subdir'].'/'.$url['basename'];
+        if( empty($path64) || $path64 == $path )
+            return false;
 
-        $image = imagecreatefromstring(file_get_contents($path));
+        $src64 = str_replace($upload_dir['relative'], $upload_dir['basedir'], $path64);
 
-        unlink($path);
+        $image = imagecreatefromstring(file_get_contents($src64));
+
+        unlink($src64);
 
         $width = imagesx($image);
         $height = imagesy($image);
@@ -324,7 +330,7 @@ final class ImageExtension extends AbstractExtension
         if( !$post_id )
             return '';
 
-        $src = wp_get_original_image_path($post_id);
+        $src = get_attached_file($post_id);
 
         if( !file_exists($src) )
             return WP_DEBUG?'<error>File not found</error>':'';
@@ -354,7 +360,7 @@ final class ImageExtension extends AbstractExtension
 
         $upload_dir = wp_upload_dir();
 
-        $image['path'] = str_replace($upload_dir['basedir'], $upload_dir['relative'], get_attached_file( $post_id ));
+        $image['path'] = str_replace($upload_dir['basedir'], $upload_dir['relative'], $src);
         $image['metadata'] = maybe_unserialize(get_post_meta( $post_id, '_wp_attachment_metadata', true ));
         $image['alt'] = htmlspecialchars($alt?:$image['alt'], ENT_QUOTES, 'UTF-8');
 
@@ -369,7 +375,7 @@ final class ImageExtension extends AbstractExtension
 
         if( $image['mime_type'] == 'image/svg+xml' || $image['mime_type'] == 'image/svg' || $image['mime_type'] == 'image/gif' ){
 
-            $img_src = $debug ? $this->generatePlaceholder($width, $height) : $image['path'];
+            $img_src = $debug ? $this->generatePlaceholder($width, $height) : $image['url'];
             $html .= '<img loading="' . $loading . '" class="' . $class . '" src="' . $img_src . '" alt="' . $image['alt'] . '" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
         }
         else {

@@ -23,6 +23,20 @@ final class AppExtension extends AbstractExtension
     }
 
     /**
+     * @param $html
+     * @return string
+     */
+    public function removeStyle($html) {
+
+        if( !is_string($html) )
+            return '';
+
+        $html = preg_replace('/<link\b[^>]*rel=["\']stylesheet["\'][^>]*>/i', '', $html);
+        $html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
+        return preg_replace('/\s*style=["\'][^"\']*["\']/i', '', $html);
+    }
+
+    /**
      * @param $picture
      * @return string
      */
@@ -577,6 +591,7 @@ final class AppExtension extends AbstractExtension
     {
         return [
             new TwigFilter('assign', [$this, 'assign']),
+            new TwigFilter('remove_style', [$this, 'removeStyle']),
             new TwigFilter('placeholder', [$this, 'placeholder']),
             new TwigFilter('has_block', [$this, 'hasBlock']),
             new TwigFilter('a11y', [$this, 'a11y']),

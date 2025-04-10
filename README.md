@@ -14,9 +14,9 @@ This project is designed to bootstrap a custom-made website without using a them
 - [ESLint](https://eslint.org/) for code quality and consistency
 
 ### Deployment & DevOps configurations
-- Docker configuration for local development and deployment
-- Platform.sh integration for scalable and secure hosting
-- Azure App Service support for cloud-based deployment ( pipeline, nginx configuration and startup script )
+- **Docker** configuration for local development and deployment
+- **Platform.sh** integration for scalable and secure hosting
+- **Azure App Service** support for cloud-based deployment, with a dedicated startup.sh script available in /.azure, an azure-pipeline.yml for CI/CD, and a custom nginx.conf for optimized server settings. The container image must be set to `mcr.microsoft.com/appsvc/wordpress-debian-php:8.3`
 
 ## Screenshots
 

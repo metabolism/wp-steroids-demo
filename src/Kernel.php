@@ -74,6 +74,43 @@ abstract class Kernel extends \Timber\Site {
     }
 
     /**
+     * Delete all transients from the database whose keys have a specific prefix.
+     *
+     * @param string $prefix The prefix. Example: 'my_cool_transient_'.
+     */
+    public function deleteTransients( $prefix ) {
+        foreach ( $this->getTransientKeysWithPrefix( $prefix ) as $key ) {
+            delete_transient( $key );
+        }
+    }
+
+    /**
+     * Gets all transient keys in the database with a specific prefix.
+     *
+     * Note that this doesn't work for sites that use a persistent object
+     * cache, since in that case, transients are stored in memory.
+     *
+     * @param  string $prefix Prefix to search for.
+     * @return array          Transient keys with prefix, or empty array on error.
+     */
+    public function getTransientKeysWithPrefix( $prefix ) {
+        global $wpdb;
+
+        $prefix = $wpdb->esc_like( '_transient_' . $prefix );
+        $sql    = "SELECT `option_name` FROM $wpdb->options WHERE `option_name` LIKE '%s'";
+        $keys   = $wpdb->get_results( $wpdb->prepare( $sql, $prefix . '%' ), ARRAY_A );
+
+        if ( is_wp_error( $keys ) ) {
+            return [];
+        }
+
+        return array_map( function( $key ) {
+            // Remove '_transient_' from the option name.
+            return substr( $key['option_name'], strlen( '_transient_' ) );
+        }, $keys );
+    }
+
+    /**
      * @param $url
      * @return string
      */
