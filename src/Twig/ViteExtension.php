@@ -7,16 +7,21 @@ final class ViteExtension extends AbstractExtension
 {
     private $manifest;
 
+    static $manifest_file = __DIR__.'/../../public/build/.vite/manifest.json';
+
+    static $vite_file = __DIR__.'/../../vite.config.js';
+
     public function __construct()
     {
-        if( file_exists(__DIR__.'/../../public/build/.vite/manifest.json'))
-            $this->manifest = json_decode(file_get_contents(__DIR__.'/../../public/build/.vite/manifest.json'), true);
-
-        add_filter('block_editor_settings_theme_css', [$this, 'blockEditorSettingsThemeCSS']);
+        if( file_exists(self::$manifest_file) || file_exists(self::$vite_file) )
+            add_filter('block_editor_settings_theme_css', [$this, 'blockEditorSettingsThemeCSS']);
     }
 
     public function getFromManifest($entry)
     {
+        if( !$this->manifest && file_exists(self::$manifest_file))
+            $this->manifest = json_decode(file_get_contents(self::$manifest_file), true);
+
         return $this->manifest[$entry]['file']??false;
     }
 
@@ -36,7 +41,9 @@ final class ViteExtension extends AbstractExtension
                 return '';
         }
 
-        return "<link rel='stylesheet' href='/build/{$entry}' type='text/css' />";
+        $url = $this->makeAbsoluteUrl("/build/{$entry}");
+
+        return "<link rel='stylesheet' href='{$url}' type='text/css' />";
     }
 
     /**
@@ -53,7 +60,9 @@ final class ViteExtension extends AbstractExtension
                 "<script type='module' src='http://localhost:8080/build/assets/scripts/{$entryName}.js'></script>";
         }
 
-        return "<script type='text/javascript' src='/build/{$entry}' defer></script>";
+        $url = $this->makeAbsoluteUrl("/build/{$entry}");
+
+        return "<script type='text/javascript' src='{$url}' defer></script>";
     }
 
     /**
@@ -61,7 +70,7 @@ final class ViteExtension extends AbstractExtension
      */
     function blockEditorSettingsThemeCSS() {
 
-        $entry = $this->manifest["assets/styles/app.scss"]['file']??false;
+        $entry = $this->getFromManifest("assets/styles/app.scss");
 
         if( !$entry ){
 
@@ -73,18 +82,54 @@ final class ViteExtension extends AbstractExtension
 
         $path = '/build/'.$entry;
 
-        if( str_starts_with($path, 'http') )
-            return $path;
+        return $this->makeAbsoluteUrl($path);
+    }
+
+
+    /**
+     * @param $entryName
+     * @param $version
+     * @return false|mixed
+     */
+    public function asset($entryName, $version=0) {
+
+        if( str_starts_with($entryName, 'http') )
+            return $entryName;
+
+        $url = '/static/' . $entryName;
+
+        if( !file_exists(__DIR__.'/../public'.$url) )
+            return '';
+
+        if( $version )
+            $url .= (str_contains($url, '?') ? '&v=' : '?v=' ).$version;
+
+        return $this->makeAbsoluteUrl($url);
+    }
+
+
+    /**
+     * @param $url
+     * @return string
+     */
+    public function makeAbsoluteUrl($url) {
+
+        if( str_starts_with($url, 'http') )
+            return $url;
 
         if( is_multisite() )
-            return network_home_url($path);
+            return network_home_url($url);
         else
-            return home_url($path);
+            return home_url($url);
     }
 
     public function getFunctions(): array
     {
+        if( !file_exists(self::$manifest_file) && !file_exists(self::$vite_file) )
+            return [];
+
         return [
+            new TwigFunction('asset', [$this, 'asset'] ),
             new TwigFunction( 'vite_entry_link_tags', [$this, 'renderLinkTags'] ),
             new TwigFunction( 'vite_entry_script_tags', [$this, 'renderScriptTags'] )
         ];

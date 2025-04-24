@@ -578,6 +578,9 @@ final class AppExtension extends AbstractExtension
         return hexdec(substr($hex,1,2))+hexdec(substr($hex,3,2))+hexdec(substr($hex,5,2)) < $average;
     }
 
+    /**
+     * @return void
+     */
     public function enqueueContactFormScripts(){
 
         if ( function_exists( 'wpcf7_enqueue_scripts' ) )
@@ -590,6 +593,7 @@ final class AppExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter('md5', 'md5'),
             new TwigFilter('assign', [$this, 'assign']),
             new TwigFilter('remove_style', [$this, 'removeStyle']),
             new TwigFilter('placeholder', [$this, 'placeholder']),
@@ -601,21 +605,21 @@ final class AppExtension extends AbstractExtension
             new TwigFilter('blocks', [$this, 'getBlocks']),
             new TwigFilter('lottie_placeholder', [$this, 'generateLottiePlaceholder']),
             new TwigFilter('table', [$this, 'generateTable']),
-            new TwigFilter( 'ucfirst', 'ucfirst' ),
-            new TwigFilter( 'encrypt', [$this,'encrypt'] ),
-            new TwigFilter( 'encode', [$this,'encode'] ),
-            new TwigFilter( 'bind', [$this,'bind'] ),
-            new TwigFilter( 'nl2p', [$this,'lineBreakToP'] ),
-            new TwigFilter( 'nl2span', [$this,'lineBreakToSpan'] ),
-            new TwigFilter( 'space2span', [$this,'spaceToSpan'] ),
-            new TwigFilter( 'parse_url', [$this,'parseUrl'] ),
-            new TwigFilter( 'phone', [$this,'formatPhone'] ),
-            new TwigFilter( 'youtube_id', [$this, 'youtubeId'] ),
-            new TwigFilter( 'instagram_id', [$this, 'instagramId'] ),
-            new TwigFilter( 'vimeo_id', [$this, 'vimeoID'] ),
-            new TwigFilter( 'clean', [$this, 'clean'] ),
-            new TwigFilter( 'highlight', [$this, 'highlight'] ),
-            new TwigFilter( 'ext', [$this, 'getExtension'] )
+            new TwigFilter('ucfirst', 'ucfirst' ),
+            new TwigFilter('encrypt', [$this,'encrypt'] ),
+            new TwigFilter('encode', [$this,'encode'] ),
+            new TwigFilter('bind', [$this,'bind'] ),
+            new TwigFilter('nl2p', [$this,'lineBreakToP'] ),
+            new TwigFilter('nl2span', [$this,'lineBreakToSpan'] ),
+            new TwigFilter('space2span', [$this,'spaceToSpan'] ),
+            new TwigFilter('parse_url', [$this,'parseUrl'] ),
+            new TwigFilter('phone', [$this,'formatPhone'] ),
+            new TwigFilter('youtube_id', [$this, 'youtubeId'] ),
+            new TwigFilter('instagram_id', [$this, 'instagramId'] ),
+            new TwigFilter('vimeo_id', [$this, 'vimeoID'] ),
+            new TwigFilter('clean', [$this, 'clean'] ),
+            new TwigFilter('highlight', [$this, 'highlight'] ),
+            new TwigFilter('ext', [$this, 'getExtension'] )
         ];
     }
 
@@ -627,25 +631,25 @@ final class AppExtension extends AbstractExtension
             new TwigFunction('nonce', 'wp_create_nonce'),
             new TwigFunction('assign', [$this, 'assign']),
             new TwigFunction('pixel', [$this, 'pixel']),
-            new TwigFunction( 'archive_url', 'get_post_type_archive_link' ),
-            new TwigFunction( 'search_url', 'get_search_link' ),
-            new TwigFunction( 'post_query', function ($query){ return Timber::get_posts($query); }),
-            new TwigFunction( 'term_query', function ($query){ return Timber::get_terms($query); }),
-            new TwigFunction( 'get_object_terms', 'wp_get_object_terms'),
-            new TwigFunction( 'enqueue_contact_form_scripts',  [$this, 'enqueueContactFormScripts']),
-            new TwigFunction( 'post_url',  [$this, 'getPermalink']),
-            new TwigFunction( 'permalink', 'get_permalink' ),
-            new TwigFunction( 'is_front_page',  'is_front_page' ),
-            new TwigFunction( 'is_404',  'is_404' ),
-            new TwigFunction( 'is_privacy_policy',  'is_privacy_policy' ),
-            new TwigFunction( 'archive_post_type',  [$this, 'getArchivePostType'] ),
-            new TwigFunction( 'is_archive',  'is_archive' ),
-            new TwigFunction( 'is_sticky',  'is_sticky' ),
-            new TwigFunction( 'archive_title',  'get_the_archive_title' ),
-            new TwigFunction( 'is_singular',  'is_singular' ),
-            new TwigFunction( 'get_page_by_state',  [$this, 'getPageByState'] ),
-            new TwigFunction( 'get_position_in_tax',  [$this, 'getPostPositionInTaxonomy'] ),
-            new TwigFunction( 'is_dark',  [$this, 'isColorDark'] ),
+            new TwigFunction('archive_url', 'get_post_type_archive_link' ),
+            new TwigFunction('search_url', 'get_search_link' ),
+            new TwigFunction('post_query', function ($query){ return Timber::get_posts($query); }),
+            new TwigFunction('term_query', function ($query){ return Timber::get_terms($query); }),
+            new TwigFunction('get_object_terms', 'wp_get_object_terms'),
+            new TwigFunction('enqueue_contact_form_scripts',  [$this, 'enqueueContactFormScripts']),
+            new TwigFunction('post_url',  [$this, 'getPermalink']),
+            new TwigFunction('permalink', 'get_permalink' ),
+            new TwigFunction('is_front_page',  'is_front_page' ),
+            new TwigFunction('is_404',  'is_404' ),
+            new TwigFunction('is_privacy_policy',  'is_privacy_policy' ),
+            new TwigFunction('archive_post_type',  [$this, 'getArchivePostType'] ),
+            new TwigFunction('is_archive',  'is_archive' ),
+            new TwigFunction('is_sticky',  'is_sticky' ),
+            new TwigFunction('archive_title',  'get_the_archive_title' ),
+            new TwigFunction('is_singular',  'is_singular' ),
+            new TwigFunction('get_page_by_state',  [$this, 'getPageByState'] ),
+            new TwigFunction('get_position_in_tax',  [$this, 'getPostPositionInTaxonomy'] ),
+            new TwigFunction('is_dark',  [$this, 'isColorDark'] ),
         ];
     }
 }

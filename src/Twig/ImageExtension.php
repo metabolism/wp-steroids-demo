@@ -205,7 +205,7 @@ final class ImageExtension extends AbstractExtension
      */
     public function generateBlurhash($attachment_id) {
 
-        if( !is_numeric($attachment_id) )
+        if( !is_numeric($attachment_id) || !class_exists('Blurhash') )
             return false;
 
         $attachment_metadata = maybe_unserialize(get_post_meta( $attachment_id, '_wp_attachment_metadata', true ));
@@ -368,10 +368,10 @@ final class ImageExtension extends AbstractExtension
         $mime = function_exists('imagewebp') ? 'image/webp' : $image['mime_type'];
         $lazy_img = $blurhash && $loading != 'eager' && ($image['mime_type'] == 'image/jpg' || $image['mime_type'] == 'image/jpeg');
 
-        if( $lazy_img )
-            $html = '<lazy-img class="responsive-picture"><picture class="has-blurhash" style="background-image: url(data:image/png;base64,'.$this->getBlurhashImage64($image, $width, $height, $blurhash).')">';
-        else
-            $html = '<picture class="responsive-picture">';
+        $html = '<picture class="responsive-picture">';
+
+        if( $lazy_img && $base64_img = $this->getBlurhashImage64($image, $width, $height, $blurhash) )
+            $html = '<picture class="responsive-picture has-blurhash" style="background-image: url(data:image/png;base64,'.$base64_img.')">';
 
         if( $image['mime_type'] == 'image/svg+xml' || $image['mime_type'] == 'image/svg' || $image['mime_type'] == 'image/gif' ){
 
@@ -453,10 +453,7 @@ final class ImageExtension extends AbstractExtension
             $html .= '<img loading="' . $loading . '"  class="' . $class . ' object-'.$crop . '" src="' . $url . '" alt="' . $image['alt'] . '" width="'.$width.'" height="'.$height.'"/>';
         }
 
-        if( $lazy_img )
-            $html .='</picture></lazy-img>';
-        else
-            $html .='</picture>';
+        $html .='</picture>';
 
         return $html;
     }

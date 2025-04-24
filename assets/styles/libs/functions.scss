@@ -1,33 +1,36 @@
 @use "sass:list";
 @use "sass:math";
 @use "sass:string";
+@use "sass:meta";
 
 // background
 
 @function fit(){
-  @return  unquote("no-repeat center; background-size: 100% 100%;")
+  @return string.unquote("no-repeat center; background-size: 100% 100%;")
 }
 
 @function cover(){
-  @return  unquote("no-repeat center; background-size: cover;")
+  @return string.unquote("no-repeat center; background-size: cover;")
 }
 
 @function contain(){
-  @return  unquote("no-repeat center; background-size: contain;")
+  @return string.unquote("no-repeat center; background-size: contain;")
 }
 
 @function fit-height(){
-  @return  unquote("no-repeat center; background-size: auto 100%;")
+  @return string.unquote("no-repeat center; background-size: auto 100%;")
 }
 
 @function fit-width(){
-  @return  unquote("no-repeat center; background-size: 100% auto;")
+  @return string.unquote("no-repeat center; background-size: 100% auto;")
 }
 
-// grid
+// Grid, todo: find out how to get $grid-columns from config
+
+$grid-columns:12;
 
 @function col($count){
-  @return unquote(math.div($count,$grip-columns)*100+'%')
+  @return string.unquote(math.div($count,$grid-columns)*100+'%')
 }
 
 // positions
@@ -57,12 +60,12 @@
 
 @function str-replace($search, $replace, $string) {
 
-  $string : inspect($string);
-  $index  : str-index($string, $search);
+  $string : meta.inspect($string);
+  $index  : string.index($string, $search);
 
   @if $index {
 
-    @return str-slice($string, 1, $index - 1) + $replace + str-slice($string, $index + str-length($search));
+    @return string.slice($string, 1, $index - 1) + $replace + string.slice($string, $index + string.length($search));
   }
 
   @return $index;
