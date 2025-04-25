@@ -10,20 +10,20 @@
 * Core
 */
 
-@use "core/*.scss";
+@use "core/**/*.scss";
 
 /*
 * Layout
 */
 
-@use "layout/*.scss";
+@use "layout/**/*.scss";
 
 
 /*
 * Vendors
 */
 
-@use "vendor/*.scss";
+@use "vendor/**/*.scss";
 
 
 /* Partials

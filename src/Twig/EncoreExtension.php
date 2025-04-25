@@ -15,7 +15,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function __construct()
     {
-        if( file_exists(self::$webpack_file) )
+        if( file_exists(self::$webpack_file) || file_exists(self::$manifest_file) )
             add_filter('block_editor_settings_theme_css', [$this, 'blockEditorSettingsThemeCSS']);
     }
 
@@ -103,7 +103,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        if( !file_exists(self::$webpack_file) )
+        if( !file_exists(self::$webpack_file) && !file_exists(self::$manifest_file) )
             return [];
 
         return [
