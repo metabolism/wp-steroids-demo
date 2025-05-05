@@ -181,3 +181,9 @@ docker system prune -a
 ```sh
 docker volume rm $(docker volume ls -q)
 ```
+
+## Troubleshooting
+
+### Redirection loop
+
+When performing a `composer update`, the file is automatically removed as a security measure. This can sometimes lead to a redirection loop since WordPress tries to access this non-existent file during certain operations. To resolve this issue, simply delete the `/edition` folder and run `composer install` to restore the proper file structure. `wp-admin/install.php`

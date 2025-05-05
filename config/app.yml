@@ -22,7 +22,7 @@ wordpress:
     disable_classic_theme_styles: true
     remove_block_library: true
     load_remote_block_patterns: false
-    block_editor_style: 'build/bundle.css'
+    block_editor_style: '/build/bundle.css'
     #block_editor_script: '/blocks.js'
     render_template: 'block/{name}/{name}.twig'
     preview_image: '/app/blocks/{name}.png'

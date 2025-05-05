@@ -1,6 +1,6 @@
 <?php
 
-class Options  implements ArrayAccess
+class Options  implements ArrayAccess, JsonSerializable
 {
     /**
      * Magic method to get property
@@ -18,6 +18,17 @@ class Options  implements ArrayAccess
         //todo:
         return true;
     }
+
+    public function jsonSerialize(): array
+    {
+        $data = [];
+
+        if( function_exists('get_field') )
+            $data = get_fields('option');
+
+        return $data;
+    }
+
 
     public function get($name)
     {

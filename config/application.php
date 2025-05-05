@@ -188,9 +188,10 @@ else{
     Config::define('WP_ALLOW_MULTISITE', true);
 }
 
+// Disable auto update, only use composer
 Config::define('AUTOMATIC_UPDATER_DISABLED', true);
+// Disable cron execution on front
 Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
-Config::define('DEEPL_KEY', env('DEEPL_KEY') ?: false);
 // Disable the plugin and theme file editor in the admin
 Config::define('DISALLOW_FILE_EDIT', true);
 // Disable plugin and theme updates and installation from the admin
@@ -242,6 +243,7 @@ if (file_exists($env_config))
 
 Config::define('WPS_YAML_FILE', __DIR__.'/app.yml');
 Config::define('GOOGLE_MAP_API_KEY', env('GOOGLE_MAP_API_KEY') ?: false);
+Config::define('DEEPL_KEY', env('DEEPL_KEY') ?: false);
 
 Config::apply();
 
