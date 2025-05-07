@@ -15,7 +15,7 @@ final class TranslationExtension extends AbstractExtension
 
     public function __construct(){
 
-        add_action( 'init', [$this, 'getTranslations']);
+        $this->getTranslations();
     }
 
     /**
@@ -25,12 +25,12 @@ final class TranslationExtension extends AbstractExtension
     {
         $options = new Options();
 
-        if( $translations = $options->get('translations') )
-        {
+        if( $translations = $options->get('translations') ) {
+
             $this->translations = [];
 
-            foreach ($translations as $translation)
-            {
+            foreach ($translations as $translation) {
+
                 $key = sanitize_title($translation['key']);
                 $this->translations[$key] = $translation['translation'];
             }
