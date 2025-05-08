@@ -1,5 +1,5 @@
-public/app/uploads
-assets
+/public/app/uploads
+/assets
 .git
 .azure
 .demo

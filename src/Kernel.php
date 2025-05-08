@@ -298,7 +298,7 @@ abstract class Kernel extends \Timber\Site {
      */
     public function addTwigExtensions( $twig ) {
 
-        if( class_exists('Twig\Extra\Intl\IntlExtension') )
+        if( class_exists('IntlExtension') )
             $twig->addExtension( new IntlExtension());
         
         $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
