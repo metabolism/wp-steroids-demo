@@ -106,7 +106,7 @@ Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
 Config::define('DB_CHARSET', 'utf8mb4');
 Config::define('DB_COLLATE', '');
 
-$table_prefix = env('DB_PREFIX') ?: 'wp_';
+$table_prefix = env('DB_PREFIX') ?: 'wps_';
 
 if (env('DATABASE_URL')) {
 
