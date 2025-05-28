@@ -25,7 +25,7 @@ use Timber\Timber;
 
 $context = Timber::context();
 
-$templates       = array( 'page.twig' );
+$templates = ['page.twig', 'single.twig'];
 
 if ( is_front_page() ){
 

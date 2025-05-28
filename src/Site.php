@@ -65,10 +65,7 @@ class Site extends Kernel {
     {
         $context = parent::addToContext($context);
 
-        $context['menu'] = [
-            'header'=>Timber::get_menu('header'),
-            'footer'=>Timber::get_menu('footer')
-        ];
+        $context['lorem'] = 'Dolor sit amet';
 
         return $context;
     }
@@ -79,34 +76,9 @@ class Site extends Kernel {
      */
     public function addToTwig( $twig ) {
 
-        $twig->addFunction( new Twig\TwigFunction( 'asset', [$this, 'asset'] ) );
         $twig->addFilter( new Twig\TwigFilter( 'protect', [$this,'protectEmail'] ) );
 
         return $twig;
-    }
-
-    /**
-     * @param $entryName
-     * @param $version
-     * @return false|mixed
-     */
-    public function asset($entryName, $version=0) {
-
-        if( str_starts_with($entryName, 'http') )
-            return $entryName;
-
-        $url = '/static/' . $entryName;
-
-        if( !file_exists(__DIR__.'/../public'.$url) )
-            return '';
-
-        if( $version )
-            $url .= (str_contains($url, '?') ? '&v=' : '?v=' ).$version;
-
-        if( is_multisite() )
-            return network_home_url($url);
-        else
-            return home_url($url);
     }
 
     /**

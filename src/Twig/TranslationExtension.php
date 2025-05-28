@@ -12,15 +12,31 @@ use kornrunner\Blurhash\Blurhash;
 final class TranslationExtension extends AbstractExtension
 {
     private $translations;
+    private static $missing_translations=[];
 
     public function __construct(){
 
         $this->getTranslations();
+
+        add_action('wp_footer', [$this, 'printMissingTranslations'], 10000);;
     }
 
     /**
      * @return void
      */
+    public function printMissingTranslations(){
+
+        $debug = ($_GET['debug']??false) == 'translation' && current_user_can('manage_options');
+
+        if( $debug && !empty(self::$missing_translations) ){
+
+            $missing_translations = array_unique(self::$missing_translations);
+            echo '<div style="background:#ff0f0f;color:white;padding:20px;margin-top:20px"><b>Missing translations</b><br/><br/>'.implode('<br/>', $missing_translations).'</div>';
+        }
+
+        self::$missing_translations = [];
+    }
+
     public function getTranslations()
     {
         $options = new Options();
@@ -53,10 +69,13 @@ final class TranslationExtension extends AbstractExtension
         }
         else{
 
-            $debug = ($_GET['debug']??false) == 'translation' && defined('WP_DEBUG') && WP_DEBUG;
+            $debug = ($_GET['debug']??false) == 'translation' && current_user_can('manage_options');
 
-            if( $debug )
+            if( $debug ){
+
+                self::$missing_translations[] = $text;
                 return '{{'.htmlspecialchars($text).'}}';
+            }
 
             return vsprintf($text, $params);
         }

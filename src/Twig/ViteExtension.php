@@ -7,9 +7,9 @@ final class ViteExtension extends AbstractExtension
 {
     private $manifest;
 
-    static $manifest_file = __DIR__.'/../../public/build/.vite/manifest.json';
+    private static $manifest_file = __DIR__.'/../../public/build/.vite/manifest.json';
 
-    static $vite_file = __DIR__.'/../../vite.config.js';
+    private static $vite_file = __DIR__.'/../../vite.config.js';
 
     public function __construct()
     {

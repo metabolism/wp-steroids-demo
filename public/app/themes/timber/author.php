@@ -13,7 +13,7 @@ use Timber\Timber;
 
 global $wp_query;
 
-$context          = Timber::context();
+$context = Timber::context();
 
 if ( isset( $wp_query->query_vars['author'] ) ) {
 	$author = Timber::get_user( $wp_query->query_vars['author'] );
@@ -21,4 +21,4 @@ if ( isset( $wp_query->query_vars['author'] ) ) {
 	$context['title']  = 'Author Archives: ' . $author->name();
 }
 
-Timber::render( array( 'author.twig', 'archive.twig' ), $context );
+Timber::render( ['author.twig', 'archive.twig'], $context );

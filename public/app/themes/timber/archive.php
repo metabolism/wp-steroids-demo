@@ -18,7 +18,7 @@ use Timber\Timber;
 
 global $wp_query;
 
-$templates = array( 'archive.twig', 'index.twig' );
+$templates = ['archive.twig', 'index.twig'];
 
 $context = Timber::context();
 $context['paged'] = max(1, get_query_var('paged',1));

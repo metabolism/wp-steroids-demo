@@ -21,7 +21,7 @@ import {LitElement} from 'lit';
 import { register } from 'swiper/element/bundle';
 register();
 
-import defineCustomElements from './customElements.js';
+import defineCustomElements from './plugins/customElements.js';
 defineCustomElements();
 
 class App extends LitElement {

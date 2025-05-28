@@ -35,7 +35,7 @@ if ( ! class_exists( 'Timber\Timber' ) ) {
 /**
  * Sets the directories (inside your theme) to find .twig files
  */
-Timber::$dirname = array( '../../../../templates', 'views' );
+Timber::$dirname = ['../../../../templates', 'views'];
 
 Timber::init();
 

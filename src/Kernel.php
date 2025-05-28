@@ -39,7 +39,7 @@ abstract class Kernel extends \Timber\Site {
 
         add_filter( 'timber/context', [$this, 'addToContext'] );
         add_filter( 'timber/loader/twig', [$this, 'addTwigExtensions'] );
-        add_filter( 'block_render_callback', [$this, 'renderBlock']);
+        add_filter( 'block_render_callback', [$this, 'renderBlock'],10 , 3);
 
         parent::__construct();
     }
@@ -213,7 +213,7 @@ abstract class Kernel extends \Timber\Site {
         }
 
         $context = Timber::context();
-        $block_context = self::getBlockContext( $block, self::getPostId() );
+        $block_context = self::getBlockContext( $block, self::getPostId(), $is_preview );
 
         $context = array_merge( $context, $block_context );
 
@@ -298,9 +298,9 @@ abstract class Kernel extends \Timber\Site {
      */
     public function addTwigExtensions( $twig ) {
 
-        if( class_exists('IntlExtension') )
+        if( class_exists('Twig\Extra\Intl\IntlExtension') )
             $twig->addExtension( new IntlExtension());
-        
+
         $twig->addExtension( new Twig\Extension\StringLoaderExtension() );
 
         $folder = __DIR__.'/Twig/';

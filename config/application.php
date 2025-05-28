@@ -53,6 +53,8 @@ if( env('BUGSNAG_API_KEY') ){
 
     define('BUGSNAG_API_KEY', env('BUGSNAG_API_KEY'));
 
+    global $bugsnag;
+
     $bugsnag = Bugsnag\Client::make(env('BUGSNAG_API_KEY'));
     Bugsnag\Handler::register($bugsnag);
 }
@@ -90,10 +92,11 @@ Config::define('WP_CONTENT_URL', Config::get('WP_HOME') . Config::get('CONTENT_D
  * DB settings
  */
 if (env('DB_SSL')) {
+
     Config::define('MYSQL_CLIENT_FLAGS', MYSQLI_CLIENT_SSL);
-    if (env('DB_SSL_CA')) {
+
+    if (env('DB_SSL_CA'))
         Config::define('MYSQL_SSL_CERT', env('DB_SSL_CA'));
-    }
 }
 
 Config::define('DB_NAME', env('DB_NAME'));
@@ -102,9 +105,11 @@ Config::define('DB_PASSWORD', env('DB_PASSWORD'));
 Config::define('DB_HOST', env('DB_HOST') ?: 'localhost');
 Config::define('DB_CHARSET', 'utf8mb4');
 Config::define('DB_COLLATE', '');
+
 $table_prefix = env('DB_PREFIX') ?: 'wp_';
 
 if (env('DATABASE_URL')) {
+
     $dsn = (object) parse_url(env('DATABASE_URL'));
 
     Config::define('DB_NAME', substr($dsn->path, 1));
@@ -176,9 +181,16 @@ if( $proxy_host = env('WP_PROXY_HOST') ) {
 
 if( $multisite = env('MULTISITE') ){
 
+    $multisite = is_bool($multisite) ? env('WP_HOME') : $multisite;
+    $domain = preg_replace( '|https?://|', '', $multisite );
+    $slash  = strpos( $domain, '/' );
+
+    if ( $slash )
+        $domain = substr( $domain, 0, $slash );
+
     Config::define( 'MULTISITE', true );
     Config::define( 'SUBDOMAIN_INSTALL', false );
-    Config::define( 'DOMAIN_CURRENT_SITE', $multisite );
+    Config::define( 'DOMAIN_CURRENT_SITE', $domain );
     Config::define( 'PATH_CURRENT_SITE', '/' );
     Config::define( 'SITE_ID_CURRENT_SITE', 1 );
     Config::define( 'BLOG_ID_CURRENT_SITE', 1 );
@@ -195,7 +207,7 @@ Config::define('DISABLE_WP_CRON', env('DISABLE_WP_CRON') ?: false);
 // Disable the plugin and theme file editor in the admin
 Config::define('DISALLOW_FILE_EDIT', true);
 // Disable plugin and theme updates and installation from the admin
-Config::define('DISALLOW_FILE_MODS', true);
+Config::define('DISALLOW_FILE_MODS', WP_ENV != 'development');
 // Limit the number of post revisions that WordPress stores (true (default WP): store every revision)
 Config::define('WP_POST_REVISIONS', env('WP_POST_REVISIONS') ?: 10);
 // Increase memory limit
@@ -222,13 +234,6 @@ if( $cookie_prefix = env('COOKIE_PREFIX') ) {
 }
 
 /**
- * Debugging Settings
- */
-Config::define('WP_DEBUG_DISPLAY', false);
-Config::define('WP_DEBUG_LOG', false);
-Config::define('SCRIPT_DEBUG', false);
-
-/**
  * Allow WordPress to detect HTTPS when used behind a reverse proxy or a load balancer
  * See https://codex.wordpress.org/Function_Reference/is_ssl#Notes
  */
@@ -241,6 +246,9 @@ $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
 if (file_exists($env_config))
     require_once $env_config;
 
+/**
+ * WP Steroids specifics
+ */
 Config::define('WPS_YAML_FILE', __DIR__.'/app.yml');
 Config::define('GOOGLE_MAP_API_KEY', env('GOOGLE_MAP_API_KEY') ?: false);
 Config::define('DEEPL_KEY', env('DEEPL_KEY') ?: false);

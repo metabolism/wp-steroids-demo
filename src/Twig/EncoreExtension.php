@@ -34,13 +34,7 @@ final class EncoreExtension extends AbstractExtension
                 return '';
         }
 
-        if( str_starts_with($path, 'http') )
-            return $path;
-
-        if( is_multisite() )
-            return network_home_url($path);
-        else
-            return home_url($path);
+        return $this->makeAbsoluteUrl($path);
     }
 
     public function getFromEntryPoints($entryName, $type)
@@ -70,7 +64,7 @@ final class EncoreExtension extends AbstractExtension
         $styles = [];
 
         foreach ($entries as $entry)
-            $styles[] = "<link rel='stylesheet' href='{$entry}' type='text/css' media='all' />";
+            $styles[] = "<link rel='stylesheet' href='{$this->makeAbsoluteUrl($entry)}' type='text/css' media='all' />";
 
         return implode('', $styles);
     }
@@ -86,9 +80,25 @@ final class EncoreExtension extends AbstractExtension
         $scripts = [];
 
         foreach ($entries as $entry)
-            $scripts[] = "<script type='text/javascript' src='{$entry}' defer></script>";
+            $scripts[] = "<script type='text/javascript' src='{$this->makeAbsoluteUrl($entry)}' defer></script>";
 
         return implode('', $scripts);
+    }
+
+
+    /**
+     * @param $url
+     * @return string
+     */
+    public function makeAbsoluteUrl($url) {
+
+        if( str_starts_with($url, 'http') )
+            return $url;
+
+        if( is_multisite() )
+            return network_home_url($url);
+        else
+            return home_url($url);
     }
 
 
@@ -98,7 +108,9 @@ final class EncoreExtension extends AbstractExtension
      */
     public function asset($entryName ) {
 
-        return $this->getFromManifest('build/'.$entryName);
+        $path = $this->getFromManifest('build/'.$entryName);
+
+        return $this->makeAbsoluteUrl($path);
     }
 
     public function getFunctions(): array

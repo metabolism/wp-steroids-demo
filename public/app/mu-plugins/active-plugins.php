@@ -1,4 +1,11 @@
 <?php
+/**
+ * Plugin Name:  Active plugins
+ * Description:  Disable plugins on the front end.
+ * Version:      1.0.0
+ * Author:       Metabolism
+ * License:      MIT License
+ */
 
 $request_uri = parse_url( $_SERVER['REQUEST_URI'], PHP_URL_PATH );
 

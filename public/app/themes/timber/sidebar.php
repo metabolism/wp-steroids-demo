@@ -7,4 +7,4 @@
  */
 use Timber\Timber;
 
-Timber::render( array( 'sidebar.twig' ) );
+Timber::render( ['sidebar.twig'] );
