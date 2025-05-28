@@ -90,13 +90,11 @@
     "wordpress-install-dir": "public/edition"
   },
   "scripts": {
-    "post-update-cmd": [
+    "post-install-cmd": [
       "rm -Rf public/edition/wp-content",
       "rm -f public/edition/readme.html",
-      "rm -f public/edition/wp-admin/install.php",
       "rm -f public/edition/wp-config-sample.php",
-      "rm -f public/edition/xmlrpc.php",
-      "rm -f public/edition/wp-activate.php"
+      "rm -f public/edition/xmlrpc.php"
     ],
     "post-root-package-install": [
       "php -r \"copy('.env.example', '.env');\""
