@@ -1,3 +1,8 @@
 {% if props and (props.title or props.anchor) and props.url %}
-    <a {% if props.icon|default %}data-icon_after="{{ props.icon }}"{% endif %} class="p-cta {{ props.class|default }}" href="{{ props.url }}" target="{{ props.target|default('_self') }}" rel="{% if props.target|default == '_blank' %}noreferrer noopener{% endif %}">{{ props.title|default(props.anchor) }}</a>
+    {% if props.link|slice(0, 7) == 'mailto:' %}
+        {% set email = props.link|slice(7)|split('@')  %}
+        <x-mail text="{{ props.title }}" name="{{ email[0] }}" domain="{{ email[1] }}" {% if props.icon|default %}data-icon_after="{{ props.icon }}"{% endif %} {% if props.aria_label|length %}aria-label="{{ props.aria_label }}"{% endif %} class="a-cta {{ props.class|default }}"></x-mail>
+    {% else %}
+        <a {% if props.icon|default %}data-icon_after="{{ props.icon }}"{% endif %} {% if props.aria_label|length %}aria-label="{{ props.aria_label }}"{% endif %} class="p-cta {{ props.class|default }}" href="{{ props.url }}" target="{{ props.target|default('_self') }}" rel="{% if props.target|default == '_blank' %}noreferrer noopener{% endif %}">{{ props.title|default(props.anchor) }}</a>
+    {% endif %}
 {% endif %}
