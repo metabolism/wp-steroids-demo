@@ -119,33 +119,6 @@ if (env('DATABASE_URL')) {
 }
 
 /**
- * Using managed identity to fetch MySQL access token
- */
-if ( env('ENABLE_MYSQL_MANAGED_IDENTITY') ) {
-
-    try {
-
-        if( !file_exists($root_dir . '/.azure/EntraID_Database_Token_Utilities.php') )
-            throw new Exception('EntraID_Database_Token_Utilities.php not found');
-
-        require_once($root_dir . '/.azure/EntraID_Database_Token_Utilities.php');
-
-        if (strtolower(getenv('CACHE_MYSQL_ACCESS_TOKEN')) !== 'true')
-            $dbpassword = EntraID_Database_Token_Utilities::getAccessToken();
-        else
-            $dbpassword = EntraID_Database_Token_Utilities::getOrUpdateAccessTokenFromCache();
-    }
-    catch (Exception $e) {
-
-        $dbpassword = '<dummy-value>';
-
-        error_log($e->getMessage());
-    }
-
-    Config::define('DB_PASSWORD', $dbpassword);
-}
-
-/**
  * Authentication Unique Keys and Salts
  */
 Config::define('AUTH_KEY', env('AUTH_KEY'));
