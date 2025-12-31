@@ -93,7 +93,7 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
     - `DB_HOST` - Database host
     - Optionally, you can define `DATABASE_URL` for using a DSN instead of using the variables above (e.g. `mysql://user:password@127.0.0.1:3306/db_name`)
 - `WP_ENV` - Set to environment (`development`, `staging`, `production`)
-- `WP_HOME` - Full URL to WordPress home (http://wordpress.io)
+- `WP_HOME` - Full URL to WordPress home (http://wordpress.local)
 - `BUGSNAG_API_KEY` - Error monitoring tool
 - `AUTH_KEY`, `SECURE_AUTH_KEY`, `LOGGED_IN_KEY`, `NONCE_KEY`, `AUTH_SALT`, `SECURE_AUTH_SALT`, `LOGGED_IN_SALT`, `NONCE_SALT`
     - Generate with [WordPress salts generator](https://roots.io/salts.html)
@@ -107,9 +107,9 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
 
 5. Allow 'write' permissions to `/path/to/site/var/` and `/path/to/site/public/app/uploads`
 
-6. Go to the `WP_HOME` url and install WordPress
+6. Go to the `WP_HOME` url ( http://wordpress.local ) and install WordPress
 
-7. Login as admin, activate `Timber` theme 
+7. Login as admin, under **Appearance > Themes**, activate `Timber` theme 
 
 8. Activate also `WordPress on Steroids` and `Advanced Custom Fields` plugins
 
@@ -121,9 +121,9 @@ Documentation is available on [Gitbook](https://metabolism.gitbook.io/symfony-wo
 
 1. Do a `Fresh install`, from step 1 to 5
 
-2. Import `.demo/database.sql` file in your database ( demo url in sql file is http://wordpress.io, admin login : demo/demo ) or install WordPress
+2. Import `.demo/database.sql` file in your database ( demo url in sql file is http://wordpress.local, admin login : demo/demo ) or install WordPress
 
-If you need to change the url, perform a search & replace in the demo.sql, and execute in bash `php bin/fix-serialisation .demo/database.sql`
+If you need to change the url, perform a search & replace in the database.sql, and execute in bash `php bin/fix-serialisation .demo/database.sql`
 
 3. Remove `.demo` folder and update Readme.md
 

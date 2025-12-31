@@ -46,7 +46,7 @@
     "composer/installers": "^2.2",
     "vlucas/phpdotenv": "^5.5",
     "oscarotero/env": "^2.1",
-    "roots/wordpress": "6.8.*",
+    "roots/wordpress": "6.9.*",
     "roots/wp-config": "^1.0.0",
     "platformsh/config-reader": "^3.0.1",
     "mnsami/composer-custom-directory-installer": "^2.0",
@@ -62,7 +62,7 @@
     "wpackagist-plugin/post-types-order": "^2.3.2",
     "wpackagist-plugin/cache-control": "^2.2.5",
     "wpackagist-plugin/cache-enabler": "^1.8.15",
-    "wpackagist-plugin/wp-2fa": "^2.3.0",
+    "wpackagist-plugin/wp-2fa": "^3.0.0",
     "wpackagist-plugin/duplicate-post": "^4.5",
     "wpackagist-plugin/wp-crontrol": "^1.14.0"
   },

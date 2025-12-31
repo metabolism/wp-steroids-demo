@@ -26,6 +26,8 @@ $context['max_num_pages'] = $wp_query->max_num_pages;
 $context['posts_per_page'] = $wp_query->get('posts_per_page')?:get_option( 'posts_per_page' );
 $context['queried_object'] = get_queried_object();
 
+$post_type = get_query_var( 'post_type' );
+
 if ( is_category() ) {
     $context['current_category'] = get_query_var( 'cat' );
     array_unshift( $templates, 'archive-category.twig' );
@@ -33,13 +35,14 @@ if ( is_category() ) {
 if ( is_tax() ) {
 
     $context['current_taxonomy'] = get_queried_object();
+    $context['archive_url'] = get_term_link($context['current_taxonomy']->slug, $context['current_taxonomy']->taxonomy);
 
-    if( get_query_var( 'post_type' ) ){
+    if( $post_type ){
 
-        array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '.twig' );
+        array_unshift( $templates, 'archive-' . $post_type . '.twig' );
 
         if( $context['paged'] > 1 )
-            array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '-paged.twig' );
+            array_unshift( $templates, 'archive-' . $post_type . '-paged.twig' );
     }
 
 	array_unshift( $templates, 'archive-' . get_query_var( 'taxonomy' ) . '.twig' );
@@ -49,10 +52,12 @@ if ( is_tax() ) {
 
 } elseif ( is_post_type_archive() ) {
 
-    array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '.twig' );
+    $context['archive_url'] = get_post_type_archive_link($post_type);
+
+    array_unshift( $templates, 'archive-' . $post_type . '.twig' );
 
     if( $context['paged'] > 1 )
-        array_unshift( $templates, 'archive-' . get_query_var( 'post_type' ) . '-paged.twig' );
+        array_unshift( $templates, 'archive-' . $post_type . '-paged.twig' );
 }
 
 Timber::render( $templates, $context );

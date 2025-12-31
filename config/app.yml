@@ -15,6 +15,8 @@ wordpress:
     remove_core_block: true
     remove_plugin_block:
       - lloc/msls-widget-block
+      - wpo365/docsbasic
+      - fluentfom/guten-block
       - yoast/faq-block
       - yoast/how-to-block
       - yoast-seo/breadcrumbs
@@ -22,6 +24,7 @@ wordpress:
     disable_classic_theme_styles: true
     remove_block_library: true
     load_remote_block_patterns: false
+    block_sorting: true
     block_editor_style: '/build/bundle.css'
     #block_editor_script: '/blocks.js'
     render_template: 'block/{name}/{name}.twig'
@@ -35,7 +38,7 @@ wordpress:
   image:
     compression: 95 #on the fly compression ratio
     svg: true
-    max_size: 1
+    max_size: 2
     resize: #resize image on upload to save server space
       max_width: 1920
       max_height: 2160
@@ -179,7 +182,11 @@ wordpress:
     user_settings:
       gallery_height: 210
     block:
+      version: 3
       api_version: 3
+      node:
+        breakpoints:
+        class:
     input:
       lock_max_length: false
     toolbars: #customize wysiwyg toolbar
@@ -199,6 +206,7 @@ wordpress:
           - removeformat
           - link
           - wp_adv
+          - small
           - fullscreen
         2:
           - undo
@@ -226,6 +234,16 @@ wordpress:
           - alignjustify
           - pastetext
           - removeformat
+          - small
+          - fullscreen
+      Simple:
+        1:
+          - bullist
+          - numlist
+          - link
+          - bold
+          - italic
+          - small
           - fullscreen
 
 
@@ -342,18 +360,6 @@ wordpress:
             description:
               type: textarea
 
-    dropdown:
-      title: Dropdown
-      #description: Featured article
-      icon: 'sort'
-      post_types:
-        - page
-      fields:
-        title:
-          type: text
-        description:
-          type: textarea
-
     #hero-home:
     #  title: Homepage hero
     #  description: Display a slider
@@ -373,6 +379,8 @@ wordpress:
   post_type: # https://developer.wordpress.org/reference/functions/register_post_type/
 
     page:
+      #columns: #add new column to post listing, thumbnail|meta
+      #  - thumbnail
       template:
         - - acf/hero
           - lock:
@@ -494,6 +502,7 @@ wordpress:
     ## Add page states like "homepage"
     #page_states:
     #archive_guide: 'Guide archive'
+    #404: '404'
 
   #################################
   ##    Database table viewer    ##
@@ -591,7 +600,7 @@ wordpress:
       - embed
       - trackback
       - comment
-  #    - feed
+      - feed
 
   ####################
   ##    Security    ##

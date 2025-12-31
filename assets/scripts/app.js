@@ -1,7 +1,7 @@
 /**
  * Application
  *
- * Copyright (c) 2024 - Metabolism
+ * Copyright (c) 2026 - Akhela
  *
  * License: GPL
  * Version: 2
@@ -25,18 +25,6 @@ import defineCustomElements from './plugins/customElements.js';
 defineCustomElements();
 
 class App extends LitElement {
-
-    static properties = {
-        $footer: {type: Node},
-        $header: {type: Node},
-        sticky: {type: Boolean},
-        sticky_bottom: {type: Boolean},
-        scroll_position: {type: Number},
-        scroll_timer: {type: Number},
-        scrolled: {type: Number},
-        scroll_down: {type: Boolean},
-        elements_height: {type: Object},
-    };
 
     createRenderRoot() {
         return this;
@@ -107,7 +95,7 @@ class App extends LitElement {
             this.sticky = sticky;
         }
 
-        if( !scroll ){
+        if( !sticky ){
 
             if( timeout )
                 clearTimeout(timeout);

@@ -13,4 +13,7 @@ use Timber\Timber;
 
 $context = Timber::context();
 
-Timber::render( '404.twig', $context );
+$error_page = get_page_by_state('404');
+$context['post'] = Timber::get_post($error_page);
+
+Timber::render( 'single.twig', $context );

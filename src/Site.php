@@ -12,9 +12,15 @@ use Timber\Timber;
 
 class Site extends Kernel {
 
+    private $context;
+
     public function __construct()
     {
         parent::__construct();
+
+        $this->loadClasses('Service');
+
+        $this->context = $this->loadClass('Context', true);
 
         // Update context based on filename
         add_filter('timber/render/data', [$this, 'updateContext'],10, 2);
@@ -44,6 +50,26 @@ class Site extends Kernel {
     }
 
     /**
+     * @param string $path
+     * @return string
+     */
+    private function pathToFunctionName(string $path) {
+
+        $path = preg_replace('/\.twig$/', '', $path);
+
+        $path = str_replace('/', ' ', $path);
+
+        $parts = array_unique(explode(' ', $path));
+
+        $parts = array_map(function($part) {
+            $words = explode('-', $part);
+            return implode('', array_map('ucfirst', $words));
+        }, $parts);
+
+        return lcfirst(implode('', $parts));
+    }
+
+    /**
      * @param $context
      * @param $file
      * @return mixed
@@ -53,19 +79,10 @@ class Site extends Kernel {
         if( !is_array( $context['props']??false ) )
             $context['props'] = [];
 
-        if( $file === 'block/hero/hero.twig' ){
+        $method = $this->pathToFunctionName($file);
 
-            $context['props']['lorem'] = 'ipsum';
-        }
-
-        return $context;
-    }
-
-    public function addToContext($context)
-    {
-        $context = parent::addToContext($context);
-
-        $context['lorem'] = 'Dolor sit amet';
+        if( method_exists($this->context, $method) )
+            $context['props'] = $this->context->$method($context['props'], $context['block']);
 
         return $context;
     }

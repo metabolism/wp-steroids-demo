@@ -37,8 +37,8 @@ if ( ! class_exists( 'Timber\Timber' ) ) {
  */
 Timber::$dirname = ['../../../../templates', 'views'];
 
-Timber::init();
-
 include ABSPATH.'../../src/Options.php';
 include ABSPATH.'../../src/Kernel.php';
 include ABSPATH.'../../src/Site.php';
+
+Timber::init();

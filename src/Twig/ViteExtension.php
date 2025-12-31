@@ -11,15 +11,9 @@ final class ViteExtension extends AbstractExtension
 
     private static $vite_file = __DIR__.'/../../vite.config.js';
 
-    public function __construct()
-    {
-        if( file_exists(self::$manifest_file) || file_exists(self::$vite_file) )
-            add_filter('block_editor_settings_theme_css', [$this, 'blockEditorSettingsThemeCSS']);
-    }
-
     public function getFromManifest($entry)
     {
-        if( !$this->manifest && file_exists(self::$manifest_file))
+        if( !$this->manifest && is_file(self::$manifest_file))
             $this->manifest = json_decode(file_get_contents(self::$manifest_file), true);
 
         return $this->manifest[$entry]['file']??false;
@@ -68,7 +62,10 @@ final class ViteExtension extends AbstractExtension
     /**
      * @return string
      */
-    function blockEditorSettingsThemeCSS() {
+    public function blockEditorSettingsThemeCSS($url) {
+
+        if( !is_file(self::$manifest_file) && !is_file(self::$vite_file) )
+            return $url;
 
         $entry = $this->getFromManifest("assets/styles/app.scss");
 
@@ -98,7 +95,7 @@ final class ViteExtension extends AbstractExtension
 
         $url = '/static/' . $entryName;
 
-        if( !file_exists(__DIR__.'/../public'.$url) )
+        if( !is_file(__DIR__.'/../public'.$url) )
             return '';
 
         if( $version )
@@ -125,7 +122,7 @@ final class ViteExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        if( !file_exists(self::$manifest_file) && !file_exists(self::$vite_file) )
+        if( !is_file(self::$manifest_file) && !is_file(self::$vite_file) )
             return [];
 
         return [

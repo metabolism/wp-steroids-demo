@@ -7,6 +7,9 @@
  */
 
 
+use lloc\Msls\MslsOptions;
+use lloc\Msls\MslsOptionsPost;
+use lloc\Msls\MslsOptionsTax;
 use Timber\Timber;
 use Timber\URLHelper;
 use Twig\Extra\Intl\IntlExtension;
@@ -19,6 +22,7 @@ abstract class Kernel extends \Timber\Site {
     public function __construct() {
 
         $this->options = new Options();
+        $this->loadClasses('Twig');
 
         add_filter('network_site_url', [$this, 'networkSiteURL'] );
         add_filter('option_siteurl', [$this, 'optionSiteURL'] );
@@ -37,11 +41,64 @@ abstract class Kernel extends \Timber\Site {
         add_action( 'init', [$this, 'maintenance']);
         add_action( 'init', [$this, 'redirect']);
 
-        add_filter( 'timber/context', [$this, 'addToContext'] );
-        add_filter( 'timber/loader/twig', [$this, 'addTwigExtensions'] );
-        add_filter( 'block_render_callback', [$this, 'renderBlock'],10 , 3);
+        add_filter('timber/context', [$this, 'addToContext'] );
+        add_filter('timber/loader/twig', [$this, 'addTwigExtensions'] );
+        add_filter('block_render_callback', [$this, 'renderBlock'],10 , 5);
+        add_filter('timber/twig/environment/options', [$this, 'twigOptions']);
+
+        $viteExtension = new ViteExtension();
+        add_filter('block_editor_settings_theme_css', [$viteExtension, 'blockEditorSettingsThemeCSS']);
+
+        $translationExtension = new TranslationExtension();
+        add_action('wp_footer', [$translationExtension, 'printMissingTranslations'], 10000);;
 
         parent::__construct();
+    }
+
+    public function twigOptions($options){
+
+        if( is_writable(dirname(__DIR__).'/var/cache/twig') ){
+
+            $options['cache']       = dirname(__DIR__).'/var/cache/twig';
+            $options['auto_reload'] = WP_DEBUG;
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param $classname
+     * @param $init
+     * @return mixed|string[]|void
+     */
+    public function loadClass($classname, $init=false){
+
+        include_once __DIR__.'/'.$classname.'.php';
+
+        if( $init )
+            return new $classname();
+    }
+
+    public function loadClasses($folder, $init=false){
+
+        $folder = __DIR__.'/'.$folder.'/';
+
+        if( !is_dir($folder) )
+            return;
+
+        $files = scandir($folder);
+
+        foreach($files as $file){
+
+            if( !in_array($file, ['.','..']) )
+            {
+                $classname = str_replace('.php', '', $file);
+                include_once $folder.'/'.$file;
+
+                if( $init )
+                    new $classname();
+            }
+        }
     }
 
     public function maintenance()
@@ -197,9 +254,11 @@ abstract class Kernel extends \Timber\Site {
      * @param $block
      * @param $content
      * @param $is_preview
+     * @param $post_id
+     * @param $wp_block
      * @return void
      */
-    public static function renderBlock($block, $content = '', $is_preview = false){
+    public static function renderBlock($block, $content, $is_preview, $post_id, $wp_block){
 
         if( !($block['front']??true) && !is_admin() )
             return;
@@ -213,7 +272,7 @@ abstract class Kernel extends \Timber\Site {
         }
 
         $context = Timber::context();
-        $block_context = self::getBlockContext( $block, self::getPostId(), $is_preview );
+        $block_context = self::getBlockContext( $block, self::getPostId(), $is_preview, $wp_block );
 
         $context = array_merge( $context, $block_context );
 
@@ -227,26 +286,101 @@ abstract class Kernel extends \Timber\Site {
      * @param $block
      * @param $post_id
      * @param $is_preview
+     * @param $wp_block
      * @return array
      */
-    public static function getBlockContext($block, $post_id=false, $is_preview=false)
+    public static function getBlockContext($block, $post_id, $is_preview, $wp_block)
     {
-        $context = [];
+        $context = [
+            'post'=>false,
+            'block'=>$block,
+            'inner_blocks'=>[],
+            'props'=>get_fields($block['id']),
+            'is_preview' => $is_preview,
+            'is_admin' => is_admin(),
+            'is_front_page' => is_front_page()
+        ];
+
+        //check performance
+        if($wp_block && ($wp_block->inner_blocks??null) instanceof WP_Block_List){
+
+            $item_count = $wp_block->inner_blocks->count();
+
+            for ( $index = 1; $index <= $item_count; $index++ ){
+
+                $inner_block = $wp_block->inner_blocks->current();
+                $attribute   = $inner_block->attributes;
+
+                $attribute['id'] = acf_ensure_block_id_prefix(acf_get_block_id( $attribute ));
+                $block = acf_prepare_block($attribute);
+
+                if( !$block )
+                    continue;
+
+                acf_setup_meta( $block['data']??[], $block['id'] );
+
+                $context['inner_blocks'][] = [
+                    'block'=>$block,
+                    'props'=>get_fields($attribute['id'])
+                ];
+
+                $wp_block->inner_blocks->next();
+            }
+
+            $wp_block->inner_blocks->rewind();
+        }
 
         if( $post_id )
             $context['post'] = Timber::get_post($post_id);
 
-        $context['props'] = get_fields($block['id']);
-
-        // Store field values.
-        $context['block'] = $block;
-
-        // Store $is_preview value.
-        $context['is_preview'] = $is_preview;
-        $context['is_admin'] = is_admin();
-        $context['is_front_page'] = is_front_page();
-
         return $context;
+    }
+
+    /**
+     * @param MslsOptions $mslsOptions
+     * @param \WP_Site $site
+     * @param string $locale
+     * @return array
+     */
+    protected function getAlternative(MslsOptions $mslsOptions, \WP_Site $site, string $locale)
+    {
+        switch_to_blog($site->blog_id);
+
+        $postlink = $mslsOptions->get_postlink( $locale );
+
+        $id = apply_filters('msls_options_get_id', $mslsOptions->__get( $locale ), $locale);
+        $permalink = (string) apply_filters('msls_options_get_permalink', $postlink, $locale);
+
+        $alternate = [
+            'entity'=>false,
+            'url'=> empty($permalink) ? home_url( '/' ) : $permalink
+        ];
+
+        if( is_numeric($id) && $postlink ){
+
+            if( $mslsOptions instanceof MslsOptionsPost && $post = get_post($id) ){
+
+                $alternate['entity'] = [
+                    'id'=> $id,
+                    'title'=> $post->post_title,
+                    'slug'=> $post->post_name,
+                    'type'=> 'post'
+                ];
+            }
+            elseif( $mslsOptions instanceof MslsOptionsTax && $term = get_term($id) ){
+
+                $alternate['entity'] = [
+                    'id'=> $id,
+                    'title'=> $term->name,
+                    'slug'=> $term->slug,
+                    'type'=> 'term'
+                ];
+            }
+        }
+
+        restore_current_blog();
+
+        return $alternate;
     }
 
     /** This is where you add some context
@@ -289,6 +423,37 @@ abstract class Kernel extends \Timber\Site {
             }
         }
 
+        $context['languages'] = [];
+
+        if( is_multisite() && defined('MSLS_PLUGIN_VERSION') && is_multisite() )
+        {
+            $sites = get_sites(['public'=>1]);
+            $current_blog_id = get_current_blog_id();
+
+            if( !function_exists('format_code_lang') && is_file(ABSPATH . 'wp-admin/includes/ms.php'))
+                require_once(ABSPATH . 'wp-admin/includes/ms.php');
+
+            $mslsOptions = MslsOptions::create();
+
+            foreach($sites as $site)
+            {
+                $locale    = get_blog_option($site->blog_id, 'WPLANG');
+                $locale    = empty($locale)? 'en_US' : $locale;
+                $lang      = explode('_', $locale)[0];
+
+                $alternate = $current_blog_id != $site->blog_id ? $this->getAlternative($mslsOptions, $site, $locale) : ['url'=>false];
+
+                $context['languages'][] = array_merge([
+                    'id'            => $site->blog_id,
+                    'is_main'       => is_main_site($site->blog_id),
+                    'active'        => $current_blog_id==$site->blog_id,
+                    'name'          => format_code_lang($lang),
+                    'home_url'      => get_home_url($site->blog_id, '/'),
+                    'language_code' => $lang
+                ], $alternate);
+            }
+        }
+
         return $context;
     }
 
@@ -311,7 +476,6 @@ abstract class Kernel extends \Timber\Site {
             if( !in_array($file, ['.','..']) )
             {
                 $classname = str_replace('.php', '', $file);
-                include_once $folder.'/'.$file;
                 $twig->addExtension( new $classname() );
             }
         }

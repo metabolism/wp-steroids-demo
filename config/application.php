@@ -56,6 +56,7 @@ if( env('BUGSNAG_API_KEY') ){
     global $bugsnag;
 
     $bugsnag = Bugsnag\Client::make(env('BUGSNAG_API_KEY'));
+    $bugsnag->setErrorReportingLevel( E_ALL & ~E_NOTICE & ~E_DEPRECATED);
     Bugsnag\Handler::register($bugsnag);
 }
 
@@ -212,6 +213,11 @@ if( $cookie_prefix = env('COOKIE_PREFIX') ) {
  */
 if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
     $_SERVER['HTTPS'] = 'on';
+}
+
+
+if ( !isset($_SERVER['HTTP_HOST']) ) {
+    $_SERVER['HTTP_HOST'] = parse_url(env('WP_HOME'), PHP_URL_HOST);
 }
 
 $env_config = __DIR__ . '/environments/' . WP_ENV . '.php';

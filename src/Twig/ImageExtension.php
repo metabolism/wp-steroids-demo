@@ -2,6 +2,7 @@
 
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
+use Twig\TwigFunction;
 use Timber\Image;
 use Timber\ImageHelper;
 use kornrunner\Blurhash\Blurhash;
@@ -34,7 +35,7 @@ final class ImageExtension extends AbstractExtension
 
             $src = get_attached_file($post_id);
 
-            if( !file_exists($src) )
+            if( !is_file($src) )
                 return '';
 
             if( $_crop = get_post_meta($post_id, 'crop', true) )
@@ -48,12 +49,12 @@ final class ImageExtension extends AbstractExtension
             }
         }
 
-        if( !$image )
+        if( !isset($image['path']) )
             return '';
 
         $src = $ext == 'webp' && function_exists('imagewebp') ? ImageHelper::img_to_webp($image['path']) : $image['path'];
 
-        return $debug ? $this->generatePlaceholder($width, $height) : $this->resizeImage($src, $width, $height, $crop);
+        return $debug ? $this->getPlaceholderUrl($width, $height) : $this->resizeImage($src, $width, $height, $crop);
     }
 
     /**
@@ -70,7 +71,7 @@ final class ImageExtension extends AbstractExtension
 
         if( $debug ){
 
-            return $this->generatePlaceholder($width, $height);
+            return $this->getPlaceholderUrl($width, $height);
         }
         else{
 
@@ -124,7 +125,7 @@ final class ImageExtension extends AbstractExtension
      * @param int $height
      * @return string
      */
-    public function generatePlaceholder($width, $height=0) {
+    public function getPlaceholderUrl($width, $height=0) {
 
         $params = '';
 
@@ -277,6 +278,7 @@ final class ImageExtension extends AbstractExtension
         $debug = ($_GET['debug']??false) == 'image' && defined('WP_DEBUG') && WP_DEBUG;
         $crop = 'center';
         $blurhash = true;
+        $placeholder = false;
         $max_retina = 960;
         $class = '';
 
@@ -327,12 +329,23 @@ final class ImageExtension extends AbstractExtension
             unset( $sources['blurhash'] );
         }
 
-        if( !$post_id )
-            return '';
+        if( isset($sources['placeholder']) ){
+
+            $placeholder = $sources['placeholder'];
+            unset( $sources['placeholder'] );
+        }
+
+        if( !$post_id ){
+
+            if( $placeholder )
+                return $this->generatePlaceholder($width, $height, $sources);
+
+            return WP_DEBUG?'<error>Post id is empty</error>':'';
+        }
 
         $src = get_attached_file($post_id);
 
-        if( !file_exists($src) )
+        if( !is_file($src) )
             return WP_DEBUG?'<error>File not found</error>':'';
 
         if( !is_numeric($width) )
@@ -347,7 +360,7 @@ final class ImageExtension extends AbstractExtension
         if( !is_array($image) or !isset($image['url'], $image['alt'], $image['mime_type']) ){
 
             if( !$attachment = get_post( $post_id ) )
-                return '';
+                return WP_DEBUG?'<error>Attachment not found</error>':'';
 
             $image = [
                 'ID' => $attachment->ID,
@@ -357,6 +370,7 @@ final class ImageExtension extends AbstractExtension
             ];
 
         }
+
 
         $upload_dir = wp_upload_dir();
 
@@ -375,7 +389,7 @@ final class ImageExtension extends AbstractExtension
 
         if( $image['mime_type'] == 'image/svg+xml' || $image['mime_type'] == 'image/svg' || $image['mime_type'] == 'image/gif' ){
 
-            $img_src = $debug ? $this->generatePlaceholder($width, $height) : $image['url'];
+            $img_src = $debug ? $this->getPlaceholderUrl($width, $height) : $image['url'];
             $html .= '<img loading="' . $loading . '" class="' . $class . '" src="' . $img_src . '" alt="' . $image['alt'] . '" '.($width?'width="'.$width.'"':'').' '.($height?'height="'.$height.'"':'').'/>';
         }
         else {
@@ -386,9 +400,6 @@ final class ImageExtension extends AbstractExtension
                 $sources = [];
 
             $sources = array_combine(array_map(function ($key){ return str_replace(' ','', $key); }, array_keys($sources)), $sources);
-
-            if( !isset($sources['max-width:1440px']) )
-                $sources = array_merge($sources, ['max-width:1440px'=>[round($width/1.3333), round($height/1.33333)]]);
             
             foreach ($sources as $media => $size) {
 
@@ -458,12 +469,101 @@ final class ImageExtension extends AbstractExtension
         return $html;
     }
 
+    /**
+     * @param $file
+     * @param int $max_w
+     * @param int $max_h
+     * @return string
+     */
+    public function generateLottiePlaceholder($file, $max_w=0, $max_h=0){
+
+        $json = json_decode(file_get_contents($file), true);
+        $w = $json['w']??800;
+        $h = $json['h']??600;
+
+        return '<img src="'.$this->generatePixel($w, $h).'" style="'.($max_h?'max-height:'.$max_h.'px':'').($max_w?';max-width:'.$max_w.'px':'').'"/>';
+    }
+
+
+    /**
+     * Generate transparent pixel base64 image
+     * @param $w
+     * @param $h
+     * @return string
+     */
+    public function generatePixel($w = 1, $h = 1) {
+
+        ob_start();
+
+        if( $h == 0 )
+            $h = $w;
+        elseif( $w == 0 )
+            $w = $h;
+
+        $img = imagecreatetruecolor($w, $h);
+        imagetruecolortopalette($img, false, 1);
+        imagesavealpha($img, true);
+        $color = imagecolorallocatealpha($img, 0, 0, 0, 127);
+        imagefill($img, 0, 0, $color);
+        imagepng($img, null, 9);
+        imagedestroy($img);
+
+        $imagedata = ob_get_contents();
+        ob_end_clean();
+
+        return 'data:image/png;base64,' . base64_encode($imagedata);
+    }
+
+
+    /**
+     * @param $width
+     * @param $height
+     * @param $sources
+     * @return string
+     */
+    public function generatePlaceholder($width=0, $height=0, $sources=[]){
+
+        if( !$width || !$height )
+            return '<span class="image-placeholder"></span>';
+
+        $html = '<picture class="responsive-picture image-placeholder">';
+
+        foreach ($sources as $media => $size) {
+
+            if (is_int($media))
+                $media = 'max-width:' . $media . 'px';
+
+            $target_width = $size[0] ?? 0;
+            $target_height = $size[1] ?? 0;
+
+            $html .= '<source media="(' . $media . ')" srcset="' . $this->generatePixel($target_width, $target_height) . '" type="image/png"/>';
+        }
+
+        $html .= '<img src="' . $this->generatePixel($width, $height) . '" alt="" aria-hidden="true" width="'.$width.'" height="'.$height.'"/>';
+        $html .='</picture>';
+
+        return $html;
+    }
+
     public function getFilters(): array
     {
         return [
-            new TwigFilter( 'crop', [$this, 'cropImage'] ),
-            new TwigFilter( 'picture', [$this, 'generatePicture'] ),
-            new TwigFilter( 'figure', [$this, 'generateFigure'] )
+            new TwigFilter('crop', [$this, 'cropImage'] ),
+            new TwigFilter('placeholder', function ($picture){
+                if( empty($picture) )
+                    return $this->generatePlaceholder();
+                else return $picture;
+            }),
+            new TwigFilter('lottie_placeholder', [$this, 'generateLottiePlaceholder']),
+            new TwigFilter('picture', [$this, 'generatePicture'] ),
+            new TwigFilter('figure', [$this, 'generateFigure'] )
+        ];
+    }
+
+    public function getFunctions(): array
+    {
+        return [
+            new TwigFunction('pixel', [$this, 'pixel'])
         ];
     }
 }

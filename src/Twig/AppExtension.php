@@ -33,19 +33,19 @@ final class AppExtension extends AbstractExtension
 
         $html = preg_replace('/<link\b[^>]*rel=["\']stylesheet["\'][^>]*>/i', '', $html);
         $html = preg_replace('/<style\b[^>]*>.*?<\/style>/is', '', $html);
+        $html = preg_replace('/<script\b[^>]*>.*?<\/script>/is', '', $html);
+
         return preg_replace('/\s*style=["\'][^"\']*["\']/i', '', $html);
     }
 
     /**
-     * @param $picture
+     * @param $text
+     * @param $preview_text
      * @return string
      */
-    public function placeholder($picture){
+    public function previewText($text, $preview_text) {
 
-        if( empty($picture) )
-            $picture = '<span class="image-placeholder"></span>';
-
-        return $picture;
+        return ((is_preview() || is_admin()) && empty($text)) ? $preview_text : $text;
     }
 
     /**
@@ -131,51 +131,6 @@ final class AppExtension extends AbstractExtension
         }
 
         return $blocks;
-    }
-
-    /**
-     * @param $file
-     * @param int $max_w
-     * @param int $max_h
-     * @return string
-     */
-    public function generateLottiePlaceholder($file, $max_w=0, $max_h=0){
-
-        $json = json_decode(file_get_contents($file), true);
-        $w = $json['w']??800;
-        $h = $json['h']??600;
-
-        return '<img src="'.$this->generatePixel($w, $h).'" style="'.($max_h?'max-height:'.$max_h.'px':'').($max_w?';max-width:'.$max_w.'px':'').'"/>';
-    }
-
-
-    /**
-     * Generate transparent pixel base64 image
-     * @param $w
-     * @param $h
-     * @return string
-     */
-    public function generatePixel($w = 1, $h = 1) {
-
-        ob_start();
-
-        if( $h == 0 )
-            $h = $w;
-        elseif( $w == 0 )
-            $w = $h;
-
-        $img = imagecreatetruecolor($w, $h);
-        imagetruecolortopalette($img, false, 1);
-        imagesavealpha($img, true);
-        $color = imagecolorallocatealpha($img, 0, 0, 0, 127);
-        imagefill($img, 0, 0, $color);
-        imagepng($img, null, 9);
-        imagedestroy($img);
-
-        $imagedata = ob_get_contents();
-        ob_end_clean();
-
-        return 'data:image/png;base64,' . base64_encode($imagedata);
     }
 
     /**
@@ -290,6 +245,9 @@ final class AppExtension extends AbstractExtension
      */
     public function youtubeID($url)
     {
+        if( !is_string($url) )
+            return '';
+
         preg_match( '/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:m\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&">]+)/', $url, $matches );
 
         return count( $matches ) > 1 ? $matches[1] : '';
@@ -593,17 +551,17 @@ final class AppExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
+            new TwigFilter('array_values', 'array_values'),
+            new TwigFilter('preview_text', [$this, 'previewText']),
             new TwigFilter('md5', 'md5'),
             new TwigFilter('assign', [$this, 'assign']),
             new TwigFilter('remove_style', [$this, 'removeStyle']),
-            new TwigFilter('placeholder', [$this, 'placeholder']),
             new TwigFilter('has_block', [$this, 'hasBlock']),
             new TwigFilter('a11y', [$this, 'a11y']),
             new TwigFilter('first_block', [$this, 'getFirstBlock']),
             new TwigFilter('intval', 'intval'),
             new TwigFilter('handle', 'sanitize_title'),
             new TwigFilter('blocks', [$this, 'getBlocks']),
-            new TwigFilter('lottie_placeholder', [$this, 'generateLottiePlaceholder']),
             new TwigFilter('table', [$this, 'generateTable']),
             new TwigFilter('ucfirst', 'ucfirst' ),
             new TwigFilter('encrypt', [$this,'encrypt'] ),
@@ -629,8 +587,8 @@ final class AppExtension extends AbstractExtension
             new TwigFunction('wp_head', 'wp_head'),
             new TwigFunction('wp_footer', 'wp_footer'),
             new TwigFunction('nonce', 'wp_create_nonce'),
+            new TwigFunction('get_calculated_carbon', 'get_calculated_carbon'),
             new TwigFunction('assign', [$this, 'assign']),
-            new TwigFunction('pixel', [$this, 'pixel']),
             new TwigFunction('archive_url', 'get_post_type_archive_link' ),
             new TwigFunction('search_url', 'get_search_link' ),
             new TwigFunction('post_query', function ($query){ return Timber::get_posts($query); }),

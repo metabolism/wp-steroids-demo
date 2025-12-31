@@ -11,15 +11,8 @@ use kornrunner\Blurhash\Blurhash;
 
 final class TranslationExtension extends AbstractExtension
 {
-    private $translations;
+    private static $translations;
     private static $missing_translations=[];
-
-    public function __construct(){
-
-        $this->getTranslations();
-
-        add_action('wp_footer', [$this, 'printMissingTranslations'], 10000);;
-    }
 
     /**
      * @return void
@@ -39,18 +32,23 @@ final class TranslationExtension extends AbstractExtension
 
     public function getTranslations()
     {
+        if( !is_null(self::$translations) )
+            return self::$translations;
+
         $options = new Options();
 
         if( $translations = $options->get('translations') ) {
 
-            $this->translations = [];
+            self::$translations = [];
 
             foreach ($translations as $translation) {
 
                 $key = sanitize_title($translation['key']);
-                $this->translations[$key] = $translation['translation'];
+                self::$translations[$key] = $translation['translation'];
             }
         }
+
+        return self::$translations;
     }
 
     /**
@@ -60,12 +58,14 @@ final class TranslationExtension extends AbstractExtension
      */
     public function translate($text, $params=[])
     {
+        $translations = self::getTranslations();
+
         $key = sanitize_title($text);
         $params = (array)$params;
 
-        if( isset($this->translations[$key]) ){
+        if( isset($translations[$key]) ){
 
-            return vsprintf($this->translations[$key], $params);
+            return vsprintf($translations[$key], $params);
         }
         else{
 

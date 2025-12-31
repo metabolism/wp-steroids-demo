@@ -15,7 +15,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function __construct()
     {
-        if( file_exists(self::$webpack_file) || file_exists(self::$manifest_file) )
+        if( is_file(self::$webpack_file) || is_file(self::$manifest_file) )
             add_filter('block_editor_settings_theme_css', [$this, 'blockEditorSettingsThemeCSS']);
     }
 
@@ -39,7 +39,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function getFromEntryPoints($entryName, $type)
     {
-        if( file_exists(self::$entrypoints_file) && is_null($this->entrypoints) )
+        if( is_file(self::$entrypoints_file) && is_null($this->entrypoints) )
             $this->entrypoints = json_decode(file_get_contents(self::$entrypoints_file), true);
 
         return $this->entrypoints['entrypoints'][$entryName][$type]??[];
@@ -47,7 +47,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function getFromManifest($entryName)
     {
-        if( file_exists(self::$manifest_file) && is_null($this->manifest) )
+        if( is_file(self::$manifest_file) && is_null($this->manifest) )
             $this->manifest = json_decode(file_get_contents(self::$manifest_file), true);
 
         return $this->manifest[$entryName]??false;
@@ -115,7 +115,7 @@ final class EncoreExtension extends AbstractExtension
 
     public function getFunctions(): array
     {
-        if( !file_exists(self::$webpack_file) && !file_exists(self::$manifest_file) )
+        if( !is_file(self::$webpack_file) && !is_file(self::$manifest_file) )
             return [];
 
         return [
